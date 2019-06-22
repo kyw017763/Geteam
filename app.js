@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -12,10 +10,17 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 // const fb = require(./function/fbLogin'); // facebook login
 const passport = require('passport')
+const ejs = require('ejs');
 // const language = require('@google-cloud/language');
+
 //templete engine and path
-app.set('view engine','pug');
-app.set('views','./views');
+ejs.open = '<?';
+ejs.close = '?>';
+
+app.set('view engine', 'ejs');
+app.engine('.html', ejs.renderFile);
+app.set('views', './views');
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cookieParser())
@@ -27,19 +32,6 @@ app.use(session({
 
 //sha 256 비밀번호 암호화
 var sha256 = require('sha256');
-
-//templete engine and path
-app.set('views', path.join(__dirname, '/views'));
-app.set("view engine", 'html');
-
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-app.use(cookieParser())
-app.use(session({
-	secret:'123123123',
-	resave:false,
-	saveUninitialize:true
-}));
 
 const route = require('./route.js');
 
@@ -63,6 +55,6 @@ app.use((err, req, res, next) => { // 에러 처리 부분
   res.status(500).send('서버 에러!'); // 500 상태 표시 후 에러 메시지 전송
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(3000, () => {
   console.log('zteam on port 3000!');
 }); // 이전과 동일

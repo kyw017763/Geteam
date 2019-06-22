@@ -1,9 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
-session_start();
-include "auth.php";
-include "dbconn.php";
-include "setting.php";
 
 $big = 'study';
 ?>
@@ -91,7 +86,7 @@ $big = 'study';
         <div class="culmn">
             <!--Home page style-->
 
-			<?php include "header.php"; ?>
+            <% include "header.html"; %>
 
 			<?php include "searchStudyList.php"; ?>
 
@@ -368,7 +363,7 @@ $big = 'study';
 
 		</div> <!-- row -->
 	</div> <!-- container -->
-        	<?php include "footer.php"; ?>
+        <% include "footer.html"; %>
 </div> <!-- culmn -->  
 
                                     
