@@ -13,32 +13,32 @@
 
     <div class="container" style="user-select:none;">   
     
-        <?php 
-        if(isset($userid)) {
-            $sql_badge_cal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
-            $sql_badge_cal = mysqli_num_rows($sql_badge_cal);
-        ?>
+        <%
+        // if(isset($userid)) {
+        //     $sql_badge_cal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
+        //     $sql_badge_cal = mysqli_num_rows($sql_badge_cal);
+        %>
         <!-- Start Atribute Navigation -->
         <div class="attr-nav">
             <ul>
                 <li class="dropdown">
                     <a href="note_recv.php">
                         <i class="fa fa-envelope-o"></i>
-                        <?php
-                            if(isset($userid)){
-                            ?>
-                                <span class="badge"><?php echo $sql_badge_cal ?></span>
-                            <?php
-                            }
-                        ?>
+                        <%
+                            // if(isset($userid)){
+                        %>
+                                <span class="badge"><%= // $sql_badge_cal %></span>
+                        <%
+                            // }
+                        %>
                     </a>
                 </li>
                 
             </ul>
         </div>   
-        <?php
-        }
-        ?>
+        <%
+        // }
+        %>
         <!-- End Atribute Navigation -->
 
         <!-- Start Header Navigation -->
@@ -60,18 +60,18 @@
                 <li><a href="contest_list.php?kind=develop&big=contest" target="_self">공모전</a></li>                    
                 <li><a href="mypage.php" target="_self">My Page</a></li>                   
                 
-                <?php 
-                if($userid) {
-                    ?>
+                <%
+                // if($userid) {
+                %>
                     <li><a href="session_unset.php" target="_self">SignOut</a></li>
-                <?php
-                } else {
-                    ?>
+                <%
+                // } else {
+                    %>
                     <li><a href="signin.php" target="_self">SignIn</a></li>
                     <li><a href="signup.php" target="_self">SignUp</a></li>  
-                <?php
-                }
-                ?>
+                <%
+                // }
+                %>
                 
             </ul>
         </div><!-- /.navbar-collapse -->
