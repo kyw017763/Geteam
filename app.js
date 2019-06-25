@@ -23,14 +23,14 @@ app.engine('.ejs', ejs.renderFile);
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(express.static(path.resolve('./assets')));
+app.use(express.static(path.join(__dirname, 'assets')));
 
 //sha 256 비밀번호 암호화
 const sha256 = require('sha256');
 
-
 app.use(passport.initialize());
 app.use(passport.session());
+
 
 var index = require('./routes/index.js');
 var auth = require('./routes/auth.js');
@@ -58,6 +58,5 @@ app.use((err, req, res, next) => { // 에러 처리 부분
 
 
 app.listen(3000, () => {
-  
   console.log('zteam on port 3000!');
 }); // 이전과 동일

@@ -22,7 +22,7 @@
         <div class="attr-nav">
             <ul>
                 <li class="dropdown">
-                    <a href="note_recv.php">
+                    <a href="note/recv">
                         <i class="fa fa-envelope-o"></i>
                         <%
                             // if(isset($userid)){
@@ -46,9 +46,9 @@
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
                 <i class="fa fa-bars"></i>
             </button>
-            <a class="navbar-brand" href="index.php">
+            <a class="navbar-brand" href="/">
                 <!-- 로고 이미지 -->
-                <img src="assets/images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
+                <img src="images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
             </a>
         </div>
         <!-- End Header Navigation -->
@@ -58,7 +58,7 @@
             <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
                 <li><a href="study_list.php?kind=develop&big=study" target="_self">스터디</a></li>                    
                 <li><a href="contest_list.php?kind=develop&big=contest" target="_self">공모전</a></li>                    
-                <li><a href="mypage.php" target="_self">My Page</a></li>                   
+                <li><a href="/mypage" target="_self">My Page</a></li>                   
                 
                 <%
                 // if($userid) {
@@ -67,8 +67,8 @@
                 <%
                 // } else {
                     %>
-                    <li><a href="signin.php" target="_self">SignIn</a></li>
-                    <li><a href="signup.php" target="_self">SignUp</a></li>  
+                    <li><a href="/auth/signin" target="_self">SignIn</a></li>
+                    <li><a href="/auth/signup" target="_self">SignUp</a></li>  
                 <%
                 // }
                 %>

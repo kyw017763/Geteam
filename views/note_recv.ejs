@@ -12,30 +12,30 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href=""> <!-- 파비콘 추가 -->
 
-        <link rel="stylesheet" href="assets/css/slick.css">
-        <link rel="stylesheet" href="assets/css/slick-theme.css">
-        <link rel="stylesheet" href="assets/css/animate.css">
-        <link rel="stylesheet" href="assets/css/fonticons.css">
-        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/slick.css">
+        <link rel="stylesheet" href="css/slick-theme.css">
+        <link rel="stylesheet" href="css/animate.css">
+        <link rel="stylesheet" href="css/fonticons.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
 
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css" rel="stylesheet">
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         
-        <link rel="stylesheet" href="assets/css/magnific-popup.css">
-        <link rel="stylesheet" href="assets/css/bootsnav.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/bootsnav.css">
 
         <!--For Plugins external css-->
-        <!--<link rel="stylesheet" href="assets/css/plugins.css" />-->
+        <!--<link rel="stylesheet" href="css/plugins.css" />-->
 
         <!--Theme custom css -->
-        <link rel="stylesheet" href="assets/css/style.css">
-        <!--<link rel="stylesheet" href="assets/css/colors/maron.css">-->
+        <link rel="stylesheet" href="css/style.css">
+        <!--<link rel="stylesheet" href="css/colors/maron.css">-->
 
         <!--Theme Responsive css-->
-        <link rel="stylesheet" href="assets/css/responsive.css" />
+        <link rel="stylesheet" href="css/responsive.css" />
 
-        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
         <script>
           function note_write_chk() {
             var p_set = document.frm_note_write;
@@ -95,7 +95,7 @@
     
         <div class="culmn">
 
-            <% include "header.html"; %>
+            <% include header %>
 
             <div class="container">
                 <div class="row">
@@ -103,10 +103,10 @@
                   <div class="col-sm-8 col-sm-offset-2">
                       <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
                           <li class="nav-item">
-                              <a class="nav-link" href="note_recv.php" " target="_self" style="color: #efdc05; font-size: 1.1rem;">받은 쪽지함</a>           
+                              <a class="nav-link" href="/note/recv" target="_self" style="color: #efdc05; font-size: 1.1rem;">받은 쪽지함</a>           
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link" href="note_send.php" target="_self" style="color: #efdc05; font-size: 1.1rem;">보낸 쪽지함</a>    
+                              <a class="nav-link" href="/note/send" target="_self" style="color: #efdc05; font-size: 1.1rem;">보낸 쪽지함</a>    
                           </li>
                       </ul>
                   </div>
@@ -121,36 +121,36 @@
                       </div>
                   </div>
 
-                  <?php
-                      if($range=="author"){
-                        $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY send_id, idx DESC");
-                      } else if($range=="content") {
-                        $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY content, idx DESC");
-                      } else {
-                        $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY idx, send_id DESC");
-                      }
-                      $scale = 10;
+                  <%
+                      // if($range=="author"){
+                      //   $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY send_id, idx DESC");
+                      // } else if($range=="content") {
+                      //   $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY content, idx DESC");
+                      // } else {
+                      //   $result_list = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' ORDER BY idx, send_id DESC");
+                      // }
+                      // $scale = 10;
 
-                      $total_record = mysqli_num_rows($result_list); //전체 글 수
-                      /*
-                      echo "SELECT * FROM note_recv WHERE send_id='$userid' ORDER BY send_id, idx DESC";
-                      echo $total_record;
-                      exit();
-                      */
-                      if($total_record % $scale==0)
-                      $total_page = $total_record/$scale;
-                      else
-                      $total_page = floor($total_record/$scale)+1;
+                      // $total_record = mysqli_num_rows($result_list); //전체 글 수
+                      // /*
+                      // echo "SELECT * FROM note_recv WHERE send_id='$userid' ORDER BY send_id, idx DESC";
+                      // echo $total_record;
+                      // exit();
+                      // */
+                      // if($total_record % $scale==0)
+                      // $total_page = $total_record/$scale;
+                      // else
+                      // $total_page = floor($total_record/$scale)+1;
                       
-                      if(!$page) $page = 1;
-                      //페이지 번호($page)가 0일 때 페이지 번호를 1로 초기화
+                      // if(!$page) $page = 1;
+                      // //페이지 번호($page)가 0일 때 페이지 번호를 1로 초기화
                       
-                      //표시할 페이지($page)에 따라 $start 계산 => 각각의 페이지의 시작번호
-                      $start = ($page-1) * $scale;
-                  ?>
+                      // //표시할 페이지($page)에 따라 $start 계산 => 각각의 페이지의 시작번호
+                      // $start = ($page-1) * $scale;
+                  %>
                   <div class="col-sm-12">
                     <div class="col-sm-3">
-                        <form method="post" action="note_recv.php?kind=<?php echo $kind; ?>">
+                        <form method="post" action="note_recv.php?kind=<%= // $kind; %>">
                             <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
                             <option value="note_recv.php?range=num">날짜</option>
                             <option value="note_recv.php?range=author">작성자</option>
@@ -187,49 +187,48 @@
                   </tr>
                 </thead>
                 <tbody>
-                <?php
-                  for($i = $start; $i < $start+$scale && $i < $total_record; $i++){
-                    mysqli_data_seek($result_list, $i); //가져올 레코드로 위치(포인터) 이동
-                    $recv_row = mysqli_fetch_array($result_list); //하나의 레코드 가져오기
-                    $note_idx = $_POST['note_idx'];
-                    $note_idx = $recv_row['idx'];
-                    $note_content = $recv_row['content'];
-                    $note_send_id = $recv_row['send_id'];
-                    $note_chk = $recv_row['recv_chk'];
-                    $note_date = $recv_row['send_date'];
-                    $note_date = substr($note_date, 0, 10);
-
-                ?>
+                <%
+                  // for($i = $start; $i < $start+$scale && $i < $total_record; $i++){
+                  //   mysqli_data_seek($result_list, $i); //가져올 레코드로 위치(포인터) 이동
+                  //   $recv_row = mysqli_fetch_array($result_list); //하나의 레코드 가져오기
+                  //   $note_idx = $_POST['note_idx'];
+                  //   $note_idx = $recv_row['idx'];
+                  //   $note_content = $recv_row['content'];
+                  //   $note_send_id = $recv_row['send_id'];
+                  //   $note_chk = $recv_row['recv_chk'];
+                  //   $note_date = $recv_row['send_date'];
+                  //   $note_date = substr($note_date, 0, 10);
+                %>
                 <!-- <script type="text/javascript">
 
                   function read(){
                     // num = $("#idx").val();
-                    // alert(<?php echo $note_idx;?>);
+                    // alert(<%= // $note_idx;%>);
                     alert("메세지 확인이 완료 되었습니다!");
                     <?php
- ?>
+                %>
                   }
                 </script> -->
                 <tr>
-                  <td><input type="checkbox" name="mnum[]" value="<?= $recv_row['idx']?>" >
-                  <td><?php echo $note_idx ?></td>
-                  <td><?php echo $note_send_id ?></td>
-                  <td><?php echo $note_content ?>
+                  <td><input type="checkbox" name="mnum[]" value="<%= // $recv_row['idx'] %>" >
+                  <td><%= // $note_idx %></td>
+                  <td><%= // $note_send_id %></td>
+                  <td><%= // $note_content %>
                   <!--<input type="button" name="read_chk_btn" value="내용 확인" onclick="location.href='note_chk.php'">-->
-                    <?php 
-                    if(!($note_send_id=="[fromFooter]")) {
-                    ?>
-                    <a href="note_chk.php?idx=<?= $recv_row['idx'] ?>">[내용 확인]</a>
-                    <?php
-                    }
-                    ?>
+                    <%
+                    // if(!($note_send_id=="[fromFooter]")) {
+                    %>
+                    <a href="note_chk.php?idx=<%= //  $recv_row['idx'] %>">[내용 확인]</a>
+                    <%
+                    // }
+                    %>
                   </td>
-                  <td><?php echo $note_date ?></td>
+                  <td><%= // $note_date %></td>
                 </tr>
   
-                <?php
-                    } //for문
-                ?>
+                <%
+                    // } //for문
+                %>
                 </tbody>
                 </table>
                 </div>
@@ -240,65 +239,62 @@
                   <nav aria-labesl="...">
                   <div>
                     <ul class="pagination pagination-lg">
-                          <?php 
-                          if(page-5 >= 1) {
-                          
-                          ?>
+                          <%
+                          // if(page-5 >= 1) {
+                          %>
                           <li class="page-item">
-                            <a class="page-link" href="note_recv.php?page=<?php echo $page-5 ?>&kind=<?php echo $kind?>" style="background: rgb(247,247,247); color: #FF8489; border: 0;">&laquo;</a>
+                            <a class="page-link" href="note_recv.php?page=<%= // $page-5 %>&kind=<%= // $kind%>" style="background: rgb(247,247,247); color: #FF8489; border: 0;">&laquo;</a>
                           </li>
-                          <?php
-                          } else {
-                          ?>
+                          <%
+                          // } else {
+                          %>
                           <li class="page-item disabled">
                             <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&laquo;</a>
                           </li>
-                          <?php 
-                          }
-                          ?>
+                          <%
+                          // }
+                          %>
                           
-                          <?php
-                          for($i=1; $i<=$total_page; $i++){
-                              if($page == $i) {
-                          ?>
+                          <%
+                          // for($i=1; $i<=$total_page; $i++){
+                          //   if($page == $i) {
+                          %>
                               <li class="page-item active">
-                                    <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><?php echo $i ?></a>
-                                  </li>
-                          <?php 
-                              } else {
-                            ?>
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="note_recv.php?page=<?php echo $i ?>&kind=<?php echo $kind ?>" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><?php echo $i ?></a>
-                                  </li>
-                          <?php 
-                              }
-                          }
-                          ?>
+                                <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
+                              </li>
+                          <% 
+                            // } else {
+                          %>
+                              <li class="page-item disabled">
+                                <a class="page-link" href="note_recv.php?page=<%= // $i %>&kind=<%= // $kind %>" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
+                              </li>
+                          <% 
+                          //     }
+                          // }
+                          %>
                           
-                          <?php 
-                          if(page+5 <= $total_page) {
-                          ?>
+                          <% 
+                          // if(page+5 <= $total_page) {
+                          %>
                           <li class="page-item">
-                            <a class="page-link" href="note_recv.php?page=<?php echo $page+5 ?>" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
+                            <a class="page-link" href="note_recv.php?page=<%= // $page+5 %>" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
                           </li>
-                          <?php
-                          } else {
-                          ?>
+                          <%
+                          // } else {
+                          %>
                           <li class="page-item disabled">
                             <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
                           </li>
-                          <?php 
-                          }
-                          ?>
-                          
+                          <%
+                          // }
+                          %>
                             </ul>
                       </div>
                       </nav>
                   </div>
                 </div> <!-- row -->
 	          </div> <!-- container -->
-
-              <% include "footer.html"; %>
+              <% include footer %>
         </div> <!-- culmn -->  
 
                           
@@ -318,7 +314,7 @@
                 <form name="frm_note_write" class="form_write" method="post" action="note_write_process.php">
                     <label>
                         보내는 사람
-                    <input type="text" class="form-control" name="write_send" value="<?php echo "$userid" ?>" (<?php echo $username ?>) readonly>
+                    <input type="text" class="form-control" name="write_send" value="<%= // "$userid" %>" (<%= // $username %>) readonly>
                     </label>
 
                     <label>
@@ -352,16 +348,16 @@
 </div> <!-- modal -->
 
         <!-- JS includes -->
-        <script src="assets/js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="assets/js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script src="assets/js/jquery.magnific-popup.js"></script>
-        <script src="assets/js/jquery.easing.1.3.js"></script>
-        <script src="assets/js/slick.min.js"></script>
-        <script src="assets/js/jquery.collapse.js"></script>
-        <script src="assets/js/bootsnav.js"></script>
+        <script src="js/jquery.magnific-popup.js"></script>
+        <script src="js/jquery.easing.1.3.js"></script>
+        <script src="js/slick.min.js"></script>
+        <script src="js/jquery.collapse.js"></script>
+        <script src="js/bootsnav.js"></script>
 
-        <script src="assets/js/plugins.js"></script>
-        <script src="assets/js/main.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
     </body>
 </html>

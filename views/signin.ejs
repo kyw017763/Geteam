@@ -12,56 +12,55 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href=""> <!-- 파비콘 추가 -->
 
-        <link rel="stylesheet" href="assets/css/slick.css">
-        <link rel="stylesheet" href="assets/css/slick-theme.css">
-        <link rel="stylesheet" href="assets/css/animate.css">
-        <link rel="stylesheet" href="assets/css/fonticons.css">
-        <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/slick.css">
+        <link rel="stylesheet" href="css/slick-theme.css">
+        <link rel="stylesheet" href="css/animate.css">
+        <link rel="stylesheet" href="css/fonticons.css">
+        <link rel="stylesheet" href="css/font-awesome.min.css">
 
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css" rel="stylesheet">
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
         
-        <link rel="stylesheet" href="assets/css/magnific-popup.css">
-        <link rel="stylesheet" href="assets/css/bootsnav.css">
+        <link rel="stylesheet" href="css/magnific-popup.css">
+        <link rel="stylesheet" href="css/bootsnav.css">
 
         <!--For Plugins external css-->
-        <!--<link rel="stylesheet" href="assets/css/plugins.css" />-->
+        <!--<link rel="stylesheet" href="css/plugins.css" />-->
 
         <!--Theme custom css -->
-        <link rel="stylesheet" href="assets/css/style.css">
-        <!--<link rel="stylesheet" href="assets/css/colors/maron.css">-->
+        <link rel="stylesheet" href="css/style.css">
+        <!--<link rel="stylesheet" href="css/colors/maron.css">-->
 
         <!--Theme Responsive css-->
-        <link rel="stylesheet" href="assets/css/responsive.css" />
+        <link rel="stylesheet" href="css/responsive.css" />
 
-        <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 
         <script>
     	window.onload = function() {
-        	
-        var text_pwd = document.getElementById("text_pwd"); //넘겨받은 메일값
-        var text_find_pwd = document.getElementById("text_find_pwd"); //메일이 정확한지 확인하는 정규표현식에 따른 결과를 보여주는 span
-        var page_original = document.getElementById("original");
-        var page_new = document.getElementById("new");                                        
+            var text_pwd = document.getElementById("text_pwd"); //넘겨받은 메일값
+            var text_find_pwd = document.getElementById("text_find_pwd"); //메일이 정확한지 확인하는 정규표현식에 따른 결과를 보여주는 span
+            var page_original = document.getElementById("original");
+            var page_new = document.getElementById("new");                                        
 
-        btn_find.onclick = function() {
-           	page_original.style.display = "none";
-           	page_new.style.display = "block";
-           	text_find_pwd.innerHTML = "해당 이메일로 전송이 완료되었습니다!";
-            
-            setTimeout(function() {
-            sendTheEmail()
-            }, 3000);
-        }
+            btn_find.onclick = function() {
+                page_original.style.display = "none";
+                page_new.style.display = "block";
+                text_find_pwd.innerHTML = "해당 이메일로 전송이 완료되었습니다!";
+                
+                setTimeout(function() {
+                sendTheEmail()
+                }, 3000);
+            }
 
-        function sendTheEmail() {
-            var p_set = document.frm_email_write;
-            
-            text_pwd = '[비밀번호 찾기 이메일]' + text_pwd;
+            function sendTheEmail() {
+                var p_set = document.frm_email_write;
+                
+                text_pwd = '[비밀번호 찾기 이메일]' + text_pwd;
 
-            p_set.submit();
-        }
+                p_set.submit();
+            }
     	}
     	</script>
     </head>
@@ -70,7 +69,7 @@
     
         <div class="culmn">
 
-            <% include "header.html"; %>
+            <% include header %>
 
             <div class="container">
                 <div class="row">
@@ -89,13 +88,17 @@
                         <form action="signin_process.php" method="post" class="form_write" name="frm_signin">
                         <label>
                         	이메일
-                            <?php 
-                                if(isset($cookie_id)){
-                                    echo "<input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email' value='$cookie_id'>";
-                                } else {
-                                    echo "<input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email'>";
-                                }
-                            ?>
+                            <%
+                            // if(isset($cookie_id)){
+                            %>
+                               <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email' value='$cookie_id'>
+                            <%
+                            //  } else {
+                            %>
+                                <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email'>
+                            <%
+                            // }
+                            %>
                         </label>
 
                         <label>
@@ -118,19 +121,20 @@
                         
         				<span id="singnin_find_result" class="fail"></span>
 
-                        <?php 
-                        if($fail) {
-                            echo "<span id='signup_result' class='fail'>이메일 또는 비밀번호가 다릅니다</span>";
-                        }
-                        ?>
+                        <%
+                        // if($fail) {
+                        %>
+                            <span id='signup_result' class='fail'>이메일 또는 비밀번호가 다릅니다</span>
+                        <%
+                        // }
+                        %>
                         </form>
 
                         </div>
                     </div>
-
                 </div> <!-- row -->
 	        </div> <!-- container -->
-            <% include "footer.html"; %>
+            <% include footer %>
         </div> <!-- culmn -->  
 
                           
@@ -152,7 +156,7 @@
             </div>
 
             <div id="original" class="col-sm-10 col-sm-offset-1">
-                <form name="frm_email_write" class="form_write" action="note_not_auth_write_process.php?$write_recv=<?php echo 's2017s04@e-mirim.hs.kr'; ?>&write_send=<?php echo "[FindPassword]" ?>&write_content=<?php echo $text_pwd ?>" method="get"> <!-- signin_findpwd에는 이메일로 비밀번호 확인 메일이 가는 로직 -->
+                <form name="frm_email_write" class="form_write" action="note_not_auth_write_process.php?$write_recv=<%= // 's2017s04@e-mirim.hs.kr'; %>&write_send=<%= // "[FindPassword]" %>&write_content=<%= // $text_pwd %>" method="get"> <!-- signin_findpwd에는 이메일로 비밀번호 확인 메일이 가는 로직 -->
                     <div class="col-sm-8">
                         <input type="text" id="text_pwd" name="text_pwd" maxlength="25" placeholder="학교 이메일(아이디)을 입력해주세요" style="padding: 1.25rem 0.3rem;">
                     </div>
@@ -169,16 +173,16 @@
 </div> <!-- modal -->
 
         <!-- JS includes -->
-        <script src="assets/js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="assets/js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/jquery-1.11.2.min.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script src="assets/js/jquery.magnific-popup.js"></script>
-        <script src="assets/js/jquery.easing.1.3.js"></script>
-        <script src="assets/js/slick.min.js"></script>
-        <script src="assets/js/jquery.collapse.js"></script>
-        <script src="assets/js/bootsnav.js"></script>
+        <script src="js/jquery.magnific-popup.js"></script>
+        <script src="js/jquery.easing.1.3.js"></script>
+        <script src="js/slick.min.js"></script>
+        <script src="js/jquery.collapse.js"></script>
+        <script src="js/bootsnav.js"></script>
 
-        <script src="assets/js/plugins.js"></script>
-        <script src="assets/js/main.js"></script>
+        <script src="js/plugins.js"></script>
+        <script src="js/main.js"></script>
     </body>
 </html>

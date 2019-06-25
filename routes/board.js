@@ -2,17 +2,6 @@ const express = require('express');
 const path = require('path');
 const router = express.Router(); // 라우터 분리
 
-const ejs = require('ejs');
-
-const app = express();
-//view engine setup
-app.set('views','../views');
-app.set('view engine','ejs');
-app.engine('.ejs', ejs.renderFile);
-
-// 없으면 경로 안맞음
-router.use(express.static(__dirname));
-
 
 router.get('/', (req, res) => {
     console.log('It\'s board page');
@@ -21,12 +10,14 @@ router.get('/', (req, res) => {
 // study
 router.get('/study/list', (req, res) => {
     console.log('study_list page');
+    res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'study_list.ejs'));
     // ?kind=',req.query.kind,'&big=',req.query.big
 });
 
 router.get('/study/view', (req, res) => {
     console.log('study_view page');
+    res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'study_view.ejs'));
     // ?num=',req.query.num,'&page=',page,'&kind=',req.query.kind,'&big=',req.query.big
 });
