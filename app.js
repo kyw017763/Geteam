@@ -23,7 +23,7 @@ app.engine('.ejs', ejs.renderFile);
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'assets')));
+app.use(express.static(path.resolve(__dirname, 'assets')));
 
 //sha 256 비밀번호 암호화
 const sha256 = require('sha256');

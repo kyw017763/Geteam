@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const countingSchema = new mongoose.Schema({
-    member: { type: Number },
-    list: { type: Number },
-    apply: { type: Number },
-    team: { type: Number },
-    visit: { type: Number },
+    member: { type: Number, default: 0 },
+    list: { type: Number, default: 0 },
+    apply: { type: Number, default: 0 },
+    team: { type: Number, default: 0 },
+    visit: { type: Number, default: 0 },
 });
 
-  module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Counting', countingSchema);
