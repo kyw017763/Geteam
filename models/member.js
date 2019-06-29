@@ -20,6 +20,6 @@ const memberSchema = new mongoose.Schema({
     noti_ap: { type: Number, required: true, default: 1 },
     noti_recvap: { type: Number, required: true, default: 1 },
     noti_vol: { type: Number, required: true, default: 1 }
-})
+});
 
 module.exports = mongoose.model('Member', memberSchema);

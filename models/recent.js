@@ -5,6 +5,6 @@ const recentSchema = new mongoose.Schema({
     big: { type: String, required: true, default: 0 },
     kind: { type: String, required: true, default: 0 },
     list_num: { type: Number, required: true, default: 0 }
-})
+});
 
 module.exports = mongoose.model('Recent', recentSchema);

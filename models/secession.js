@@ -5,6 +5,6 @@ const secessionSchema = new mongoose.Schema({
     secession_id: { type: String, required: true },
     secession_name: { type: String, required: true },
     secession_date: { type: Date, required: true, default: Date.now }
-})
+});
 
 module.exports = mongoose.model('Secession', secessionSchema);
