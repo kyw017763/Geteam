@@ -7,4 +7,12 @@ const secessionSchema = new mongoose.Schema({
     secession_date: { type: Date, required: true, default: Date.now }
 });
 
+secessionSchema.statics.saveSecession = (req) => {
+    
+    return this.create({
+        secession_id: req.body.secession_id,
+        secession_name: req.body.secession_name
+    });
+};
+
 module.exports = mongoose.model('Secession', secessionSchema);

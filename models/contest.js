@@ -50,7 +50,7 @@ contestSchema.static.viewItem = (kind, num) => {
 }
 
 // 검색
-contestSchema.static.findItem = (keyword) => {
+contestSchema.statics.findItem = (keyword) => {
 
     // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
     return this.find().or(

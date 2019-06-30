@@ -32,15 +32,15 @@ studySchema.statics.saveStudyItem = (req) => {
 };
 
 // List 시 검색
-studySchema.static.allItem = () => {
+studySchema.statics.allItem = () => {
     return this.find()
 }
-studySchema.static.listItem = (kind) => {
+studySchema.statics.listItem = (kind) => {
     return this.find({kind: kind})
 }
 
 // View 시 검색 
-studySchema.static.viewItem = (kind, num) => {
+studySchema.statics.viewItem = (kind, num) => {
     return this.find({
         kind: kind,
         num : num
@@ -48,7 +48,7 @@ studySchema.static.viewItem = (kind, num) => {
 }
 
 // 검색
-studySchema.static.findItem = (keyword) => {
+studySchema.statics.findItem = (keyword) => {
 
     // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
     return this.find().or(

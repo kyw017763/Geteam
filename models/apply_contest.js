@@ -34,7 +34,7 @@ applyContestSchema.statics.saveApplyC = (req) => {
     })
 };
 
-applyContestSchema.static.findApplyC = (item_kind, item_num, user_id) => {
+applyContestSchema.statics.findApplyC = (item_kind, item_num, user_id) => {
 
     // kind, list_num, user_id 비교해서 true면 이미 신청한 것으로 판단 
     this.find({
