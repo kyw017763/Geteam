@@ -123,10 +123,9 @@ memberSchema.statics.updateMyInfo = (req) => {
 // 마이페이지에서 비밀번호 변경 시
 // 현재 비밀번호 같은지 확인하고 새로운 비밀번호로 변경
 memberSchema.statics.updateMyPwd = (req) => {
-    if(
-        this.find({ id: req.body.id, pwd: req.body.pwd })
-    ) {
-
+    if(this.find({ id: req.body.id, pwd: req.body.pwd })) 
+    {
+        
     } else {
         return update(
             { id: req.body.id }, 

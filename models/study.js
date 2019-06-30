@@ -31,6 +31,31 @@ studySchema.statics.saveStudyItem = (req) => {
     })
 };
 
+
+studySchema.statics.updateHit = (req) => {
+    return this.update(
+        { num: req.body.num }, 
+        { $inc: { hit : 1 } }    
+    );
+}
+
+// 신청 인원이 한 명 이상이라면 수정할 수 없다는 것 명시
+studySchema.statics.updateItemStudy = (req) => {
+    return update(
+        { num: req.body.num }, 
+        { $set: { 
+            title: req.body.title,
+            content: req.body.content,
+            want_num: req.body.want_num,
+            end_day: req.body.end_day
+    } });
+};
+
+studySchema.statics.deleteItemStudy = (req) => {
+    return remove({ num: req.body.num });
+};
+
+
 // List 시 검색
 studySchema.statics.allItem = () => {
     return this.find()
