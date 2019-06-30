@@ -6,8 +6,15 @@ const noteSchema = new mongoose.Schema({
     send_id: { type: String, required: true },
     content: { type: String, required: true },
     recv_chk: { type: Number, required: true, default: 0 }, // 읽음 체크
-    send_date: { type: Date, required: true, default: Date.now }, // 쪽지에는 시간까지 저장
+    send_date: { type: Date, required: true, timestamps: true, default: Date.now }, // 쪽지에는 시간까지 저장
     re_chk: { type: Number, required: true, default: 0 } // 대답인지
+});
+
+noteSchema.plugin(autoIncrement.plugin, {
+    model: 'Note', 
+    field: 'idx', 
+    startAt: 1, 
+    incrementBy: 1 
 });
 
 noteSchema.statics.saveNote = (req) => {
@@ -21,9 +28,9 @@ noteSchema.statics.saveNote = (req) => {
 };
 
 noteSchema.statics.updateNote = (req) => {
-    this.update( // 내쪽에서 삭제
+    this.update(
         { idx: req.body.note_idx },
-        { $set: { recv_chk: 10 } }
+        { $set: { recv_chk: 1 } }
     )
 }
 

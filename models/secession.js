@@ -1,10 +1,17 @@
 const mongoose = require('mongoose');
 
 const secessionSchema = new mongoose.Schema({
-    idx: { type: Number, required: true, unique: ture }, // A.I
+    num: { type: Number, required: true, unique: ture }, // A.I
     secession_id: { type: String, required: true },
     secession_name: { type: String, required: true },
     secession_date: { type: Date, required: true, default: Date.now }
+});
+
+secessionSchema.plugin(autoIncrement.plugin, {
+    model: 'Secession', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
 });
 
 secessionSchema.statics.saveSecession = (req) => {

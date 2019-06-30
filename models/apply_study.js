@@ -16,6 +16,13 @@ const applyStudySchema = new mongoose.Schema({
     apply_chk: { type: Number, required: true, default: 0 }
 });
 
+applyStudySchema.plugin(autoIncrement.plugin, {
+    model: 'ApplyStudy', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 applyStudySchema.statics.saveApplyS = (req) => {
 
     return this.create({

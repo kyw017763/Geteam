@@ -16,6 +16,13 @@ const studySchema = new mongoose.Schema({
     team_chk: { type: Number, required: true, default: 0 }
 });
 
+studySchema.plugin(autoIncrement.plugin, {
+    model: 'Study', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 studySchema.statics.saveStudyItem = (req) => {
     
     return this.create({

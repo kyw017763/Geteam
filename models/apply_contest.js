@@ -17,6 +17,13 @@ const applyContestSchema = new mongoose.Schema({
     apply_chk: { type: Number, required: true, default: 0 }
 });
 
+applyContestSchema.plugin(autoIncrement.plugin, {
+    model: 'ApplyContest', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 applyContestSchema.statics.saveApplyC = (req) => {
 
     return this.create({

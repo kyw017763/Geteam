@@ -7,4 +7,11 @@ const recentSchema = new mongoose.Schema({
     list_num: { type: Number, required: true, default: 0 }
 });
 
+recentSchema.plugin(autoIncrement.plugin, {
+    model: 'Recent', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 module.exports = mongoose.model('Recent', recentSchema);

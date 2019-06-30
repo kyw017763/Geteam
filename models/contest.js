@@ -17,6 +17,13 @@ const contestSchema = new mongoose.Schema({
     team_chk: { type: Number, required: true, default: 0 }
 });
 
+contestSchema.plugin(autoIncrement.plugin, {
+    model: 'Contest', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 contestSchema.statics.saveContestItem = (req) => {
     
     return this.create({

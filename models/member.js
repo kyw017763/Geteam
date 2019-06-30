@@ -34,6 +34,13 @@ const memberSchema = new mongoose.Schema({
     noti_vol: { type: Number, required: true, default: 1 }
 });
 
+memberSchema.plugin(autoIncrement.plugin, {
+    model: 'Member', 
+    field: 'num', 
+    startAt: 1, 
+    incrementBy: 1 
+});
+
 // 이미지 처리 필요
 
 // 친구 신청 처리 필요
