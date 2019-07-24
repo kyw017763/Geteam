@@ -92,19 +92,22 @@ memberSchema.statics.removeFriend = (req) => {
 
 // 회원가입
 memberSchema.statics.signup = (req) => {
-
     return this.create({
-        id: req.body.id,
-        name: req.body.name,
-        pwd: req.body.pwd,
-        s_num: req.body.s_num,
-        interest1: req.body.interest1,
-        interest2: req.body.interest2,
-        interest3: req.body.interest3,
-        profile: req.body.profile
+        id: req.body.signup_email,
+        name: req.body.signup_name,
+        pwd: req.body.signup_pwd,
+        s_num: req.body.signup_num,
+        interest1: req.body.signup_inter1,
+        interest2: req.body.signup_inter2,
+        interest3: req.body.signup_inter3,
+        profile: req.body.signup_profile
     })
 };
 
+// 회원가입 시 같은 이메일인 사람 있는 지 확인
+memberSchema.statics.checkSignup = (req) => {
+    return this.find({id : req.body.signup_email});
+}
 
 // 마이페이지에서 개인정보 조회 시
 memberSchema.statics.mypageInfo = (user_id) => {
@@ -156,6 +159,9 @@ memberSchema.statics.updateMyNoti = (req) => {
 // 로그인
 memberSchema.statics.checkSignin = (user_id, user_pwd) => {
     return this.find({id : user_id}, {pwd: user_pwd});
+};
+memberSchema.statics.checkSigninId = (user_id) => {
+    return this.find({id : user_id});
 };
 
 // 회원탈퇴

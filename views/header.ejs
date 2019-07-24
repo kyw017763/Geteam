@@ -56,14 +56,14 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-menu">
             <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                <li><a href="study_list.php?kind=develop&big=study" target="_self">스터디</a></li>                    
-                <li><a href="contest_list.php?kind=develop&big=contest" target="_self">공모전</a></li>                    
+                <li><a href="/study/list" target="_self">스터디</a></li>                    
+                <li><a href="/contest/list" target="_self">공모전</a></li>                    
                 <li><a href="/mypage" target="_self">My Page</a></li>                   
                 
                 <%
                 // if($userid) {
                 %>
-                    <li><a href="session_unset.php" target="_self">SignOut</a></li>
+                    <li><a href="/auth/signout" target="_self">SignOut</a></li>
                 <%
                 // } else {
                     %>

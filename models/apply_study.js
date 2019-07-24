@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const applyStudySchema = new mongoose.Schema({
     num: { type: Number, required: true, unique: ture }, // A.I
-    kind: { type: Number, required: true },
+    kind: { type: String, required: true },
     num_recv: { type: Number, required: true },
     id_apply: { type: String, required: true },
     id_recv: { type: String, required: true },
