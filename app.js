@@ -32,15 +32,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-var index = require('./routes/index.js');
 var auth = require('./routes/auth.js');
 var board = require('./routes/board.js');
 var note = require('./routes/note.js');
 var mypage = require('./routes/mypage.js');
 
 // routes 사용
-app.use('/', index);
-app.use('/auth', auth);
+app.use('/', auth);
 app.use('/board', board);
 app.use('/note', note);
 app.use('/mypage', mypage);

@@ -2,19 +2,39 @@ const express = require('express');
 const path = require('path');
 const router = express.Router(); // 라우터 분리
 const Member = require('../models/member.js');
+const app = express();
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
-// mongoose
-const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/test'); // 기본 설정에 따라 포트가 상이 할 수 있습니다.
-let dbconn = mongoose.connection;
-dbconn.on('error', console.error.bind(console, 'connection error:'));
-dbconn.once('open', function callback () {
-	console.log("mongo db connection OK.");
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
+
+// Connection URL
+const url = 'mongodb://localhost:27017';
+
+// Database Name
+const dbName = 'zteam';
+const client = new MongoClient(url, { useNewUrlParser: true });
+
+// Use connect method to connect to the server
+client.connect(function(err) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+
+  const db = client.db(dbName);
+});
+
+router.get('/', (req, res) => {
+    
+    console.log('index page');
+
+    res.setHeader('Content-Type', 'text/html');
+    // res.render(path.join(__dirname, '..', 'views', 'index.ejs'));
+    res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
+    res.end();
 });
 
 // login, signup, logout

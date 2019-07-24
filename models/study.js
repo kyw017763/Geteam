@@ -13,7 +13,9 @@ const studySchema = new mongoose.Schema({
     start_day: { type: Date, required: true, default: Date.now },
     end_day: { type: Date, required: true },
     hit: { type: Number, required: true, default: 0 },
-    team_chk: { type: Number, required: true, default: 0 }
+    team_chk: { type: Number, required: true, default: 0 },
+    modify_day: { type: Date, required: true, default: Date.now },
+    modify_chk: { type: Number, required: true, default: 0 }
 });
 
 studySchema.plugin(autoIncrement.plugin, {
