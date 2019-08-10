@@ -14,7 +14,7 @@ secessionSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-secessionSchema.statics.saveSecession = (req) => {
+secessionSchema.statics.saveSecession = function(req) {
     
     return this.create({
         secession_id: req.body.secession_id,

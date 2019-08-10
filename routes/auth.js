@@ -9,31 +9,10 @@ const cookieParser = require('cookie-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-
-// Connection URL
-const url = 'mongodb://localhost:27017';
-
-// Database Name
-const dbName = 'zteam';
-const client = new MongoClient(url, { useNewUrlParser: true });
-
-// Use connect method to connect to the server
-client.connect(function(err) {
-  assert.equal(null, err);
-  console.log("Connected successfully to server");
-
-  const db = client.db(dbName);
-});
-
 router.get('/', (req, res) => {
-    
     console.log('index page');
-
     res.setHeader('Content-Type', 'text/html');
-    // res.render(path.join(__dirname, '..', 'views', 'index.ejs'));
-    res.sendFile(path.join(__dirname, '..', 'views', 'index.html'));
+    res.render(path.join(__dirname, '..', 'views', 'index.ejs'));
     res.end();
 });
 
@@ -51,22 +30,18 @@ router.post('/signup', (req, res) => {
     // DB 확인 - 데이터 삽입 로직
     try {    
         let user = Member.checkSignup(req);
-        if(!user){
+        if(user){
             Member.signup(req);
         } else {
             res.send('중복된 이메일로 가입하실 수 없습니다!');
         }
     } catch (e) {
-        res.redirect('/signup');
         return console.log(e);
     }
-    res.redirect('/signin');
 });
 
 router.get('/signin', (req, res) => {
     console.log('signin page');
-    
-    let session = req.session;
 
     res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'signin.ejs'));

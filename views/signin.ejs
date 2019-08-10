@@ -89,15 +89,15 @@
                         <label>
                         	이메일
                             <%
-                            // if(isset($cookie_id)){
+                            if(cookie_id){
                             %>
                                <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email' value='$cookie_id'>
                             <%
-                            //  } else {
+                            } else {
                             %>
                                 <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email'>
                             <%
-                            // }
+                            }
                             %>
                         </label>
 
@@ -122,11 +122,11 @@
         				<span id="singnin_find_result" class="fail"></span>
 
                         <%
-                        // if($fail) {
+                        if(fail) {
                         %>
                             <span id='signup_result' class='fail'>이메일 또는 비밀번호가 다릅니다</span>
                         <%
-                        // }
+                        }
                         %>
                         </form>
 

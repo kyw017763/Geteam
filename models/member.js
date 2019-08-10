@@ -1,6 +1,15 @@
 const mongoose = require('mongoose');
+
+let url = 'mongodb://localhost:27017/zteam';
+let connection = mongoose.createConnection(url, function(err) {
+  if(err){
+    console.log("Connected failed");
+  }
+  console.log("Connected successfully to server");
+});
+
 const autoIncrement = require('mongoose-auto-increment');
-autoIncrement.initialize(mongoose.connection);
+autoIncrement.initialize(connection);
 
 const memberSchema = new mongoose.Schema({
     num: { type: Number, required: true, unique: true }, // A.I
@@ -37,7 +46,7 @@ const memberSchema = new mongoose.Schema({
 });
 
 memberSchema.plugin(autoIncrement.plugin, {
-    model: 'Member', 
+    model: 'members', 
     field: 'num', 
     startAt: 1, 
     incrementBy: 1 
@@ -48,8 +57,8 @@ memberSchema.plugin(autoIncrement.plugin, {
 // 친구 신청 처리 필요
 
 // 친구 추가 (양쪽) 
-memberSchema.statics.addFriend = (req, user_id) => {
-    memberSchema.update(
+memberSchema.statics.addFriend = function(req, user_id) {
+    this.update(
         { id: user_id },
         { // 내쪽에 추가
         $push: {
@@ -70,8 +79,8 @@ memberSchema.statics.addFriend = (req, user_id) => {
 }
 
 // 친구 끊기 (양쪽)
-memberSchema.statics.removeFriend = (req) => {
-    memberSchema.update( // 내쪽에서 삭제
+memberSchema.statics.removeFriend = function(req) {
+    this.update( // 내쪽에서 삭제
         { id: user_id },
         {
         $pull: {
@@ -93,8 +102,8 @@ memberSchema.statics.removeFriend = (req) => {
 
 
 // 회원가입
-memberSchema.statics.signup = (req) => {
-    return memberSchema.create({
+memberSchema.statics.signup = function(req) {
+    return this.create({
         id: req.body.signup_email,
         name: req.body.signup_name,
         pwd: req.body.signup_pwd,
@@ -107,18 +116,18 @@ memberSchema.statics.signup = (req) => {
 };
 
 // 회원가입 시 같은 이메일인 사람 있는 지 확인
-memberSchema.statics.checkSignup = (req) => {
-    return memberSchema.find({id : req.body.signup_email});
+memberSchema.statics.checkSignup = function(req) {
+    return this.findOne({id : req.body.signup_email});
 }
 
 // 마이페이지에서 개인정보 조회 시
-memberSchema.statics.mypageInfo = (user_id) => {
-    return memberSchema.find({id : user_id});
+memberSchema.statics.mypageInfo = function(user_id) {
+    return this.find({id : user_id});
 };
 
 // 마이페이지에서 개인정보 변경 시
-memberSchema.statics.updateMyInfo = (req) => {
-    return memberSchema.update(
+memberSchema.statics.updateMyInfo = function(req) {
+    return this.update(
         { id: req.body.id },
         {   $set: {
             name: req.body.name,
@@ -134,12 +143,12 @@ memberSchema.statics.updateMyInfo = (req) => {
 
 // 마이페이지에서 비밀번호 변경 시
 // 현재 비밀번호 같은지 확인하고 새로운 비밀번호로 변경
-memberSchema.statics.updateMyPwd = (req) => {
-    if(memberSchema.find({ id: req.body.id, pwd: req.body.pwd })) 
+memberSchema.statics.updateMyPwd = function(req) {
+    if(this.find({ id: req.body.id, pwd: req.body.pwd })) 
     {
         
     } else {
-        return memberSchema.update(
+        return this.update(
             { id: req.body.id }, 
             { $set: { pwd : req.body.newpwd } }
     );
@@ -147,8 +156,8 @@ memberSchema.statics.updateMyPwd = (req) => {
 };
 
 // 마이페이지에서 알림 변경 시
-memberSchema.statics.updateMyNoti = (req) => {
-    return memberSchema.update(
+memberSchema.statics.updateMyNoti = function(req) {
+    return this.update(
         { id: req.body.id }, 
         { $set: { 
         noti_apply: req.body.noti_apply,
@@ -159,16 +168,16 @@ memberSchema.statics.updateMyNoti = (req) => {
   
 
 // 로그인
-memberSchema.statics.checkSignin = (user_id, user_pwd) => {
-    return memberSchema.find({id : user_id}, {pwd: user_pwd});
+memberSchema.statics.checkSignin = function(user_id, user_pwd) {
+    return this.find({id : user_id}, {pwd: user_pwd});
 };
-memberSchema.statics.checkSigninId = (user_id) => {
-    return memberSchema.find({id : user_id});
+memberSchema.statics.checkSigninId = function(user_id) {
+    return this.find({id : user_id});
 };
 
 // 회원탈퇴
-memberSchema.statics.deleteSign = (user_id) => {
-    return memberSchema.remove({ id: user_id });
+memberSchema.statics.deleteSign = function(user_id) {
+    return this.remove({ id: user_id });
 };
 
-module.exports = mongoose.model('Member', memberSchema);
+module.exports = mongoose.model('members', memberSchema);

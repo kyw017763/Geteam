@@ -17,7 +17,7 @@ noteSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-noteSchema.statics.saveNote = (req) => {
+noteSchema.statics.saveNote = function(req) {
     
     return this.create({
         recv_id: req.body.recv_id,
@@ -27,7 +27,7 @@ noteSchema.statics.saveNote = (req) => {
 
 };
 
-noteSchema.statics.updateNote = (req) => {
+noteSchema.statics.updateNote = function(req) {
     this.update(
         { idx: req.body.note_idx },
         { $set: { recv_chk: 1 } }

@@ -26,7 +26,7 @@ contestSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-contestSchema.statics.saveContestItem = (req) => {
+contestSchema.statics.saveContestItem = function(req) {
     
     return this.create({
         kind: req.body.kind,
@@ -43,7 +43,7 @@ contestSchema.statics.saveContestItem = (req) => {
 };
 
 
-contestSchema.statics.updateHit = (req) => {
+contestSchema.statics.updateHit = function(req) {
     return this.update(
         { num: req.body.num }, 
         { $inc: { hit : 1 } }    
@@ -51,7 +51,7 @@ contestSchema.statics.updateHit = (req) => {
 }
 
 // 신청 인원이 한 명 이상이라면 수정할 수 없다는 것 명시
-contestSchema.statics.updateItemContest = (req) => {
+contestSchema.statics.updateItemContest = function(req) {
     return update(
         { num: req.body.num }, 
         { $set: { 
@@ -63,21 +63,21 @@ contestSchema.statics.updateItemContest = (req) => {
     } });
 };
 
-contestSchema.statics.deleteItemContest = (req) => {
+contestSchema.statics.deleteItemContest = function(req) {
     return remove({ num: req.body.num });
 };
 
 
 // List 시 검색
-contestSchema.static.allItem = () => {
+contestSchema.static.allItem = function() {
     return this.find()
 }
-contestSchema.static.listItem = (kind) => {
+contestSchema.static.listItem = function(kind) {
     return this.find({kind: kind})
 }
 
 // View 시 검색 
-contestSchema.static.viewItem = (kind, num) => {
+contestSchema.static.viewItem = function(kind, num) {
     return this.find({
         kind: kind,
         num : num
@@ -85,7 +85,7 @@ contestSchema.static.viewItem = (kind, num) => {
 }
 
 // 검색
-contestSchema.statics.findItem = (keyword) => {
+contestSchema.statics.findItem = function(keyword) {
 
     // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
     return this.find().or(
@@ -102,16 +102,16 @@ contestSchema.statics.findItem = (keyword) => {
 };
 
 // 정렬 (1, -1)
-contestSchema.query.sortByNum = (order) => {
+contestSchema.query.sortByNum = function(order) {
     return this.sort({num: order})
 };
-contestSchema.query.sortById = (order) => {
+contestSchema.query.sortById = function(order) {
     return this.sort({id: order})
 };
-contestSchema.query.sortByAuthor = (order) => {
+contestSchema.query.sortByAuthor = function(order) {
     return this.sort({name: order})
 };
-contestSchema.query.sortByTitle = (order) => {
+contestSchema.query.sortByTitle = function(order) {
     return this.sort({title: order})
 };
 

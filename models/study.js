@@ -25,7 +25,7 @@ studySchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-studySchema.statics.saveStudyItem = (req) => {
+studySchema.statics.saveStudyItem = function(req) {
     
     return this.create({
         kind: req.body.kind,
@@ -41,7 +41,7 @@ studySchema.statics.saveStudyItem = (req) => {
 };
 
 
-studySchema.statics.updateHit = (req) => {
+studySchema.statics.updateHit = function(req) {
     return this.update(
         { num: req.body.num }, 
         { $inc: { hit : 1 } }    
@@ -49,7 +49,7 @@ studySchema.statics.updateHit = (req) => {
 }
 
 // 신청 인원이 한 명 이상이라면 수정할 수 없다는 것 명시
-studySchema.statics.updateItemStudy = (req) => {
+studySchema.statics.updateItemStudy = function(req) {
     return update(
         { num: req.body.num }, 
         { $set: { 
@@ -60,21 +60,21 @@ studySchema.statics.updateItemStudy = (req) => {
     } });
 };
 
-studySchema.statics.deleteItemStudy = (req) => {
+studySchema.statics.deleteItemStudy = function(req) {
     return remove({ num: req.body.num });
 };
 
 
 // List 시 검색
-studySchema.statics.allItem = () => {
+studySchema.statics.allItem = function() {
     return this.find()
 }
-studySchema.statics.listItem = (kind) => {
+studySchema.statics.listItem = function(kind) {
     return this.find({kind: kind})
 }
 
 // View 시 검색 
-studySchema.statics.viewItem = (kind, num) => {
+studySchema.statics.viewItem = function(kind, num) {
     return this.find({
         kind: kind,
         num : num

@@ -8,23 +8,23 @@ const countingSchema = new mongoose.Schema({
     visit: { type: Number, default: 0 },
 });
 
-countingSchema.statics.updateMember = () => {
+countingSchema.statics.updateMember = function() {
   update({ $inc: { member : 1 } });
 }
 
-countingSchema.statics.updateList = () => {
+countingSchema.statics.updateList = function() {
   update({ $inc: { list : 1 } });
 }
 
-countingSchema.statics.updateApply = () => {
+countingSchema.statics.updateApply = function() {
   update({ $inc: { apply : 1 } });
 }
 
-countingSchema.statics.updateTeam = () => {
+countingSchema.statics.updateTeam = function() {
   update({ $inc: { team : 1 } });
 }
 
-countingSchema.statics.updateVisit = () => {
+countingSchema.statics.updateVisit = function() {
   update({ $inc: { visit : 1 } });
 }
 

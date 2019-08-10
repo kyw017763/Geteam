@@ -23,7 +23,7 @@ applyStudySchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-applyStudySchema.statics.saveApplyS = (req) => {
+applyStudySchema.statics.saveApplyS = function(req) {
 
     return this.create({
         kind: req.body.kind,
@@ -39,7 +39,7 @@ applyStudySchema.statics.saveApplyS = (req) => {
     })
 };
 
-applyStudySchema.statics.findApplyS = (item_kind, item_num, user_id) => {
+applyStudySchema.statics.findApplyS = function(item_kind, item_num, user_id) {
 
     // kind, list_num, user_id 비교해서 true면 이미 신청한 것으로 판단 
     this.find({

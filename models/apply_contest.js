@@ -24,7 +24,7 @@ applyContestSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-applyContestSchema.statics.saveApplyC = (req) => {
+applyContestSchema.statics.saveApplyC = function(req) {
 
     return this.create({
         kind: req.body.kind,
@@ -41,7 +41,7 @@ applyContestSchema.statics.saveApplyC = (req) => {
     })
 };
 
-applyContestSchema.statics.findApplyC = (item_kind, item_num, user_id) => {
+applyContestSchema.statics.findApplyC = function(item_kind, item_num, user_id) {
 
     // kind, list_num, user_id 비교해서 true면 이미 신청한 것으로 판단 
     this.find({
