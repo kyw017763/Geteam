@@ -58,4 +58,4 @@ applyStudySchema.statics.findApplyS = function(item_kind, item_num, user_id) {
 
 };
 
-module.exports = mongoose.model('ApplyStudy', applyStudySchema);
+module.exports = mongoose.model('studyapplies', applyStudySchema);

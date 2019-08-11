@@ -99,36 +99,6 @@ memberSchema.statics.removeFriend = function(req) {
     });
 }
 
-
-// 회원가입
-memberSchema.statics.signup = function(req) {
-    return this.create({
-        id: req.body.signup_email,
-        name: req.body.signup_name,
-        pwd: req.body.signup_pwd,
-        s_num: req.body.signup_num,
-        interest1: req.body.signup_inter1,
-        interest2: req.body.signup_inter2,
-        interest3: req.body.signup_inter3,
-        profile: req.body.signup_profile
-    }, function (err) {
-        console.log(err);
-    });
-};
-
-// 회원가입 시 같은 이메일인 사람 있는 지 확인
-memberSchema.statics.checkSignup = function(req) {
-    this.find({id : req.body.signup_email}, function(err, result){
-        if(err) {
-            return 'generate error';
-        }
-        else {
-            if (result.length == 0) return 'member not found';
-        }
-        return 'member found';
-    });
-}
-
 // 마이페이지에서 개인정보 조회 시
 memberSchema.statics.mypageInfo = function(user_id) {
     return this.find({id : user_id});

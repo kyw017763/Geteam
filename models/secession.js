@@ -22,4 +22,4 @@ secessionSchema.statics.saveSecession = function(req) {
     });
 };
 
-module.exports = mongoose.model('Secession', secessionSchema);
+module.exports = mongoose.model('secessions', secessionSchema);

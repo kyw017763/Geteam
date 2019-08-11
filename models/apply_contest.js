@@ -60,4 +60,4 @@ applyContestSchema.statics.findApplyC = function(item_kind, item_num, user_id) {
 
 };
 
-module.exports = mongoose.model('ApplyContest', applyContestSchema);
+module.exports = mongoose.model('contestapplies', applyContestSchema);

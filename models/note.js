@@ -34,4 +34,4 @@ noteSchema.statics.updateNote = function(req) {
     )
 }
 
-module.exports = mongoose.model('Note', noteSchema);
+module.exports = mongoose.model('notes', noteSchema);

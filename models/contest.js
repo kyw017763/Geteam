@@ -115,4 +115,4 @@ contestSchema.query.sortByTitle = function(order) {
     return this.sort({title: order})
 };
 
-module.exports = mongoose.model('Contest', contestSchema);
+module.exports = mongoose.model('contestboards', contestSchema);

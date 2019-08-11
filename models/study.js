@@ -112,4 +112,4 @@ studySchema.query.sortByTitle = (order) => {
     return this.sort({title: order})
 };
 
-module.exports = mongoose.model('Study', studySchema);
+module.exports = mongoose.model('studyboards', studySchema);

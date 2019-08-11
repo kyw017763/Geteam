@@ -29,4 +29,4 @@ countingSchema.statics.updateVisit = function() {
 }
 
 
-module.exports = mongoose.model('Counting', countingSchema);
+module.exports = mongoose.model('counting', countingSchema);

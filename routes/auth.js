@@ -1,14 +1,25 @@
 const express = require('express');
 const path = require('path');
-const mongoose = require('mongoose');
-const router = express.Router(); // 라우터 분리
 const Member = require('../models/member.js');
-const app = express();
-
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
+const app = express();
+const router = express.Router(); // 라우터 분리
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use(session({
+    secret: 'yewon kim',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
+    }
+}))
+
 
 router.get('/', (req, res) => {
     console.log('index page');
@@ -20,30 +31,42 @@ router.get('/', (req, res) => {
 // login, signup, logout
 router.get('/signup', (req, res) => {
     console.log('signup page');
+
+    let sess = req.session;
     res.setHeader('Content-Type', 'text/html');
-    res.render(path.join(__dirname, '..', 'views', 'signup.ejs'));
+    let m = sess.message;
+    sess.message = null;
+    res.render(path.join(__dirname, '..', 'views', 'signup.ejs'), {
+        message: m
+    });
+    
     res.end();
 });
 
 router.post('/signup', (req, res) => {
     console.log('signup db connect page');
+    let sess = req.session;
     
-    // DB 확인 - 데이터 삽입 로직
-    try {    
-        let checkResult = Member.checkSignup(req);
-        console.log(checkResult)
-        if(!checkResult){
-            console.log('creating member');
-            Member.signup(req, function (err) {
-                console.log(err);
-            });    
-            res.redirect('/signin');
-        } else {
-            res.redirect(req.get('referer'));
+    Member.create({
+        id: req.body.signup_email,
+        name: req.body.signup_name,
+        pwd: req.body.signup_pwd,
+        s_num: req.body.signup_num,
+        interest1: req.body.signup_inter1,
+        interest2: req.body.signup_inter2,
+        interest3: req.body.signup_inter3,
+        profile: req.body.signup_profile
+    }, function(err){
+        if (err.name === 'MongoError' && err.code === 11000) {
+            console.log('go to signup');
+            let str = '중복된 이메일로 가입하실 수 없습니다!';
+            sess.message = str;
+            return res.redirect('/signup');
         }
-    } catch (e) {
-        return console.log(e);
-    }
+        
+        console.log('go to signin');
+        return res.redirect('/signin');
+    });
 });
 
 router.get('/signin', (req, res) => {
@@ -61,8 +84,6 @@ router.post('/signin', (req, res) => {
     if(req.body.id_ck == "yes") {
         res.cookie('cookie_id',req.body.signin_email,{options});
     }
-    
-    let session = req.session;
 
     let id = req.body.signin_email;
     let pwd = req.body.signin_pwd;

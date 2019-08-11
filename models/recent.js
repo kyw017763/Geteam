@@ -14,4 +14,4 @@ recentSchema.plugin(autoIncrement.plugin, {
     incrementBy: 1 
 });
 
-module.exports = mongoose.model('Recent', recentSchema);
+module.exports = mongoose.model('recents', recentSchema);
