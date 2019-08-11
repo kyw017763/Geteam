@@ -8,60 +8,60 @@ router.get('/', (req, res) => {
 });
 
 // study
-router.get('/board/study/list', (req, res) => {
+router.get('/study/list', (req, res) => {
     console.log('study_list page');
     res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'study_list.ejs'));
     // ?kind=',req.query.kind,'&big=',req.query.big
 });
 
-router.get('/board/study/view', (req, res) => {
+router.get('/study/view', (req, res) => {
     console.log('study_view page');
     res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'study_view.ejs'));
     // ?num=',req.query.num,'&page=',page,'&kind=',req.query.kind,'&big=',req.query.big
 });
 
-router.get('/board/study/write', (req, res) => {
+router.get('/study/write', (req, res) => {
     console.log('study_insert');
     
 });
 
-router.get('/board/study/modify', (req, res) => {
+router.get('/study/modify', (req, res) => {
     console.log('study_modify');
     
 });
 
 
-router.get('/board/study/delete', (req, res) => {
+router.get('/study/delete', (req, res) => {
     console.log('study_delete');
     
 });
 
 
 // contest
-router.get('/board/contest/list', (req, res) => {
+router.get('/contest/list', (req, res) => {
     console.log('contest_list page');
     res.render(path.join(__dirname, '..', 'views', 'contest_list.ejs'));
 });
 
-router.get('/board/contest/view', (req, res) => {
+router.get('/contest/view', (req, res) => {
     console.log('contest_view page');
     res.render(path.join(__dirname, '..', 'views', 'contest_view.ejs'));
 });
 
-router.get('/board/contest/write', (req, res) => {
+router.get('/contest/write', (req, res) => {
     console.log('contest_insert');
     
 });
 
-router.get('/board/contest/modify', (req, res) => {
+router.get('/contest/modify', (req, res) => {
     console.log('contest_modify');
     
 });
 
 
-router.get('/board/contest/delete', (req, res) => {
+router.get('/contest/delete', (req, res) => {
     console.log('contest_delete');
     
 });

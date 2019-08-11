@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const router = express.Router(); // 라우터 분리
 const Member = require('../models/member.js');
 const app = express();
@@ -29,11 +30,16 @@ router.post('/signup', (req, res) => {
     
     // DB 확인 - 데이터 삽입 로직
     try {    
-        let user = Member.checkSignup(req);
-        if(user){
-            Member.signup(req);
+        let checkResult = Member.checkSignup(req);
+        console.log(checkResult)
+        if(!checkResult){
+            console.log('creating member');
+            Member.signup(req, function (err) {
+                console.log(err);
+            });    
+            res.redirect('/signin');
         } else {
-            res.send('중복된 이메일로 가입하실 수 없습니다!');
+            res.redirect(req.get('referer'));
         }
     } catch (e) {
         return console.log(e);

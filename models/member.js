@@ -1,19 +1,18 @@
 const mongoose = require('mongoose');
 
 let url = 'mongodb://localhost:27017/zteam';
-let connection = mongoose.createConnection(url, function(err) {
+let connection = mongoose.createConnection(url, {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true}, function(err) {
   if(err){
     console.log("Connected failed");
   }
   console.log("Connected successfully to server");
 });
 
-const autoIncrement = require('mongoose-auto-increment');
-autoIncrement.initialize(connection);
+// const autoIncrement = require('mongoose-auto-increment');
+// autoIncrement.initialize(connection);
 
 const memberSchema = new mongoose.Schema({
-    num: { type: Number, required: true, unique: true }, // A.I
-    id: { type: String, required: true },
+    id: { type: String, required: true, unique: true },
     name: { type: String, required: true },
     pwd: { type: String, required: true },
     s_num: { type: Number, required: true },
@@ -21,11 +20,16 @@ const memberSchema = new mongoose.Schema({
     interest2: { type: String, required: true },
     interest3: { type: String, required: true },
     profile: { type: String, required: true },
+    list_num: { type: Number, required: true, default: 0 },
+    date_join: { type: Date, required: true, default: Date.now },
+    noti_apply: { type: Number, required: true, default: 1 },
+    noti_recvap: { type: Number, required: true, default: 1 },
+    noti_vol: { type: Number, required: true, default: 1 },
     image : {
         data : Buffer,
         contentsType : String,
         default: {}
-    },
+   },
     friend: {
         type : [{
             f_id: {
@@ -37,20 +41,15 @@ const memberSchema = new mongoose.Schema({
             }
         }],
         default: []
-    },
-    list_num: { type: Number, required: true, default: 0 },
-    date_join: { type: Date, required: true, default: Date.now },
-    noti_apply: { type: Number, required: true, default: 1 },
-    noti_recvap: { type: Number, required: true, default: 1 },
-    noti_vol: { type: Number, required: true, default: 1 }
-});
+    }
+}, { minimize: false });
 
-memberSchema.plugin(autoIncrement.plugin, {
-    model: 'members', 
-    field: 'num', 
-    startAt: 1, 
-    incrementBy: 1 
-});
+// memberSchema.plugin(autoIncrement.plugin, {
+//     model: 'members', 
+//     field: 'num', 
+//     startAt: 1, 
+//     incrementBy: 1 
+// });
 
 // 이미지 처리 필요
 
@@ -112,12 +111,22 @@ memberSchema.statics.signup = function(req) {
         interest2: req.body.signup_inter2,
         interest3: req.body.signup_inter3,
         profile: req.body.signup_profile
-    })
+    }, function (err) {
+        console.log(err);
+    });
 };
 
 // 회원가입 시 같은 이메일인 사람 있는 지 확인
 memberSchema.statics.checkSignup = function(req) {
-    return this.findOne({id : req.body.signup_email});
+    this.find({id : req.body.signup_email}, function(err, result){
+        if(err) {
+            return 'generate error';
+        }
+        else {
+            if (result.length == 0) return 'member not found';
+        }
+        return 'member found';
+    });
 }
 
 // 마이페이지에서 개인정보 조회 시
@@ -180,4 +189,4 @@ memberSchema.statics.deleteSign = function(user_id) {
     return this.remove({ id: user_id });
 };
 
-module.exports = mongoose.model('members', memberSchema);
+module.exports = connection.model('members', memberSchema);
