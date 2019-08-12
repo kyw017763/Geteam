@@ -20,6 +20,20 @@ app.use(session({
       maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
     }
 }))
+
+app.use(function(req, res, next) {
+  // header에서 사용해야하는 값
+  if(req.session.userid) {
+      res.locals.sess = true;
+  } else {
+      res.locals.sess = false;
+  }
+  res.locals.badge_cal = 0;
+  // console.log('전달되진 않는 req.session.userid값 '+req.session.userid);
+  // console.log('전달되는 res.locals.sess 값 : '+res.locals.sess);
+  // console.log('전달되는 badge_cal 값 : '+res.locals.badge_cal);
+  next();
+})
 // const language = require('@google-cloud/language');
 
 //view engine setup

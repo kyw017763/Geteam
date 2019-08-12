@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
+
 const Member = require('../models/member.js');
+const Counting = require('../models/counting.js');
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
@@ -11,21 +14,34 @@ const router = express.Router(); // 라우터 분리
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 
-app.use(session({
-    secret: 'yewon kim',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
-    }
-}))
-
 
 router.get('/', (req, res) => {
     console.log('index page');
+
+    Counting.find({}, function(err, counting) {
+        console.log('returned document : '+counting.length);
+        if(counting.length === 0) Counting.create({});
+    });
+
+    Counting.findOneAndUpdate({}, { $inc: { visit : 1 } });
+    
     res.setHeader('Content-Type', 'text/html');
-    res.render(path.join(__dirname, '..', 'views', 'index.ejs'));
-    res.end();
+    let sess = req.session;
+    console.log('signin : '+sess.userid);
+
+    // 접근 권한 없이 board, note, mypage에 접근했을 경우
+    let m = sess.message;
+    sess.message = null;
+    
+    Counting.findOne({}, function(err, counting) {
+        console.log(counting);
+        res.render(path.join(__dirname, '..', 'views', 'index.ejs'), {
+            message: m,
+            c: counting
+        });
+    });
+    
+    // res.end();
 });
 
 // login, signup, logout
@@ -64,6 +80,7 @@ router.post('/signup', (req, res) => {
             return res.redirect('/signup');
         }
         
+        Counting.updateMember();
         console.log('go to signin');
         return res.redirect('/signin');
     });
@@ -72,42 +89,68 @@ router.post('/signup', (req, res) => {
 router.get('/signin', (req, res) => {
     console.log('signin page');
 
+    let sess = req.session;
     res.setHeader('Content-Type', 'text/html');
-    res.render(path.join(__dirname, '..', 'views', 'signin.ejs'));
+
+    let cid = null;
+    if(req.cookies.cookie_id !== undefined) {
+        cid = req.cookies.cookie_id;
+        console.log('cookie_id : '+cid);
+    }
+
+    let m = sess.message;
+    console.log('signin fail message: '+m);
+    sess.message = null;
+
+    res.setHeader('Content-Type', 'text/html');
+    res.render(path.join(__dirname, '..', 'views', 'signin.ejs'), {
+        message: m,
+        cookie_id: cid
+    });
     res.end();
 });
 
 router.post('/signin', (req, res) => {
     console.log('signin db connect page');
 
-    // checkbox 체크 시 쿠키 
-    if(req.body.id_ck == "yes") {
-        res.cookie('cookie_id',req.body.signin_email,{options});
-    }
-
+    let sess = req.session;
+    
     let id = req.body.signin_email;
     let pwd = req.body.signin_pwd;
 
-    // DB 확인 - 로그인 로직
-    try {
-        let user = Member.checkSignin(id, pwd); // 로그인 완료
-        let idCheckUser = Member.checkSignin(id); // 아이디만 맞음 or 틀림
+    // checkbox 체크 시 쿠키 
+    if(req.body.id_ck == 'yes') {
+        res.cookie('cookie_id', id);
+    }
 
-        if(user) {
-            session.userid = user.id;
-            session.userpwd = user.pwd;
-            res.send('로그인되었습니다');
-            res.redirect('/');
-        } else {
-            if(idCheckUser) {
-                res.send('해당 이메일 또는 비밀번호는 틀렸습니다');
-                res.sendStatus(401);
-            } else {
-                res.send('해당 이메일로 가입된 계정이 없습니다');
-                res.sendStatus(401);
-            }
-            res.redirect('/signin');
-        }
+    // 로그인 로직
+    let str = null;
+    try {
+        Member.findOne({id : id}).select('id').exec(function(err, idCheckUser) { // 아이디만 가져와서 맞음 or 틀림
+            Member.findOne({id : id, pwd: pwd}, function(err, user) { // 로그인 완료
+                console.log(idCheckUser);
+                console.log(user);
+                if(user) { // 로그인
+                    console.log('pass user');
+                    if(idCheckUser) {
+                        console.log('pass idcheckuser');
+                        sess.userid = idCheckUser.id;
+                        sess.username = user.name;
+                        res.redirect('/');
+                    }
+                } else {
+                    if(idCheckUser) { // 아이디로 찾았을 때에는 있음
+                        str = '해당 이메일 또는 비밀번호가 틀렸습니다';
+                        // res.status(401).send('해당 이메일 또는 비밀번호가 틀렸습니다');
+                    } else { // 아이디로 찾았을 때 없으니 아예 가입이 안 돼있음
+                        str = '해당 이메일로 가입된 계정이 없습니다';
+                        // res.status(401).send('해당 이메일로 가입된 계정이 없습니다');
+                    }
+                    sess.message = str;
+                    res.redirect('/signin');
+                }
+            });
+        });
     } catch (e) {
         res.redirect('/signin');
         return console.log(e);
@@ -117,10 +160,13 @@ router.post('/signin', (req, res) => {
 router.get('/signout', (req, res) => {
     console.log('signout page');
 
+    console.log(req.session.userid);
+    console.log(req.session.username);
+
     delete req.session.userid;
     delete req.session.username;
 
-    res.send(`<script>location.href='/';</script>`);
+    res.redirect('/');
 });
 
 module.exports = router; // 모듈로 만드는 부분

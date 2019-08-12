@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+let url = 'mongodb://localhost:27017/zteam';
+let connection = mongoose.createConnection(url, {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true}, function(err) {
+  if(err){
+    console.log("Connected failed");
+  }
+  console.log("Connected successfully to server");
+});
+
 const countingSchema = new mongoose.Schema({
     member: { type: Number, default: 0 },
     list: { type: Number, default: 0 },
@@ -9,24 +17,23 @@ const countingSchema = new mongoose.Schema({
 });
 
 countingSchema.statics.updateMember = function() {
-  update({ $inc: { member : 1 } });
+  this.updateOne({}, { $inc: { member : 1 } });
 }
 
 countingSchema.statics.updateList = function() {
-  update({ $inc: { list : 1 } });
+  this.updateOne({}, { $inc: { list : 1 } });
 }
 
 countingSchema.statics.updateApply = function() {
-  update({ $inc: { apply : 1 } });
+  this.updateOne({}, { $inc: { apply : 1 } });
 }
 
 countingSchema.statics.updateTeam = function() {
-  update({ $inc: { team : 1 } });
+  this.updateOne({}, { $inc: { team : 1 } });
 }
 
 countingSchema.statics.updateVisit = function() {
-  update({ $inc: { visit : 1 } });
+  this.updateOne({}, { $inc: { visit : 1 } });
 }
 
-
-module.exports = mongoose.model('counting', countingSchema);
+module.exports = connection.model('countings', countingSchema);

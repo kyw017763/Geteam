@@ -65,7 +65,7 @@
                             <%
                             if(cookie_id){
                             %>
-                               <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email' value='$cookie_id'>
+                               <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email' value='<%= cookie_id%>'>
                             <%
                             } else {
                             %>
@@ -95,15 +95,14 @@
                         
         				<span id="singnin_find_result" class="fail"></span>
 
-                        <%
-                        if(fail) {
-                        %>
-                            <span id='signup_result' class='fail'>이메일 또는 비밀번호가 다릅니다</span>
-                        <%
-                        }
+                        <% 
+                        if(message) { 
+                            %>
+                            <span id='signup_result' class='fail'><%= message %></span>
+                        <% 
+                        } 
                         %>
                         </form>
-
                         </div>
                     </div>
                 </div> <!-- row -->
@@ -146,17 +145,5 @@
     </div> <!-- modal-dialog -->
 </div> <!-- modal -->
 
-        <!-- JS includes -->
-        <script src="js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="js/vendor/bootstrap.min.js"></script>
-
-        <script src="js/jquery.magnific-popup.js"></script>
-        <script src="js/jquery.easing.1.3.js"></script>
-        <script src="js/slick.min.js"></script>
-        <script src="js/jquery.collapse.js"></script>
-        <script src="js/bootsnav.js"></script>
-
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>

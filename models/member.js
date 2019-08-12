@@ -144,15 +144,6 @@ memberSchema.statics.updateMyNoti = function(req) {
         noti_vol:  req.body.noti_vol
     } });
 };
-  
-
-// 로그인
-memberSchema.statics.checkSignin = function(user_id, user_pwd) {
-    return this.find({id : user_id}, {pwd: user_pwd});
-};
-memberSchema.statics.checkSigninId = function(user_id) {
-    return this.find({id : user_id});
-};
 
 // 회원탈퇴
 memberSchema.statics.deleteSign = function(user_id) {
