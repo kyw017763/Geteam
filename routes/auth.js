@@ -7,6 +7,7 @@ const Counting = require('../models/counting.js');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const router = express.Router(); // 라우터 분리
@@ -44,6 +45,39 @@ router.get('/', (req, res) => {
     // res.end();
 });
 
+// 문의 메일
+router.post('/', (req, res) => {
+    console.log('question email');
+
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 's2017s04@e-mirim.hs.kr',
+            pass: ''
+        }
+    });
+
+    const message = req.body.question_content;
+    const mResult = message.replace(/(?:\r\n|\r|\n)/g, '<br />');
+    const mailOptions = {
+        from: 's2017s04@e-mirim.hs.kr',
+        to: req.body.question_recv,
+        subject: '[ZTEAM question]'+message.substring(0,10),
+        html: '<h1>문의사항</h1>'+mResult,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if(err) {
+            console.log(err);
+        } else {
+            console.log('Message sent : ' + info.response);
+        }
+        transporter.close();
+    });
+
+    res.redirect('/');
+});
+
 // login, signup, logout
 router.get('/signup', (req, res) => {
     console.log('signup page');
@@ -61,7 +95,9 @@ router.get('/signup', (req, res) => {
 
 router.post('/signup', (req, res) => {
     console.log('signup db connect page');
+    
     let sess = req.session;
+    let str;
     
     Member.create({
         id: req.body.signup_email,
@@ -73,13 +109,15 @@ router.post('/signup', (req, res) => {
         interest3: req.body.signup_inter3,
         profile: req.body.signup_profile
     }, function(err){
-        if (err.name === 'MongoError' && err.code === 11000) {
-            console.log('go to signup');
-            let str = '중복된 이메일로 가입하실 수 없습니다!';
-            sess.message = str;
-            return res.redirect('/signup');
+        if(err){
+            if (err.name === 'MongoError' && err.code === 11000) {
+                console.log('go to signup');
+                str = '중복된 이메일로 가입하실 수 없습니다!';
+                sess.message = str;
+                return res.redirect('/signup');
+            }
         }
-        
+
         Counting.updateMember();
         console.log('go to signin');
         return res.redirect('/signin');

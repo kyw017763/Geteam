@@ -1,12 +1,12 @@
 <script>
     //footer mesasge 유효성검사
-    function footer_note_write_chk() {
-        var footer_set = document.footer_note_write;
-        var footer_result = document.getElementById("footer_note_write_result");
+    function footer_note_question_chk() {
+        var footer_set = document.footer_note_question;
+        var footer_result = document.getElementById("footer_note_question_result");
         var footer_content = document.getElementById("footerInput");
         if(footer_content.value=="") {
             footer_result.innerHTML = "쪽지 내용을 입력해주세요";
-            footer_set.footer_write_content.focus();
+            footer_set.footer_question_content.focus();
         } else {
             footer_set.submit();
         }
@@ -23,23 +23,22 @@
                 <div class="col-sm-10 col-sm-offset-1">
                     <div class="subscribe_btns m-top-40">
                         <p class="text_footer m-top-30 text-white">
-                                문의할 사항이 있으실 때,
-                                추가됐으면 하는 기능이 있으실 때 <br />
+                                문의할 사항이나 즐팀을 위한 아이디어(기능 개선, 추가 등)가 있으실 때,<br />
                                 
-                                메일이나 즐팀 관리자 계정으로 쪽지를 주세요!
+                                언제든지 즐팀 관리자에게 의견을 보내주세요!
                         </p>
     
-                        <form name="footer_note_write" class="form_write" method="post" action="note/email">
+                        <form name="footer_note_question" class="form_question" method="post" action="/">
                             <div class="form-group col-sm-4 col-sm-offset-1">
-                                <select class="form-control" name="write_recv">
+                                <select class="form-control" name="question_recv">
                                     <option value="s2017s04@e-mirim.hs.kr">s2017s04@e-mirim.hs.kr(뉴미디어 솔루션과 3학년)</option>
                                     <option value="s2017i09@e-mirim.hs.kr">s2017i09@e-mirim.hs.kr(인터랙티브 미디어과 3학년)</option>
                                 </select>
-                                <input type="text" class="form-control" name="write_content" id="footerInput" placeholder="Your Message">
-                                <span id="footer_note_write_result" class="fail_yellow" style="color: #efdc05;"></span>
+                                <textarea class="form-control" name="question_content" id="footerInput" rows="3" placeholder="Your Message"></textarea>
+                                <span id="footer_note_question_result" class="fail_yellow" style="color: #efdc05;"></span>
                             </div>
                             <div class="col-sm-2">
-                            <button type="button" onClick="footer_note_write_chk()" class="btn btn-default">보내기</button>
+                            <button type="button" onClick="footer_note_question_chk()" class="btn btn-default">보내기</button>
                             </div>
                         </form>
                     </div>

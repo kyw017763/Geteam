@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const connection = require('./Connection.js');
 
 const recentSchema = new mongoose.Schema({
     num: { type: Number, required: true, unique: ture, default: 0 }, // A.I

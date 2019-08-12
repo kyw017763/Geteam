@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const connection = require('./Connection.js');
 
 const noteSchema = new mongoose.Schema({
     idx: { type: Number, required: true, unique: ture }, // A.I

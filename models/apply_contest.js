@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const connection = require('./Connection.js');
 
 const applyContestSchema = new mongoose.Schema({
     num: { type: Number, required: true, unique: ture }, // A.I
