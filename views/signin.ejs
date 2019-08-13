@@ -12,30 +12,42 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <script>
-    	window.onload = function() {
-            var text_pwd = document.getElementById("text_pwd"); //넘겨받은 메일값
-            var text_find_pwd = document.getElementById("text_find_pwd"); //메일이 정확한지 확인하는 정규표현식에 따른 결과를 보여주는 span
-            var page_original = document.getElementById("original");
-            var page_new = document.getElementById("new");                                        
+        function find_pwd_chk() {
+            let find_email = document.getElementById("find_email").value;
+            let find_hint = document.getElementById("find_hint").value;
+            
+            let result_text = document.getElementById("text_find_pwd"); //메일이 정확한지 확인하는 정규표현식에 따른 결과를 보여주는 span
 
-            btn_find.onclick = function() {
-                page_original.style.display = "none";
-                page_new.style.display = "block";
-                text_find_pwd.innerHTML = "해당 이메일로 전송이 완료되었습니다!";
-                
-                setTimeout(function() {
-                sendTheEmail()
-                }, 3000);
+            let page_original = document.getElementById("original");
+            let page_new = document.getElementById("new");
+            
+            const regxEmail = /[A-Za-z0-9]{8}@e-mirim.hs.kr/;
+            let resultEmail = regxEmail.exec(find_email);
+
+            let flag = 0;
+            let str = '입력하신 정보를 확인 중입니다';
+            
+            if(!resultEmail) {
+                str = '학교 이메일 형식은 @e-mirim.hs.kr 입니다';
+                flag = 1;
+                document.getElementById("find_email").value = '';
+                document.getElementById("find_hint").value= '';
             }
 
-            function sendTheEmail() {
-                var p_set = document.frm_email_write;
-                
-                text_pwd = '[비밀번호 찾기 이메일]' + text_pwd;
+            page_original.style.display = 'none';
+            page_new.style.display = 'block';
+            result_text.innerHTML = str;
+            setTimeout(function() {
+                page_original.style.display = 'block';
+                page_new.style.display = 'none';
+            }, 2000);
+            if(flag === 0) setTimeout(function() { sendTheEmail() }, 2000);
+        }
 
-                p_set.submit();
-            }
-    	}
+        function sendTheEmail() {
+            let p_set = document.frm_find_write;
+            p_set.submit();
+        }
     	</script>
     </head>
 
@@ -129,12 +141,13 @@
             </div>
 
             <div id="original" class="col-sm-10 col-sm-offset-1">
-                <form name="frm_email_write" class="form_write" action="note_not_auth_write_process.php?$write_recv=<%= // 's2017s04@e-mirim.hs.kr'; %>&write_send=<%= // "[FindPassword]" %>&write_content=<%= // $text_pwd %>" method="get"> <!-- signin_findpwd에는 이메일로 비밀번호 확인 메일이 가는 로직 -->
+                <form name="frm_find_write" class="form_write" action="/signin/find" method="post">
                     <div class="col-sm-8">
-                        <input type="text" id="text_pwd" name="text_pwd" maxlength="25" placeholder="학교 이메일(아이디)을 입력해주세요" style="padding: 1.25rem 0.3rem;">
+                        <input type="text" id="find_email" name="find_email" maxlength="25" placeholder="학교 이메일(아이디)을 입력해주세요" style="padding: 1.25rem 0.3rem;">
+                        <input type="text" id="find_hint" name="find_hint" maxlength="25" placeholder="가입 시 입력했던 흥미있는 기술 / 공부 주제를 입력해주세요" style="padding: 1.25rem 0.3rem;">
                     </div>
                     <div class="col-sm-4">
-                        <button type="button" id="btn_find" class="form-control btn btn-primary">확인</button>
+                        <button type="button" onClick="find_pwd_chk()" id="btn_find" class="form-control btn btn-primary">확인</button>
                     </div>
                 </form>
             </div>

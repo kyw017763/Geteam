@@ -98,30 +98,49 @@ router.post('/signup', (req, res) => {
     
     let sess = req.session;
     let str;
-    
-    Member.create({
-        id: req.body.signup_email,
-        name: req.body.signup_name,
-        pwd: req.body.signup_pwd,
-        s_num: req.body.signup_num,
-        interest1: req.body.signup_inter1,
-        interest2: req.body.signup_inter2,
-        interest3: req.body.signup_inter3,
-        profile: req.body.signup_profile
-    }, function(err){
-        if(err){
-            if (err.name === 'MongoError' && err.code === 11000) {
-                console.log('go to signup');
-                str = '중복된 이메일로 가입하실 수 없습니다!';
-                sess.message = str;
-                return res.redirect('/signup');
-            }
-        }
+    let flag;
 
-        Counting.updateMember();
-        console.log('go to signin');
-        return res.redirect('/signin');
-    });
+    const regxEmail = /[A-Za-z0-9]{8}@e-mirim.hs.kr/;
+    const regxPwd = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,15}$/;
+    let resultEmail = regxEmail.exec(req.body.signup_email);
+    let resultPwd = regxPwd.exec(req.body.signup_pwd);
+
+    if(!resultEmail) {
+        str = '학교 이메일 형식은 @e-mirim.hs.kr 입니다';
+        flag = 1;
+    } else if (!resultPwd) {
+        str = '비밀번호 형식이 틀립니다';
+        flag = 1;
+    }
+    if(flag === 1) {
+        sess.message = str;
+        return res.redirect('/signup');
+    } else {
+    
+        Member.create({
+            id: req.body.signup_email,
+            name: req.body.signup_name,
+            pwd: req.body.signup_pwd,
+            s_num: req.body.signup_num,
+            interest1: req.body.signup_inter1,
+            interest2: req.body.signup_inter2,
+            interest3: req.body.signup_inter3,
+            profile: req.body.signup_profile
+        }, function(err){
+            if(err){
+                if (err.name === 'MongoError' && err.code === 11000) {
+                    console.log('go to signup');
+                    str = '중복된 이메일로 가입하실 수 없습니다!';
+                    sess.message = str;
+                    return res.redirect('/signup');
+                }
+            }
+
+            Counting.updateMember();
+            console.log('go to signin');
+            return res.redirect('/signin');
+        });
+    }
 });
 
 router.get('/signin', (req, res) => {
@@ -193,6 +212,55 @@ router.post('/signin', (req, res) => {
         res.redirect('/signin');
         return console.log(e);
     }
+});
+
+router.post('/signin/find', (req, res) => {
+    console.log('find pwd page');
+
+    try {
+        console.log(req.body.find_email);
+        Member.findOne({id : req.body.find_email}).exec(function(err, idCheckUser) { // 아이디만 가져와서 맞음 or 틀림
+            if(idCheckUser) {
+                switch(req.body.find_hint){
+                    case idCheckUser.interest1:
+                    case idCheckUser.interest2:
+                    case idCheckUser.interest3:    
+                    sendEmail(idCheckUser.pwd);
+                }
+            }
+        });
+    } catch(e) {
+        console.log(e);
+        return res.redirect('/signin');
+    }
+
+    function sendEmail(pwd) {
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: 's2017s04@e-mirim.hs.kr',
+                pass: 'LimKimwon7763*'
+            }
+        });
+
+        let message = req.body.find_email+'님의 비밀번호는 <span style="background: #efdc05;">'+pwd+'</span> 입니다.'
+        const mailOptions = {
+            from: 's2017s04@e-mirim.hs.kr',
+            to: req.body.find_email,
+            subject: '[ZTEAM 비밀번호 찾기]',
+            html: '<h1>비밀번호 찾기</h1>'+message,
+        };
+
+        transporter.sendMail(mailOptions, (err, info) => {
+            if(err) {
+                console.log(err);
+            } else {
+                console.log('Message sent : ' + info.response);
+            }
+            transporter.close();
+        });
+    }
+    res.redirect('/');
 });
 
 router.get('/signout', (req, res) => {
