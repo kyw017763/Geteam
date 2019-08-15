@@ -10,23 +10,44 @@
         <title>즐팀 : 스터디 목록</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            <%
-            if(sess){
-            %>
-            <%
-            } else {
-            %>
-                window.history.back();
-            <%
-            }
-            %>
-        }, false);
-        </script>
 
         <script>
+        function getFormatDate(date){ 
+            let year = date.getFullYear();	//yyyy 
+            let month = (1 + date.getMonth());	//M
+            month = month >= 10 ? month : '0' + month;	//month 두자리로 저장 
+            let day = date.getDate();	//d 
+            day = day >= 10 ? day : '0' + day;	//day 두자리로 저장 
+            return year + '-' + month + '-' + day; 
+        }
+
+        let today = new Date();
+        let tDate = getFormatDate(<%= list.end_day %>);  
+        let dateArray = dateString.split("-");  
+        let dateObj = new Date(dateArray[0], Number(dateArray[1])-1, dateArray[2]);  
+        let betweenDay = (today.getTime() - dateObj.getTime())/1000/60/60/24;
+        let diffdate = betweenDay;
+
+        String.prototype.trim = function() {
+        return this.replace(/(^\s*)|(\s*$)/gi, "");
+        }
+
+        function search_chk() {
+            let s_set = document.frm_search;
+            let search_key = document.getElementById("search").value;
+            search_key = search_key.trim();
+
+    		if(!search_key.value) {
+    			window.alert('검색하실 단어를 입력해주세요');
+    			document.getElementById("search").focus();
+    		} else if(search_key.value.length <= 1) {
+    			window.alert('2글자 이상의 단어를 입력해주세요');
+    			document.getElementById("search").focus();
+    		} else {
+    			s_set.submit();
+        	}
+        }
+        
     	function item_chk() {
     		var p_set = document.frm_item;
     		
@@ -50,7 +71,6 @@
         	}
     	}
 
-        
         function lengCounter() {
 			document.getElementById("counter").innerHTML=document.getElementById("textarea").value.length;
         }
@@ -73,8 +93,6 @@
 
             <% include header %>
 
-			<% // include "searchStudyList.php"; %>
-            
             <div class="container">
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2">
@@ -82,46 +100,63 @@
                             <% // study면 3메뉴, contest면 4메뉴 %>
                             
                             <li class="nav-item">
-                                <a class="nav-link" href="/board/total/list/develop" target="_self" style="color: #efdc05; font-size: 1.1rem;">개발</a>           
+                                <a class="nav-link" href="/board/<%= kind %>/list/develop" target="_self" style="color: #efdc05; font-size: 1.1rem;">개발</a>           
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/board/total/list/design" target="_self" style="color: #efdc05; font-size: 1.1rem;">디자인</a>    
+                                <a class="nav-link" href="/board/<%= kind %>/list/design" target="_self" style="color: #efdc05; font-size: 1.1rem;">디자인</a>    
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="/board/total/list/etc" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/board/total/list/idea" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
+                                <a class="nav-link" href="/board/<%= kind %>/list/etc" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
                             </li>
 
+                            <%
+                            if(kind==='contest') {
+                            %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/board/<%= kind %>/list/idea" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
+                            </li>
+                            <%
+                            }
+                            %>
                         </ul>
                     </div>
                 
                 <div class="separator_auto"></div>
+
+                <% 
+                let total_record  = list.length; 
+                %>
                     
                 <div class="col-sm-12">
-
                     <div class="page_title text-center">
                         <h2><%= ptitle %></h2>
-                        
                         <div class="separator_auto"></div>
                         <div class="skill_bottom_item m-top-20">
-                            <h6>총 게시글 수&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="statistic-counter"><%= list.length %></span></h6>
+                            <h6>총 게시글 수&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="statistic-counter"><%= total_record %></span></h6>
                         </div>
                     </div>
                 </div>
-                        
                     
             	<div class="col-sm-10 col-sm-offset-1">
                     <div class="col-sm-10">
-                    	<form method="post" action="/<%= kind %>/list/search">
+                    	<form name="frm_search" method="post" action="/<%= kind %>/list/search">
                             <select name="search_list" class="form-control dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="width: 30%; display: inline-block;">
                             <option value="subject">제목</option>
                             <option value="content">내용</option>
                             <option value="name">작성자</option>
                             </select>
+                            <%
+                            if(locals.key){
+                            %>
+                            <input type="search" class="form-control form_fifty" placeholder="Search" name="search" style="display: inline-block; width: 50%;" value="<%= key %>">
+                            <%
+                            } else {
+                            %>
                             <input type="search" class="form-control form_fifty" placeholder="Search" name="search" style="display: inline-block; width: 50%;">
-                            <button type="submit" class="btn_ btn-primary" style="padding: 1.2em 1.5em;"><i class="fa fa-search"></i></button>
+                            <%
+                            }
+                            %>
+                            <button type="button" onClick="search_chk()" class="btn_ btn-primary" style="padding: 1.2em 1.5em;"><i class="fa fa-search"></i></button>
                         </form>
                     </div>
                 </div>
@@ -130,7 +165,7 @@
                     <!-- 글쓰기 버튼 -->
                 	<div class="col-sm-3">
                         <%
-                        if(user_write >= 3) {
+                        if(user_list_num >= 3) {
                         %>
                         	<button onClick='not_alert()' class="home_btns form-control btn btn-primary">글쓰기</button>
                         <%
@@ -144,87 +179,87 @@
 
                     <!-- 정렬 선택 -->
                     <div class="col-sm-3">
-                        <form method="post" action="study_list.php?mode=search&kind=<%= // $kind %>">
-                            <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
-                            <option value="study_list.php?kind=<%= // $kind %>&range=num">글번호</option>
-                            <option value="study_list.php?kind=<%= // $kind %>&range=author">작성자</option>
-                            <option value="study_list.php?kind=<%= // $kind %>&range=topic">주제</option>
-                            </select>
-                        </form>
+                        <select onchange="location=this.value;" class="form-control" style="display: inline-block;">
+                        <option value="/<%= kind %>/list?range=num">글번호</option>
+                        <option value="/<%= kind %>/list?range=author">작성자</option>
+                        <option value="/<%= kind %>/list?range=topic">주제</option>
+                        <option value="/<%= kind %>/list?range=title">제목</option>
+                        </select>
                     </div>
                 </div>
             
 			<!-- 목록 각 하나의 article -->
             <%
-            list.forEach(function (item){   
+            let start = (page-1) * scale;
             %>
-                <script>
-                function getFormatDate(date){ 
-                    let year = date.getFullYear();	//yyyy 
-                    let month = (1 + date.getMonth());	//M
-                    month = month >= 10 ? month : '0' + month;	//month 두자리로 저장 
-                    let day = date.getDate();	//d 
-                    day = day >= 10 ? day : '0' + day;	//day 두자리로 저장 
-                    return year + '-' + month + '-' + day; 
+            <%
+            let total_page;
+            %>
+            <%
+            for(let i = start; i < start + scale && i < total_record; i++){
+                let item = list[i-1];
+                if(total_record % scale === 0) {
+                    total_page = total_record/scale;
+                } else {
+                    total_page = (total_record/scale)+1;
                 }
+                
+                if(!page) page = 1;
+                //페이지 번호(page)가 0일 때 페이지 번호를 1로 초기화
+                
+                //표시할 페이지(page)에 따라 start 계산 => 각각의 페이지의 시작번호
+                start = (page-1) * scale;
 
-                let today = new Date();
-                let tDate = getFormatDate(<%= list.end_day %>);  
-                let dateArray = dateString.split("-");  
-                let dateObj = new Date(dateArray[0], Number(dateArray[1])-1, dateArray[2]);  
-                let betweenDay = (today.getTime() - dateObj.getTime())/1000/60/60/24;
-                <%
-                let diffdate = betweenDay;
-                %>
-                </script>
-
+                item.start_day = item.start_day.substr(0, 10);
+                item.end_day = item.end_day.substr(0, 10);
+                item.content = item.content.replace(/(<([^>]+)>)/ig,"");
+            %>
                 <%
                 if(diffdate < 0) {
                 %>
                 <div class='col-sm-6 m-top-10'>
                 <div class='not_list'>
                 <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - +$diff_date</span>
-                <span>No.$item_num</span> <!-- 번호 -->
-                <span>작성자 | $item_id ($item_name) <!-- 작성자 -->
+                <span>No.<%= item.num %>(<%= index %>)</span> <!-- 번호 -->
+                <span>작성자 | <%= item.id %> (<%= item.name %>) <!-- 작성자 -->
+            
+                <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span> <!-- 주제, 제목 -->
                 
-                <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
+                <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
                 
-                <span class='content' style='margin-bottom: 23px;'>$item_content</span>
-                
-                <span>신청 기간 | $item_apply_s ~ $item_apply_e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span>신청 기간 | <%= item.start_day %> ~ <%= item.end_day %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 <span style='float: left;'>
-                    신청현황 | $item_a_num / $item_w_num 
+                    신청현황 | <%= item.apply_num %> / <%= item.want_num %>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    조회수 | $item_hit
+                    조회수 | <%= item.hit %>
                 </span> <!-- 신청수, 조회수 -->
                 </div>
                 </div>
                 <%
                 } else {
                 %>
-                  
                     <%
-                    if(Math.abs(diffdate) < 10) { // // 신청 마감일과 현재 날짜가 10일 이상 차이나면 아예 안보임
+                    if(Math.abs(diffdate) < 10) { // 신청 마감일과 현재 날짜가 10일 이상 차이나면 아예 안보임
                     %>
                     <a href='study_view.php?num=$item_num&page=$page&kind=$kind&big=study' style='text-decoration: none;'>
                         <div class='col-sm-6 m-top-10'>
                             <div class='list'>
-                            <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - $diff_date</span>
-                            <span>No.$item_num</span> <!-- 번호 -->
-                            <span>작성자 | $item_id ($item_name)</span> <!-- 작성자 -->
+                            <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - <% diffdate %>s</span>
+                            <span>No.<%= item.num %></span> <!-- 번호 -->
+                            <span>작성자 | <%= item.id %> (<%= item.name %>)</span> <!-- 작성자 -->
                             
-                            <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
+                            <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span> <!-- 주제, 제목 -->
                             
-                            <span class='content' style='margin-bottom: 23px;'>$item_content</span>
+                            <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
 
-                            <span>신청일 | $item_apply_s ~ $item_apply_e</span>
+                            <span>신청일 | <%= item.start_day %> ~ <%= item.end_day %></span>
                             <span>
-                                신청현황 | $item_a_num / $item_w_num 
+                                신청현황 | <%= item.apply_num %> / <%= item.want_num %>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                조회수 | $item_hit
+                                조회수 | <%= item.hit %>
                             </span> <!-- 신청수, 조회수 -->
                         
-                            <a href="study_delete_process.php?num=<%= // $item_num %>&page=<%= // $page %>&kind=<%= // $kind %>">
+                            <a href="<%= kind %>/delete?id=<%= item._id %>">
                             <button type="button" class="btn btn-primary_delete" style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
                             <i class='fa fa-trash text-primary'></i>
                             </button>
@@ -240,31 +275,22 @@
                 }
                 %>
             <%
-            }); // end of forEach
-            %>
-
-            <%
-                //     $item_apply_s = $row['start_day'];
-                //     $item_apply_s = substr($item_apply_s, 0, 10);
-                //     $item_apply_e = $row['end_day'];
-                //     $item_apply_e = substr($item_apply_e, 0, 10);
-                //     $item_content = strip_tags($item_content);
-                //     // CSS로 말줄임표 처리
+            }; // end of for
             %>
 
             <div class="col-sm-4 col-sm-offset-4 text-center m-top-50">
             <!--페이지 번호 표시-->
             <nav aria-labesl="...">
             <div>
-              <ul class="pagination pagination-lg">
+                <ul class="pagination pagination-lg">
                   	<%
-                  	// if($page-5 >= 1) {
+                  	if(page-5 >= 1) {
                   	%>
                   	<li class="page-item">
                       <a class="page-link" href="study_list.php?page=<%= // $page-5 %>&kind=<%= // $kind %>" style="background: rgb(247,247,247); color: #FF8489; border: 0;">&laquo;</a>
                     </li>
                     <%
-                  	// } else {
+                  	} else {
                     %>
                     <li class="page-item disabled">
                       <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&laquo;</a>
@@ -274,42 +300,41 @@
                     %>
                     
                     <%
-                    // for($i=1; $i<=$total_page; $i++){
-                    //     if($page == $i) {
+                    for(let i=1; i<=total_page; i++){
+                        if(page == i) {
                     %>
                      		<li class="page-item active">
                               <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= $i %></a>
                             </li>
                     <%
-                    // } else {
+                        } else {
                     %>
                       		<li class="page-item disabled">
-                              <a class="page-link" href="study_list.php?page=<%= // $i %>&kind=<%= // $kind %>" style="background: rgb(247,247,247); color: #ff6863; border: 0;"><%= // $i %></a>
+                              <a class="page-link" href="study_list.php?page=<%= // $i %>&kind=<%= // $kind %>" style="background: rgb(247,247,247); color: #ff6863; border: 0;"><%= i %></a>
                             </li>
                     <% 
-                //     }
-                // }
+                        }
+                    }
                     %>
                     
                     <%
-                  	// if($page+5 <= $total_page) {
+                  	if(page+5 <= total_page) {
                     %>
                   	<li class="page-item">
                       <a class="page-link" href="study_list.php?page=<%= // $page+5 %>" style="background: rgb(247,247,247); color: #ff6863; border: 0;">&raquo;</a>
                     </li>
                     <%
-                  	// } else {
+                  	} else {
                     %>
                     <li class="page-item disabled">
                       <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
                     </li>
                     <%
-                  	// }
+                  	}
                     %>
-                    
-                      </ul>
-                </div>
-                </nav>
+                </ul>
+            </div>
+            </nav>
             </div>
 
 		</div> <!-- row -->

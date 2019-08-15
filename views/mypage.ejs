@@ -17,21 +17,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            <%
-            if(sess){
-            %>
-            <%
-            } else {
-            %>
-                window.history.back();
-            <%
-            }
-            %>
-        }, false);
-        </script>
-        
-        <script type="text/javascript">
         function chk_value(id, value) {
             let target = document.getElementById(id);
             let v = 1-value;
