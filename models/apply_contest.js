@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const connection = require('./Connection.js');
 
 const applyContestSchema = new mongoose.Schema({
-    num: { type: Number, required: true, unique: ture }, // A.I
+    num: { type: Number, required: true, unique: true }, // A.I
     kind: { type: String, required: true },
     num_recv: { type: Number, required: true },
     id_apply: { type: String, required: true },
@@ -17,6 +17,9 @@ const applyContestSchema = new mongoose.Schema({
     want: { type: String, required: true, trim: true },
     apply_chk: { type: Number, required: true, default: 0 }
 });
+
+const autoIncrement = require('mongoose-auto-increment');
+autoIncrement.initialize(connection);
 
 applyContestSchema.plugin(autoIncrement.plugin, {
     model: 'ApplyContest', 
@@ -61,4 +64,4 @@ applyContestSchema.statics.findApplyC = function(item_kind, item_num, user_id) {
 
 };
 
-module.exports = mongoose.model('contestapplies', applyContestSchema);
+module.exports = connection.model('contestapplies', applyContestSchema);

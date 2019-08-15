@@ -11,13 +11,28 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
+        <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            <%
+            if(sess){
+            %>
+            <%
+            } else {
+            %>
+                window.history.back();
+            <%
+            }
+            %>
+        }, false);
+        </script>
+
         <script>
-    	function study_write_chk() {
-    		var p_set = document.frm_study_write;
+    	function item_chk() {
+    		var p_set = document.frm_item;
     		
-    		var double_result = document.getElementById("study_write_double_result");
-    		var topic_result = document.getElementById("study_write_topic_result");
-    		var title_result = document.getElementById("study_write_title_result");
+    		var double_result = document.getElementById("item_double_result");
+    		var topic_result = document.getElementById("item_topic_result");
+    		var title_result = document.getElementById("item_title_result");
 
     		if(p_set.write_want_num.value=="") {
     			double_result.innerHTML = "값을 입력해주세요";
@@ -45,7 +60,7 @@
         }
 
         function not_alert() {
-			alert('스터디 글 최대 작성 수 3개를 초과하셨습니다!');
+			alert('최대 작성 수 3개를 초과하셨습니다!');
         }
     	</script>
     	
@@ -59,20 +74,26 @@
             <% include header %>
 
 			<% // include "searchStudyList.php"; %>
-
+            
             <div class="container">
                 <div class="row">
                     <div class="col-sm-8 col-sm-offset-2">
                         <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
+                            <% // study면 3메뉴, contest면 4메뉴 %>
+                            
                             <li class="nav-item">
-                                <a class="nav-link" href="study_list.php?kind=develop&big=study" target="_self" style="color: #efdc05; font-size: 1.1rem;">개발</a>           
+                                <a class="nav-link" href="/board/total/list/develop" target="_self" style="color: #efdc05; font-size: 1.1rem;">개발</a>           
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="study_list.php?kind=design&big=study" target="_self" style="color: #efdc05; font-size: 1.1rem;">디자인</a>    
+                                <a class="nav-link" href="/board/total/list/design" target="_self" style="color: #efdc05; font-size: 1.1rem;">디자인</a>    
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="study_list.php?kind=etc&big=study" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
+                                <a class="nav-link" href="/board/total/list/etc" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/board/total/list/idea" target="_self" style="color: #efdc05; font-size: 1.1rem;">etc</a>              
+                            </li>
+
                         </ul>
                     </div>
                 
@@ -81,30 +102,19 @@
                 <div class="col-sm-12">
 
                     <div class="page_title text-center">
-                        <h2>
-                        <%
-                            // if($kind=="develop"){
-                            //     echo "개발 관련 스터디";
-                            // } else if($kind=="design"){
-                            //     echo "디자인 관련 스터디";
-                            // } else if($kind=="etc"){
-                            //     echo "기타 스터디 및 모임";
-                            // }
-                        %>
-                        </h2>
+                        <h2><%= ptitle %></h2>
                         
                         <div class="separator_auto"></div>
                         <div class="skill_bottom_item m-top-20">
-                            <h6>총 게시글 수&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="statistic-counter"><%= // "$total_record"; %></span></h6>
+                            <h6>총 게시글 수&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="statistic-counter"><%= list.length %></span></h6>
                         </div>
-                        
                     </div>
                 </div>
                         
                     
             	<div class="col-sm-10 col-sm-offset-1">
                     <div class="col-sm-10">
-                    	<form method="post" action="study_list.php?mode=search&kind=<%= $kind %>">
+                    	<form method="post" action="/<%= kind %>/list/search">
                             <select name="search_list" class="form-control dropdown-toggle" data-toggle="dropdown" aria-expanded="false" style="width: 30%; display: inline-block;">
                             <option value="subject">제목</option>
                             <option value="content">내용</option>
@@ -116,27 +126,23 @@
                     </div>
                 </div>
                         
-                <!-- 글쓰기 버튼 -->
                 <div class="col-sm-10 col-sm-offset-1 m-top-20">
+                    <!-- 글쓰기 버튼 -->
                 	<div class="col-sm-3">
                         <%
-                        // $result = mysqli_query($conn, "SELECT * FROM member WHERE id='$userid'");
-                        // $row = mysqli_fetch_array($result);
-                        // $user_list_num = $row['list_num'];
-                        
-                        // if($user_list_num >= 3) {
+                        if(user_write >= 3) {
                         %>
                         	<button onClick='not_alert()' class="home_btns form-control btn btn-primary">글쓰기</button>
                         <%
-                        // } else {
+                        } else {
                         %>
-                        	<button type='button' class="home_btns form-control btn btn-primary" data-toggle="modal" data-target="#modal_study_write">글쓰기</button>
+                        	<button type='button' class="home_btns form-control btn btn-primary" data-toggle="modal" data-target="#modal_item">글쓰기</button>
                         <%
-                        // } 
+                        } 
                         %>
                     </div>
 
-                <!-- 정렬 선택 -->
+                    <!-- 정렬 선택 -->
                     <div class="col-sm-3">
                         <form method="post" action="study_list.php?mode=search&kind=<%= // $kind %>">
                             <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
@@ -148,123 +154,103 @@
                     </div>
                 </div>
             
-			<!-- study목록 각 하나의 article -->
-			<!--블럭 내에 보여 줄 데이터들 DB에서 가져온 값이 저장된 $row 변수에서 한 속성씩 빼냄-->
-                <%
-                    // for($i = $start; $i < $start+$scale && $i < $total_record; $i++){
-                    //     mysqli_data_seek($result_list, $i); //가져올 레코드로 위치(포인터) 이동
-                    //     $row = mysqli_fetch_array($result_list); //하나의 레코드 가져오기
-                        
-                    //     $item_num = $row['num'];
-                    //     $item_id = $row['id'];
-                    //     $item_name = $row['name'];
-                    //     $item_topic = $row['topic'];
-                    //     $item_title = $row['title'];
-                    //     $item_content = $row['content'];
-                    //     $item_a_num = $row['apply_num'];
-                    //     $item_w_num = $row['want_num'];
-                        
-                    //     $item_apply_s = $row['start_day'];
-                    //     $item_apply_s = substr($item_apply_s, 0, 10);
-                        
-                    //     $item_apply_e = $row['end_day'];
-                    //     $item_apply_e = substr($item_apply_e, 0, 10);
-                        
-                    //     $item_content = strip_tags($item_content);
-                        
-                    //     $item_hit = $row['hit'];
-
-                    //     // CSS로 말줄임표 처리
-                %>
-
-                <%
-                    // $timenow = date("Y-m-d");
-                    
-                    // $diff_date = (strtotime($item_apply_e) - strtotime($timenow)) / 86400;
-                    
-                    // if($item_apply_e < $timenow) {
-                    //     if(abs($diff_date) < 10) { // 신청 마감일과 현재 날짜가 10일 이상 차이나면 아예 안보임
-                    //         if($diff_date < 0) {
-                    //             $diff_date = $diff_date + abs($diff_date)*2;
-                %>
-                    <div class='col-sm-6 m-top-10'>
-                    <div class='not_list'>
-                    <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - +$diff_date</span>
-                    <span>No.$item_num</span> <!-- 번호 -->
-                    <span>작성자 | $item_id ($item_name) <!-- 작성자 -->
-                    
-                    <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
-                    
-                    <span class='content' style='margin-bottom: 23px;'>$item_content</span>
-                    
-                    <span>신청 기간 | $item_apply_s ~ $item_apply_e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span style='float: left;'>
-                        신청현황 | $item_a_num / $item_w_num 
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        조회수 | $item_hit
-                    </span> <!-- 신청수, 조회수 -->
+			<!-- 목록 각 하나의 article -->
             <%
-                // } else {
+            list.forEach(function (item){   
             %>
-                    <div class='col-sm-6 m-top-10'>
-                        <div class='not_list'>
-                        <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - $diff_date</span>
-                        <span>No.$item_num</span> <!-- 번호 -->
-                        <span>작성자 | $item_id ($item_name) <!-- 작성자 -->
-                        
-                        <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
-                        
-                        <span class='content' style='margin-bottom: 23px;'>$item_content</span>
-                        
-                        <span>신청 기간 | $item_apply_s ~ $item_apply_e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <span style='float: left;'>
-                            신청현황 | $item_a_num / $item_w_num 
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                            조회수 | $item_hit
-                        </span> <!-- 신청수, 조회수 -->
+                <script>
+                function getFormatDate(date){ 
+                    let year = date.getFullYear();	//yyyy 
+                    let month = (1 + date.getMonth());	//M
+                    month = month >= 10 ? month : '0' + month;	//month 두자리로 저장 
+                    let day = date.getDate();	//d 
+                    day = day >= 10 ? day : '0' + day;	//day 두자리로 저장 
+                    return year + '-' + month + '-' + day; 
+                }
+
+                let today = new Date();
+                let tDate = getFormatDate(<%= list.end_day %>);  
+                let dateArray = dateString.split("-");  
+                let dateObj = new Date(dateArray[0], Number(dateArray[1])-1, dateArray[2]);  
+                let betweenDay = (today.getTime() - dateObj.getTime())/1000/60/60/24;
                 <%
-                    // }
-                    // if($userid==$item_id){ //신청기간 지난 게시물의 삭제 버튼
+                let diffdate = betweenDay;
                 %>
-                        <a href="study_delete_process.php?num=<%= // $item_num %>&page=<%= // $page %>&kind=<%= // $kind %>">
+                </script>
+
+                <%
+                if(diffdate < 0) {
+                %>
+                <div class='col-sm-6 m-top-10'>
+                <div class='not_list'>
+                <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - +$diff_date</span>
+                <span>No.$item_num</span> <!-- 번호 -->
+                <span>작성자 | $item_id ($item_name) <!-- 작성자 -->
+                
+                <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
+                
+                <span class='content' style='margin-bottom: 23px;'>$item_content</span>
+                
+                <span>신청 기간 | $item_apply_s ~ $item_apply_e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span style='float: left;'>
+                    신청현황 | $item_a_num / $item_w_num 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    조회수 | $item_hit
+                </span> <!-- 신청수, 조회수 -->
+                </div>
+                </div>
+                <%
+                } else {
+                %>
+                  
+                    <%
+                    if(Math.abs(diffdate) < 10) { // // 신청 마감일과 현재 날짜가 10일 이상 차이나면 아예 안보임
+                    %>
+                    <a href='study_view.php?num=$item_num&page=$page&kind=$kind&big=study' style='text-decoration: none;'>
+                        <div class='col-sm-6 m-top-10'>
+                            <div class='list'>
+                            <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - $diff_date</span>
+                            <span>No.$item_num</span> <!-- 번호 -->
+                            <span>작성자 | $item_id ($item_name)</span> <!-- 작성자 -->
+                            
+                            <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
+                            
+                            <span class='content' style='margin-bottom: 23px;'>$item_content</span>
+
+                            <span>신청일 | $item_apply_s ~ $item_apply_e</span>
+                            <span>
+                                신청현황 | $item_a_num / $item_w_num 
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                조회수 | $item_hit
+                            </span> <!-- 신청수, 조회수 -->
+                        
+                            <a href="study_delete_process.php?num=<%= // $item_num %>&page=<%= // $page %>&kind=<%= // $kind %>">
                             <button type="button" class="btn btn-primary_delete" style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
                             <i class='fa fa-trash text-primary'></i>
                             </button>
-                        </a>
-                    <%
-                    // }
-                    %>
+                            </a>
 
-                    </div>
-                </div>
-                    <%
-                    // }
-                    // } else {
-                    %>
-                        <a href='study_view.php?num=$item_num&page=$page&kind=$kind&big=study' style='text-decoration: none;'>
-                            <div class='col-sm-6 m-top-10'>
-                                <div class='list'>
-                                <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>D - $diff_date</span>
-                                <span>No.$item_num</span> <!-- 번호 -->
-                                <span>작성자 | $item_id ($item_name)</span> <!-- 작성자 -->
-                                
-                                <span class='title' style='margin-top: 15px;'>[$item_topic] $item_title</span> <!-- 주제, 제목 -->
-                                
-                                <span class='content' style='margin-bottom: 23px;'>$item_content</span>
-
-                                <span>신청일 | $item_apply_s ~ $item_apply_e</span>
-                                <span>
-                                    신청현황 | $item_a_num / $item_w_num 
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    조회수 | $item_hit
-                                </span> <!-- 신청수, 조회수 -->
-                                </div>
                             </div>
-                        </a>
+                        </div>
+                    </a>
+                    <%
+                    }
+                    %>
                 <%
-                    // }
-                    // } //for문
+                }
                 %>
+            <%
+            }); // end of forEach
+            %>
+
+            <%
+                //     $item_apply_s = $row['start_day'];
+                //     $item_apply_s = substr($item_apply_s, 0, 10);
+                //     $item_apply_e = $row['end_day'];
+                //     $item_apply_e = substr($item_apply_e, 0, 10);
+                //     $item_content = strip_tags($item_content);
+                //     // CSS로 말줄임표 처리
+            %>
 
             <div class="col-sm-4 col-sm-offset-4 text-center m-top-50">
             <!--페이지 번호 표시-->
@@ -333,7 +319,7 @@
 
                                     
 <!-- Insert Modal -->
-<div class="modal fade" id="modal_study_write" role="dialog">
+<div class="modal fade" id="modal_item" role="dialog">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
         
     <!-- Modal content-->
@@ -344,7 +330,7 @@
             <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div> <!-- modal header -->
 		
-		<form name="frm_study_write" class="form_write" method="post" action="study_insert_process.php?num=<%= // $num %>&page=<%= // $page %>&kind=<%= // $kind %>&big=<%= // $big %>">
+		<form name="frm_item" class="form_write" method="post" action="study_insert_process.php?num=<%= // $num %>&page=<%= // $page %>&kind=<%= // $kind %>&big=<%= // $big %>">
                 
         <div class="modal-body" style="padding: 50px;">
                     <label>
@@ -362,13 +348,13 @@
                         <input type="date" class="short" name="write_end_day" value="<%= // $regist_day = date("Y-m-d"); echo $regist_day %>">
                     </label>
                     
-                    <span id="study_write_double_result" class="fail"></span>
+                    <span id="item_double_result" class="fail"></span>
                     
                     <label>
                         스터디 주제
                     <input type="text" name="write_topic">
                     </label>
-                    <span id="study_write_topic_result" class="fail"></span>
+                    <span id="item_topic_result" class="fail"></span>
                     
                     <div class="textarea_counter">
                         <label>
@@ -377,7 +363,7 @@
                             <span id="ex_counter" class="counter">( <span id="text_counter" class="counter"></span> / 50 )</span>
                         
                         </label>
-                        <span id="study_write_title_result" class="fail"></span>
+                        <span id="item_title_result" class="fail"></span>
                     </div>
 
                     <script src="https://cdn.ckeditor.com/ckeditor5/12.2.0/classic/ckeditor.js"></script>
@@ -398,7 +384,7 @@
 
         <div class="modal-footer">
             <div class="col-sm-3 col-sm-offset-9">
-                <button type="button" onClick="study_write_chk()" class="form-control btn btn-primary">저장</button>
+                <button type="button" onClick="item_chk()" class="form-control btn btn-primary">저장</button>
             </div>
         </div> <!-- modal footer -->
         

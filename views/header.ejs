@@ -47,25 +47,21 @@
         //     $sql_badge_cal = mysqli_num_rows($sql_badge_cal);
         %>
         <!-- Start Atribute Navigation -->
+        <%
+        if(sess){
+        %>
         <div class="attr-nav">
             <ul>
                 <li class="dropdown">
                     <a href="note/recv">
                         <i class="fa fa-envelope-o"></i>
-                        <%
-                        if(sess){
-                        %>
-                            <span class="badge"><%= badge_cal %></span>
-                        <%
-                        }
-                        %>
+                        <span class="badge"><%= badge_cal %></span>
                     </a>
                 </li>
-                
             </ul>
         </div>   
         <%
-        // }
+        }
         %>
         <!-- End Atribute Navigation -->
 
@@ -84,9 +80,10 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-menu">
             <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                <li><a href="board/study/list" target="_self">스터디</a></li>                    
-                <li><a href="board/contest/list" target="_self">공모전</a></li>                    
-                <li><a href="/mypage" target="_self">My Page</a></li>                   
+                <li><a href="/board/total/list" target="_self">전체</a></li>
+                <li><a href="/board/study/list" target="_self">스터디</a></li>
+                <li><a href="/board/contest/list" target="_self">공모전</a></li>
+                <li><a href="/mypage" target="_self">My Page</a></li>
                 
                 <%
                 if(sess) {

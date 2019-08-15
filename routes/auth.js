@@ -147,7 +147,6 @@ router.get('/signin', (req, res) => {
     console.log('signin page');
 
     let sess = req.session;
-    res.setHeader('Content-Type', 'text/html');
 
     let cid = null;
     if(req.cookies.cookie_id !== undefined) {
