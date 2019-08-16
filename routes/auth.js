@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 
+const passport = require('passport');
+
 const Member = require('../models/member.js');
 const Counting = require('../models/counting.js');
 
@@ -166,51 +168,27 @@ router.get('/signin', (req, res) => {
     res.end();
 });
 
-router.post('/signin', (req, res) => {
-    console.log('signin db connect page');
+router.post('/signin', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info) {
+        
+        if (err) { return next(err); }
+        if (!user) {
+            // checkbox 체크 시 쿠키 
+            if(req.body.id_ck == 'yes') {
+                res.cookie('cookie_id', req.body.signin_email);
+            }
+            
+            let str = '해당 이메일 또는 비밀번호가 틀렸습니다';
+            req.session.message = str;
 
-    let sess = req.session;
-    
-    let id = req.body.signin_email;
-    let pwd = req.body.signin_pwd;
+            return res.redirect('/signin'); 
+        }
 
-    // checkbox 체크 시 쿠키 
-    if(req.body.id_ck == 'yes') {
-        res.cookie('cookie_id', id);
-    }
-
-    // 로그인 로직
-    let str = null;
-    try {
-        Member.findOne({id : id}).select('id').exec(function(err, idCheckUser) { // 아이디만 가져와서 맞음 or 틀림
-            Member.findOne({id : id, pwd: pwd}, function(err, user) { // 로그인 완료
-                console.log(idCheckUser);
-                console.log(user);
-                if(user) { // 로그인
-                    console.log('pass user');
-                    if(idCheckUser) {
-                        console.log('pass idcheckuser');
-                        sess.userid = idCheckUser.id;
-                        sess.username = user.name;
-                        res.redirect('/');
-                    }
-                } else {
-                    if(idCheckUser) { // 아이디로 찾았을 때에는 있음
-                        str = '해당 이메일 또는 비밀번호가 틀렸습니다';
-                        // res.status(401).send('해당 이메일 또는 비밀번호가 틀렸습니다');
-                    } else { // 아이디로 찾았을 때 없으니 아예 가입이 안 돼있음
-                        str = '해당 이메일로 가입된 계정이 없습니다';
-                        // res.status(401).send('해당 이메일로 가입된 계정이 없습니다');
-                    }
-                    sess.message = str;
-                    res.redirect('/signin');
-                }
-            });
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.redirect('/');
         });
-    } catch (e) {
-        res.redirect('/signin');
-        return console.log(e);
-    }
+    })(req, res, next);
 });
 
 router.post('/signin/find', (req, res) => {
@@ -265,12 +243,10 @@ router.post('/signin/find', (req, res) => {
 router.get('/signout', (req, res) => {
     console.log('signout page');
 
-    console.log(req.session.userid);
-    console.log(req.session.username);
-
     delete req.session.userid;
     delete req.session.username;
-
+    
+    req.logOut();
     res.redirect('/');
 });
 

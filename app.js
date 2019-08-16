@@ -9,7 +9,8 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 // const fb = require(./function/fbLogin'); // facebook login
-const passport = require('passport')
+const passport = require('passport');
+const passportConfig = require('./routes/passport');
 const ejs = require('ejs');
 
 app.use(session({
@@ -19,11 +20,16 @@ app.use(session({
     cookie: {
       maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
     }
-}))
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passportConfig();
+
 
 app.use(function(req, res, next) {
   // header에서 사용해야하는 값
-  if(req.session.userid) {
+  if(req.user) {
       res.locals.sess = true;
   } else {
       res.locals.sess = false;

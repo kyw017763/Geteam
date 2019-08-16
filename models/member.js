@@ -91,6 +91,16 @@ memberSchema.statics.removeFriend = function(req) {
     });
 }
 
+memberSchema.methods.comparePassword = function(inputPwd, memberPwd, cb) {
+    if (inputPwd === memberPwd) {
+        console.log('same');
+        cb(null, true);
+    } else {
+        console.log('not same');
+        cb('error');
+    }
+};
+
 // 마이페이지에서 개인정보 조회 시
 memberSchema.statics.mypageInfo = function(user_id) {
     return this.find({id : user_id});
