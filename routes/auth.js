@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 
 const passport = require('passport');
+const flash = require('connect-flash');
 
 const Member = require('../models/member.js');
 const Counting = require('../models/counting.js');
@@ -14,8 +15,19 @@ const nodemailer = require('nodemailer');
 const app = express();
 const router = express.Router(); // 라우터 분리
 
+app.use(session({
+    secret: 'yewon kim',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
+    }
+}));
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
+
+app.use(flash());
 
 
 router.get('/', (req, res) => {
@@ -29,12 +41,11 @@ router.get('/', (req, res) => {
     Counting.findOneAndUpdate({}, { $inc: { visit : 1 } });
     
     res.setHeader('Content-Type', 'text/html');
-    let sess = req.session;
-    console.log('signin : '+sess.userid);
+    console.log('signin : '+req.session.userid);
 
     // 접근 권한 없이 board, note, mypage에 접근했을 경우
-    let m = sess.message;
-    sess.message = null;
+    let m = req.session.message;
+    req.session.message = null;
     
     Counting.findOne({}, function(err, counting) {
         console.log(counting);
@@ -43,7 +54,6 @@ router.get('/', (req, res) => {
             c: counting
         });
     });
-    
     // res.end();
 });
 
@@ -84,10 +94,9 @@ router.post('/', (req, res) => {
 router.get('/signup', (req, res) => {
     console.log('signup page');
 
-    let sess = req.session;
     res.setHeader('Content-Type', 'text/html');
-    let m = sess.message;
-    sess.message = null;
+    let m = req.session.message;
+    req.session.message = null;
     res.render(path.join(__dirname, '..', 'views', 'signup.ejs'), {
         message: m
     });
@@ -98,7 +107,6 @@ router.get('/signup', (req, res) => {
 router.post('/signup', (req, res) => {
     console.log('signup db connect page');
     
-    let sess = req.session;
     let str;
     let flag;
 
@@ -115,7 +123,7 @@ router.post('/signup', (req, res) => {
         flag = 1;
     }
     if(flag === 1) {
-        sess.message = str;
+        req.session.message = str;
         return res.redirect('/signup');
     } else {
     
@@ -133,7 +141,7 @@ router.post('/signup', (req, res) => {
                 if (err.name === 'MongoError' && err.code === 11000) {
                     console.log('go to signup');
                     str = '중복된 이메일로 가입하실 수 없습니다!';
-                    sess.message = str;
+                    req.session.message = str;
                     return res.redirect('/signup');
                 }
             }
@@ -148,17 +156,15 @@ router.post('/signup', (req, res) => {
 router.get('/signin', (req, res) => {
     console.log('signin page');
 
-    let sess = req.session;
-
     let cid = null;
     if(req.cookies.cookie_id !== undefined) {
         cid = req.cookies.cookie_id;
         console.log('cookie_id : '+cid);
     }
 
-    let m = sess.message;
+    let m = req.session.message;
     console.log('signin fail message: '+m);
-    sess.message = null;
+    req.session.message = null;
 
     res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'signin.ejs'), {
@@ -243,9 +249,6 @@ router.post('/signin/find', (req, res) => {
 router.get('/signout', (req, res) => {
     console.log('signout page');
 
-    delete req.session.userid;
-    delete req.session.username;
-    
     req.logOut();
     res.redirect('/');
 });
