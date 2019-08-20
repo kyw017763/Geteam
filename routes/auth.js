@@ -13,9 +13,12 @@ const session = require('express-session');
 const nodemailer = require('nodemailer');
 
 const app = express();
+
 const router = express.Router(); // 라우터 분리
 
-app.use(session({
+router.use(flash());
+
+router.use(session({
     secret: 'yewon kim',
     resave: false,
     saveUninitialized: true,
@@ -24,11 +27,8 @@ app.use(session({
     }
 }));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(cookieParser());
-
-app.use(flash());
-
+router.use(bodyParser.urlencoded({extended: false}));
+router.use(cookieParser());
 
 router.get('/', (req, res) => {
     console.log('index page');
@@ -44,13 +44,11 @@ router.get('/', (req, res) => {
     console.log('signin : '+req.session.userid);
 
     // 접근 권한 없이 board, note, mypage에 접근했을 경우
-    let m = req.session.message;
-    req.session.message = null;
-    
+
     Counting.findOne({}, function(err, counting) {
         console.log(counting);
         res.render(path.join(__dirname, '..', 'views', 'index.ejs'), {
-            message: m,
+            message: req.flash('message'),
             c: counting
         });
     });
@@ -95,10 +93,8 @@ router.get('/signup', (req, res) => {
     console.log('signup page');
 
     res.setHeader('Content-Type', 'text/html');
-    let m = req.session.message;
-    req.session.message = null;
     res.render(path.join(__dirname, '..', 'views', 'signup.ejs'), {
-        message: m
+        message: req.flash('message')
     });
     
     res.end();
@@ -123,7 +119,7 @@ router.post('/signup', (req, res) => {
         flag = 1;
     }
     if(flag === 1) {
-        req.session.message = str;
+        req.flash('message', str);
         return res.redirect('/signup');
     } else {
     
@@ -141,7 +137,7 @@ router.post('/signup', (req, res) => {
                 if (err.name === 'MongoError' && err.code === 11000) {
                     console.log('go to signup');
                     str = '중복된 이메일로 가입하실 수 없습니다!';
-                    req.session.message = str;
+                    req.flash('message', str);
                     return res.redirect('/signup');
                 }
             }
@@ -162,13 +158,9 @@ router.get('/signin', (req, res) => {
         console.log('cookie_id : '+cid);
     }
 
-    let m = req.session.message;
-    console.log('signin fail message: '+m);
-    req.session.message = null;
-
     res.setHeader('Content-Type', 'text/html');
     res.render(path.join(__dirname, '..', 'views', 'signin.ejs'), {
-        message: m,
+        message: req.flash('message'),
         cookie_id: cid
     });
     res.end();
@@ -185,7 +177,7 @@ router.post('/signin', function(req, res, next) {
             }
             
             let str = '해당 이메일 또는 비밀번호가 틀렸습니다';
-            req.session.message = str;
+            req.flash('message', str);
 
             return res.redirect('/signin'); 
         }
