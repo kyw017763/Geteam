@@ -5,7 +5,6 @@
   "main": "app.js",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
-    "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^3.0.0",
@@ -29,10 +28,18 @@
     "session": "^0.1.0",
     "sha256": "^0.2.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.6.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.18.2"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "babel-node app.js"
   },
   "repository": {
     "type": "git",
@@ -48,5 +55,19 @@
   "bugs": {
     "url": "https://github.com/kyw017763/zteam_NodeJS/issues"
   },
-  "homepage": "https://github.com/kyw017763/zteam_NodeJS#readme"
+  "homepage": "https://github.com/kyw017763/zteam_NodeJS#readme",
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "airbnb-base",
+    "rules": {
+      "linebreak-style": 0,
+      "no-console": 0,
+      "no-unused-vars": 1,
+      "camelcase": 0,
+      "consistent-return": 0
+    },
+    "env": {
+      "browser": true
+    }
+  }
 }

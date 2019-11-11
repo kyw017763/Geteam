@@ -1,67 +1,60 @@
-const express = require('express');
+import express from 'express';
+import path from 'path';
+import ejs from 'ejs';
+import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import flash from 'connect-flash';
+import nodemailer from 'nodemailer';
+import fs from 'fs';
+import parseJson from 'parse-json';
+import sha256 from 'sha256';
+import passport from 'passport';
+import passportConfig from './routes/passport';
+
+import auth from './routes/auth';
+import board from './routes/board';
+import note from './routes/note';
+import mypage from './routes/mypage';
+
 const app = express();
-const path = require('path');
-// const sequelize = require('sequelize'); // ORM 사용시
-const parseJson = require('parse-json');
-const fs = require('fs');
-// const spawn = require('child_process').spawn; // 자식모듈
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-// const fb = require(./function/fbLogin'); // facebook login
-const passport = require('passport');
-const passportConfig = require('./routes/passport');
-const ejs = require('ejs');
 
 app.use(session({
-    secret: 'yewon kim',
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 24000 * 60 * 60 // 쿠키 유효기간 24시간
-    }
+  secret: 'yewon kim',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
+  },
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 passportConfig();
 
-
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   // header에서 사용해야하는 값
-  if(req.user) {
-      res.locals.sess = true;
+  if (req.user) {
+    res.locals.sess = true;
   } else {
-      res.locals.sess = false;
+    res.locals.sess = false;
   }
   res.locals.badge_cal = 0;
   // console.log('전달되진 않는 req.session.userid값 '+req.session.userid);
   // console.log('전달되는 res.locals.sess 값 : '+res.locals.sess);
   // console.log('전달되는 badge_cal 값 : '+res.locals.badge_cal);
   next();
-})
+});
 // const language = require('@google-cloud/language');
 
-//view engine setup
-app.set('views','./views');
-app.set('view engine','ejs');
+// view engine setup
+app.set('views', './views');
+app.set('view engine', 'ejs');
 app.engine('.ejs', ejs.renderFile);
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, 'assets')));
-
-//sha 256 비밀번호 암호화
-const sha256 = require('sha256');
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-var auth = require('./routes/auth.js');
-var board = require('./routes/board.js');
-var note = require('./routes/note.js');
-var mypage = require('./routes/mypage.js');
 
 // routes 사용
 app.use('/', auth);

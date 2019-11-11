@@ -1,11 +1,13 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-let url = 'mongodb://localhost:27017/zteam';
-let connection = mongoose.createConnection(url, {useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true}, function(err) {
-  if(err){
-    console.log("Connected failed");
-  }
-  console.log("Connected successfully to server");
-});
+const url = 'mongodb://localhost:27017/zteam';
+const connection = mongoose.createConnection(
+  url, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
+    if (err) {
+      console.log('Connected failed');
+    }
+    console.log('Connected successfully to server');
+  },
+);
 
-module.exports = connection;
+export default connection;

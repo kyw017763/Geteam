@@ -1,26 +1,28 @@
-const mongoose = require('mongoose');
-const connection = require('./Connection.js');
+import mongoose from 'mongoose';
+import autoIncrement from 'mongoose-auto-increment';
+import connection from './Connection';
+
+autoIncrement.initialize(connection);
 
 const secessionSchema = new mongoose.Schema({
-    num: { type: Number, required: true, unique: ture }, // A.I
-    secession_id: { type: String, required: true },
-    secession_name: { type: String, required: true },
-    secession_date: { type: Date, required: true, default: Date.now }
+  num: { type: Number, required: true, unique: true }, // A.I
+  secession_id: { type: String, required: true },
+  secession_name: { type: String, required: true },
+  secession_date: { type: Date, required: true, default: Date.now },
 });
 
 secessionSchema.plugin(autoIncrement.plugin, {
-    model: 'Secession', 
-    field: 'num', 
-    startAt: 1, 
-    incrementBy: 1 
+  model: 'Secession',
+  field: 'num',
+  startAt: 1,
+  incrementBy: 1,
 });
 
-secessionSchema.statics.saveSecession = function(req) {
-    
-    return this.create({
-        secession_id: req.body.secession_id,
-        secession_name: req.body.secession_name
-    });
+secessionSchema.statics.saveSecession = function (req) {
+  return this.create({
+    secession_id: req.body.secession_id,
+    secession_name: req.body.secession_name,
+  });
 };
 
-module.exports = mongoose.model('secessions', secessionSchema);
+export default mongoose.model('secessions', secessionSchema);

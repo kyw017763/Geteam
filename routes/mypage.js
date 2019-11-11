@@ -1,14 +1,19 @@
-const express = require('express');
-const path = require('path');
-const router = express.Router(); // 라우터 분리
+import express from 'express';
+import path from 'path';
+import cookieParser from 'cookie-parser';
+
+import Member from '../models/member';
+
+const router = express.Router();
+export default router;
+
+router.use(express.urlencoded({ extended: false }));
+router.use(cookieParser());
 
 
 router.get('/', (req, res) => {
-    
-    console.log('mypage page');
+  console.log('mypage page');
 
-    res.setHeader('Content-Type', 'text/html');
-    res.render(path.join(__dirname, '..', 'views', 'mypage.ejs'));
+  res.setHeader('Content-Type', 'text/html');
+  res.render(path.join(__dirname, '..', 'views', 'mypage.ejs'));
 });
-
-module.exports = router; // 모듈로 만드는 부분
