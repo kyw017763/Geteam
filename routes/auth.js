@@ -114,7 +114,7 @@ router.post('/signup', (req, res) => {
   let flag;
 
   const regxEmail = /[A-Za-z0-9]{8}@e-mirim.hs.kr/;
-  const regxPwd = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,15}$/;
+  const regxPwd = /(?=.*\d{1,50})(?=.*[~`!@#$%^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,15}$/;
   const resultEmail = regxEmail.exec(req.body.signup_email);
   const resultPwd = regxPwd.exec(req.body.signup_pwd);
 

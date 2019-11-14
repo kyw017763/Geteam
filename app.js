@@ -10,7 +10,6 @@ import parseJson from 'parse-json';
 import sha256 from 'sha256';
 import passport from 'passport';
 import passportConfig from './routes/passport';
-
 import auth from './routes/auth';
 import board from './routes/board';
 import note from './routes/note';
