@@ -1,23 +1,31 @@
-const babelPlugin = require('@babel/core').transform('code', {
+const path = require('path');
+
+// warning
+require('@babel/core').transform('code', {
   plugins: ['@babel/plugin-proposal-class-properties'],
 });
 
-const path = require('path');
-
 const DIST_DIR = path.resolve(__dirname, 'dist');
 const SRC_DIR = path.resolve(__dirname);
-
 module.exports = {
-  mode: 'production',
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    port: 9000
+  },
+  mode: 'development',
   entry: ['@babel/polyfill', `${SRC_DIR}/app.js`],
   output: {
-    path: `${DIST_DIR}/app`,
+    publicPath: '/assets/',
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/app/',
   },
-  presets: [
-    '@babel/preset-env',
-  ],
+  node: {
+    child_process: 'empty',
+    dns: 'empty',
+    fs: 'empty',
+    net: 'empty',
+    tls: 'empty',
+  },
   module: {
     rules: [
       {
@@ -26,12 +34,10 @@ module.exports = {
         loaders: 'babel-loader',
         options: {
           presets: [
-            '@babel/preset-env', {
-              targets: { node: 'current' },
-              modules: 'false',
-            },
+            '@babel/preset-env',
           ],
-
+          // eslint-disable-next-line global-require
+          plugins: [require('@babel/plugin-proposal-class-properties')],
         },
       },
     ],
