@@ -6,10 +6,13 @@ autoIncrement.initialize(connection);
 
 const secessionSchema = new mongoose.Schema({
   num: { type: Number, required: true, unique: true }, // A.I
-  secession_id: { type: String, required: true },
-  secession_name: { type: String, required: true },
-  secession_date: { type: Date, required: true, default: Date.now },
+  secessionId: { type: String, required: true },
+  secessionName: { type: String, required: true },
+  approach: { type: Number, default: 0 },
+}, {
+  timestamps: true,
 });
+
 
 secessionSchema.plugin(autoIncrement.plugin, {
   model: 'Secession',
@@ -20,8 +23,8 @@ secessionSchema.plugin(autoIncrement.plugin, {
 
 secessionSchema.statics.saveSecession = function (req) {
   return this.create({
-    secession_id: req.body.secession_id,
-    secession_name: req.body.secession_name,
+    secessionId: req.body.secessionId,
+    secessionName: req.body.secessionName,
   });
 };
 

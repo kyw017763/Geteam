@@ -1,24 +1,23 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
+import Member from './member';
 
 autoIncrement.initialize(connection);
 
 const applyContestSchema = new mongoose.Schema({
   num: { type: Number, required: true, unique: true }, // A.I
   kind: { type: String, required: true },
-  num_recv: { type: Number, required: true },
-  id_apply: { type: String, required: true },
-  id_recv: { type: String, required: true },
-  name_apply: { type: String, required: true },
-  name_recv: { type: String, required: true },
+  memApply: { type: mongoose.Schema.Types.ObjectId, required: true },
+  memRecv: { type: mongoose.Schema.Types.ObjectId, required: true },
   topic: { type: String, required: true, trim: true },
   title: { type: String, required: true, trim: true },
-  apply_day: { type: Date, required: true, default: Date.now },
   part: { type: String, required: true, trim: true },
   portfolio: { type: String, required: true, trim: true },
   want: { type: String, required: true, trim: true },
-  apply_chk: { type: Number, required: true, default: 0 },
+  applyChk: { type: Number, default: 0 },
+}, {
+  timestamps: true,
 });
 
 applyContestSchema.plugin(autoIncrement.plugin, {
@@ -31,11 +30,9 @@ applyContestSchema.plugin(autoIncrement.plugin, {
 applyContestSchema.statics.saveApplyC = function (req) {
   return this.create({
     kind: req.body.kind,
-    num_recv: req.body.num_recv,
-    id_apply: req.body.id_apply,
-    id_recv: req.body.id_recv,
-    name_apply: req.body.name_apply,
-    name_recv: req.body.name_recv,
+    itemNum: req.body.itemNum,
+    memApply: Member.find({ id: req.body.idApply }),
+    memRecv: Member.find({ id: req.body.idRecv }),
     topic: req.body.topic,
     title: req.body.title,
     part: req.body.part,
@@ -44,13 +41,12 @@ applyContestSchema.statics.saveApplyC = function (req) {
   });
 };
 
-applyContestSchema.statics.findApplyC = function (item_kind, item_num, user_id) {
+applyContestSchema.statics.findApplyContest = function (itemKind, itemNum, userId) {
   // kind, list_num, user_id 비교해서 true면 이미 신청한 것으로 판단
   this.find({
-    kind: item_kind,
-    num_recv: item_num,
-    item_id: user_id,
-
+    kind: itemKind,
+    num: itemNum,
+    memApply: Member.find({ id: userId }),
   }, (err, results) => {
     if (err) {
       return false;

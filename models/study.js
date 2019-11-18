@@ -1,26 +1,28 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
+import Member from './member';
 
 autoIncrement.initialize(connection);
 
 const studySchema = new mongoose.Schema({
   num: { type: Number, required: true, unique: true }, // A.I
   kind: { type: String, required: true },
-  id: { type: String, required: true },
-  name: { type: String, required: true },
+  mem: { type: mongoose.Schema.Types.ObjectId, required: true },
   topic: { type: String, required: true },
+  part: { type: String, required: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
-  want_num: { type: Number, required: true },
-  apply_num: { type: Number, required: true },
-  start_day: { type: Date, required: true, default: Date.now },
-  end_day: { type: Date, required: true },
+  wantNum: { type: Number, required: true },
+  applyNum: { type: Number, required: true },
+  // startDay는 createdAt 으로 대신한다
+  endDay: { type: Date, required: true },
   hit: { type: Number, required: true, default: 0 },
-  team_chk: { type: Number, required: true, default: 0 },
-  modify_day: { type: Date, required: true, default: Date.now },
-  modify_chk: { type: Number, required: true, default: 0 },
+  teamChk: { type: Number, default: 0 },
+}, {
+  timestamps: true,
 });
+
 
 studySchema.plugin(autoIncrement.plugin, {
   model: 'Study',
@@ -32,14 +34,14 @@ studySchema.plugin(autoIncrement.plugin, {
 studySchema.statics.saveStudyItem = function (req) {
   return this.create({
     kind: req.body.kind,
-    id: req.body.id,
-    name: req.body.name,
+    mem: Member.find({ id: req.body.idApply }),
     topic: req.body.topic,
+    part: req.body.part,
     title: req.body.title,
     content: req.body.content,
-    want_num: req.body.want_num,
-    apply_num: req.body.apply_num,
-    end_day: req.body.end_day,
+    wantNum: req.body.wantNum,
+    applyNum: req.body.applyNum,
+    endDay: req.body.endDay,
   });
 };
 
@@ -59,8 +61,8 @@ studySchema.statics.updateItemStudy = function (req) {
       $set: {
         title: req.body.title,
         content: req.body.content,
-        want_num: req.body.want_num,
-        end_day: req.body.end_day,
+        wantNum: req.body.wantNum,
+        endDay: req.body.endDay,
       },
     },
   );
@@ -82,8 +84,8 @@ studySchema.statics.subjectItem = function (kind) {
 // View 시 검색
 studySchema.statics.viewItem = function (kind, num) {
   return this.find({
-    kind,
     num,
+    kind,
   });
 };
 

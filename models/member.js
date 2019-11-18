@@ -5,16 +5,16 @@ const memberSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   pwd: { type: String, required: true },
-  s_num: { type: Number, required: true },
+  sNum: { type: Number, required: true },
   interest1: { type: String, required: true },
   interest2: { type: String, required: true },
   interest3: { type: String, required: true },
   profile: { type: String, required: true },
-  list_num: { type: Number, required: true, default: 0 },
-  date_join: { type: Date, required: true, default: Date.now },
-  noti_apply: { type: Number, required: true, default: 1 },
-  noti_recvap: { type: Number, required: true, default: 1 },
-  noti_vol: { type: Number, required: true, default: 1 },
+  listNum: { type: Number, required: true, default: 0 },
+  dateJoin: { type: Date, required: true, default: Date.now },
+  notiApply: { type: Number, default: 1 },
+  notiRecv: { type: Number, default: 1 },
+  notiVol: { type: Number, default: 1 },
   image: {
     data: Buffer,
     contentsType: String,
@@ -22,46 +22,40 @@ const memberSchema = new mongoose.Schema({
   },
   friend: {
     type: [{
-      f_id: {
-        type: String,
+      fId: {
+        type: mongoose.Schema.Types.ObjectId,
+        requied: true,
       },
-      f_date: {
+      fDate: {
         type: Date,
         default: Date.now(),
       },
     }],
     default: [],
   },
-}, { minimize: false });
-
-// memberSchema.plugin(autoIncrement.plugin, {
-//     model: 'members',
-//     field: 'num',
-//     startAt: 1,
-//     incrementBy: 1
-// });
+}, { minimize: false, timestamps: true });
 
 // 이미지 처리 필요
 
 // 친구 신청 처리 필요
 
 // 친구 추가 (양쪽)
-memberSchema.statics.addFriend = function (req, user_id) {
+memberSchema.statics.addFriend = function (req, userId) {
   this.update(
-    { id: user_id },
+    { id: userId },
     { // 내쪽에 추가
       $push: {
         friend: {
-          f_id: req.body.f_id,
+          fId: req.body.fId,
         },
       },
     },
   ).update(
-    { id: req.body.id },
+    { id: req.body.fId },
     { // 쟤쪽에 추가
       $push: {
         friend: {
-          f_id: user_id,
+          fId: userId,
         },
       },
     },
@@ -69,23 +63,23 @@ memberSchema.statics.addFriend = function (req, user_id) {
 };
 
 // 친구 끊기 (양쪽)
-memberSchema.statics.removeFriend = function (req, user_id) {
+memberSchema.statics.removeFriend = function (req, userId) {
   this.update( // 내쪽에서 삭제
-    { id: user_id },
+    { id: userId },
     {
       $pull: {
         friend: {
-          f_id: req.body.f_id,
+          fId: req.body.fId,
         },
       },
     },
   )
     .update( // 쟤쪽에서 삭제
-      { id: req.body.id },
+      { id: req.body.fId },
       {
         $pull: {
           friend: {
-            f_id: user_id,
+            fId: userId,
           },
         },
       },
@@ -103,8 +97,8 @@ memberSchema.methods.comparePassword = function (inputPwd, memberPwd, cb) {
 };
 
 // 마이페이지에서 개인정보 조회 시
-memberSchema.statics.mypageInfo = function (user_id) {
-  return this.find({ id: user_id });
+memberSchema.statics.mypageInfo = function (userId) {
+  return this.find({ id: userId });
 };
 
 // 마이페이지에서 개인정보 변경 시
@@ -114,7 +108,7 @@ memberSchema.statics.updateMyInfo = function (req) {
     {
       $set: {
         name: req.body.name,
-        s_num: req.body.s_num,
+        sNum: req.body.sNum,
         interest1: req.body.interest1,
         interest2: req.body.interest2,
         interest3: req.body.interest3,
@@ -141,17 +135,17 @@ memberSchema.statics.updateMyNoti = function (req) {
     { id: req.body.id },
     {
       $set: {
-        noti_apply: req.body.noti_apply,
-        noti_recvap: req.body.noti_recvap,
-        noti_vol: req.body.noti_vol,
+        notiApply: req.body.notiApply,
+        notiRecv: req.body.notiRecv,
+        notiVol: req.body.notiVol,
       },
     },
   );
 };
 
 // 회원탈퇴
-memberSchema.statics.deleteSign = function (user_id) {
-  return this.remove({ id: user_id });
+memberSchema.statics.deleteSign = function (userId) {
+  return this.remove({ id: userId });
 };
 
 export default connection.model('members', memberSchema);
