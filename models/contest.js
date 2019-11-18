@@ -119,4 +119,4 @@ contestSchema.query.sortByTitle = function (order) {
   return this.sort({ title: order });
 };
 
-export default connection.model('contestboards', contestSchema);
+export default connection.model('contestBoards', contestSchema);

@@ -61,4 +61,4 @@ applyContestSchema.statics.findApplyC = function (item_kind, item_num, user_id) 
   });
 };
 
-export default connection.model('contestapplies', applyContestSchema);
+export default connection.model('contestApplies', applyContestSchema);

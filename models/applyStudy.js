@@ -59,4 +59,4 @@ applyStudySchema.statics.findApplyS = function (item_kind, item_num, user_id) {
   });
 };
 
-export default connection.model('studyapplies', applyStudySchema);
+export default connection.model('studyApplies', applyStudySchema);
