@@ -77,7 +77,7 @@ applyStudySchema.statis = {
       if (!result.length) {
         return true;
       }
-    })
+    });
   },
   // 신청 한 게시물이 받아들여졌는지 확인
   isConfirmed: function (userId, kind, itemNum) {
@@ -94,7 +94,7 @@ applyStudySchema.statis = {
         return true;
       }
     });
-  }
+  },
 };
 
 export default connection.model('studyApplies', applyStudySchema);

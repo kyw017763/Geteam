@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
-import Member from './member';
 
 autoIncrement.initialize(connection);
 
 const noteSchema = new mongoose.Schema({
   idx: { type: Number, required: true, unique: true }, // A.I
-  memRecv: { type: mongoose.Schema.Types.ObjectId, required: true },
-  memSend: { type: mongoose.Schema.Types.ObjectId, required: true },
+  memRecv: { type: String, required: true },
+  memSend: { type: String, required: true },
   content: { type: String, required: true },
   recvChk: { type: Number, default: 0 }, // 읽음 체크
   reChk: { type: Number, default: 0 }, // 대답인지
@@ -23,19 +22,38 @@ noteSchema.plugin(autoIncrement.plugin, {
   incrementBy: 1,
 });
 
-noteSchema.statics.saveNote = function (req) {
-  return this.create({
-    memRecv: Member.find({ id: req.body.recvId }),
-    memSend: Member.find({ id: req.body.sendId }),
-    content: req.body.content,
-  });
-};
-
-noteSchema.statics.updateNote = function (req) {
-  this.update(
-    { idx: req.body.idx },
-    { $set: { recvChk: 1 } },
-  );
+noteSchema.statics = {
+  createNote: function (req) {
+    return this.create({
+      memRecv: req.body.recvId,
+      memSend: req.body.sendId,
+      content: req.body.content,
+    });
+  },
+  createNoteReturn: function (req) {
+    return this.create({
+      memRecv: req.body.recvId,
+      memSend: req.body.sendId,
+      content: req.body.content,
+      reChk: 1,
+    });
+  },
+  updateNote: function (userId, content) {
+    return this.findOneAndUpdate({ id: userId }, {
+      $set: {
+        content,
+      },
+    });
+  },
+  removeNote: function (idx) {
+    return this.findOneAndDelete({ idx });
+  },
+  updateReadChk: function (idx) {
+    this.update(
+      { idx },
+      { $set: { recvChk: 1 } },
+    );
+  },
 };
 
 export default mongoose.model('notes', noteSchema);

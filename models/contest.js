@@ -55,12 +55,12 @@ contestSchema.statics = {
   },
   // 내가 작성한 conteset 종류별로 받아오기
   getContestByKind: function (userId, kind) {
-    return this.find( { mem: userId, kind });
+    return this.find({ mem: userId, kind });
   },
   // 현재 contest 받아오기'
   getContestByNum: function (num) {
     return this.find({
-      num
+      num,
     });
   },
   // 검색
@@ -99,7 +99,7 @@ contestSchema.statics = {
     );
   },
   // applyNum 하나 올리기
-  updateApplyNum: function (req) {
+  updateApplyNum: function (num) {
     return this.findOneAndUpdate(
       { num },
       { $inc: { applyNum: 1 } },
@@ -109,7 +109,7 @@ contestSchema.statics = {
   enableModify: function (num) {
     this.find({
       num,
-      applyNum: 0
+      applyNum: 0,
     }, (err, result) => {
       if (err) {
         return false;
@@ -134,7 +134,7 @@ contestSchema.statics = {
         return true;
       }
     });
-  }
+  },
 };
 
 // 정렬 (1, -1)

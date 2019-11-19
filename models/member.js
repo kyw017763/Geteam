@@ -53,25 +53,26 @@ memberSchema.statics = {
   },
   updateMember: function (userId, req) {
     return this.findOneAndUpdate({ id: userId }, {
-        $set: {
-          name: req.body.name,
-          sNum: req.body.sNum,
-          interest1: req.body.interest1,
-          interest2: req.body.interest2,
-          interest3: req.body.interest3,
-          profile: req.body.profile,
-        }
+      $set: {
+        name: req.body.name,
+        sNum: req.body.sNum,
+        interest1: req.body.interest1,
+        interest2: req.body.interest2,
+        interest3: req.body.interest3,
+        profile: req.body.profile,
+      },
     });
   },
   updatePwd: function (userId, newPwd) {
-    let pwd = this.find({ id: userId }).select('pwd');
+    const pwd = this.find({ id: userId }).select('pwd');
 
-    if(pwd === newPwd) {
+    if (pwd === newPwd) {
       return false;
+    // eslint-disable-next-line no-else-return
     } else {
       this.update(
-        { id: req.body.id },
-        { $set: { pwd: req.body.newpwd } },
+        { id: userId },
+        { $set: { pwd: newPwd } },
       );
       return true;
     }
@@ -91,56 +92,54 @@ memberSchema.statics = {
   removeMember: function (userId) {
     return this.findOneAndDelete({ id: userId });
   },
-};
 
-
-// 이미지 처리 필요
-// 친구 신청 처리 필요
-// 친구 추가 (양쪽)
-memberSchema.statics.addFriend = function (req, userId) {
-  this.update(
-    { id: userId },
-    { // 내쪽에 추가
-      $push: {
-        friend: {
-          fId: req.body.fId,
+  addFriend: function (userId, req) {
+    this.update(
+      { id: userId },
+      { // 내쪽에 추가
+        $push: {
+          friend: {
+            fId: req.body.fId,
+          },
         },
       },
-    },
-  ).update(
-    { id: req.body.fId },
-    { // 쟤쪽에 추가
-      $push: {
-        friend: {
-          fId: userId,
-        },
-      },
-    },
-  );
-};
-
-// 친구 끊기 (양쪽)
-memberSchema.statics.removeFriend = function (req, userId) {
-  this.update( // 내쪽에서 삭제
-    { id: userId },
-    {
-      $pull: {
-        friend: {
-          fId: req.body.fId,
-        },
-      },
-    },
-  )
-    .update( // 쟤쪽에서 삭제
+    ).update(
       { id: req.body.fId },
-      {
-        $pull: {
+      { // 쟤쪽에 추가
+        $push: {
           friend: {
             fId: userId,
           },
         },
       },
     );
+  },
+  removeFriend: function (userId, friendId) {
+    this.update( // 내쪽에서 삭제
+      { id: userId },
+      {
+        $pull: {
+          friend: {
+            fId: friendId,
+          },
+        },
+      },
+    )
+      .update( // 쟤쪽에서 삭제
+        { id: friendId },
+        {
+          $pull: {
+            friend: {
+              fId: userId,
+            },
+          },
+        },
+      );
+  },
 };
+
+// TODO: 이미지 처리 필요
+// TODO: 친구 신청 처리 필요
+// TODO: 친구 추가 (양쪽)
 
 export default connection.model('members', memberSchema);

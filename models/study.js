@@ -53,12 +53,12 @@ studySchema.statics = {
   },
   // 내가 작성한 study 종류별로 받아오기
   getSutydByKind: function (userId, kind) {
-    return this.find( { mem: userId, kind });
+    return this.find({ mem: userId, kind });
   },
   // 현재 study 받아오기'
   getStudyByNum: function (num) {
     return this.find({
-      num
+      num,
     });
   },
   // 검색
@@ -96,7 +96,7 @@ studySchema.statics = {
     );
   },
   // applyNum 하나 올리기
-  updateApplyNum: function (req) {
+  updateApplyNum: function (num) {
     return this.findOneAndUpdate(
       { num },
       { $inc: { applyNum: 1 } },
@@ -106,7 +106,7 @@ studySchema.statics = {
   enableModify: function (num) {
     this.find({
       num,
-      applyNum: 0
+      applyNum: 0,
     }, (err, result) => {
       if (err) {
         return false;
@@ -131,7 +131,7 @@ studySchema.statics = {
         return true;
       }
     });
-  }
+  },
 };
 
 // 정렬 (1, -1)
