@@ -10,8 +10,8 @@ const memberSchema = new mongoose.Schema({
   interest2: { type: String, required: true },
   interest3: { type: String, required: true },
   profile: { type: String, required: true },
-  listNum: { type: Number, required: true, default: 0 },
-  dateJoin: { type: Date, required: true, default: Date.now },
+  listNum: { type: Number, default: 0 },
+  // 가입일은 createdAt 으로 대신한다
   notiApply: { type: Number, default: 1 },
   notiRecv: { type: Number, default: 1 },
   notiVol: { type: Number, default: 1 },
@@ -23,7 +23,7 @@ const memberSchema = new mongoose.Schema({
   friend: {
     type: [{
       fId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         requied: true,
       },
       fDate: {
@@ -35,10 +35,67 @@ const memberSchema = new mongoose.Schema({
   },
 }, { minimize: false, timestamps: true });
 
+memberSchema.statics = {
+  createMember: function (req) {
+    return this.create({
+      id: req.body.id,
+      name: req.body.name,
+      pwd: req.body.pwd,
+      sNum: req.body.sNum,
+      interest1: req.body.interest1,
+      interest2: req.body.interest2,
+      interest3: req.body.interest3,
+      profile: req.body.profile,
+    });
+  },
+  getMember: function (userId) {
+    return this.find({ id: userId });
+  },
+  updateMember: function (userId, req) {
+    return this.findOneAndUpdate({ id: userId }, {
+        $set: {
+          name: req.body.name,
+          sNum: req.body.sNum,
+          interest1: req.body.interest1,
+          interest2: req.body.interest2,
+          interest3: req.body.interest3,
+          profile: req.body.profile,
+        }
+    });
+  },
+  updatePwd: function (userId, newPwd) {
+    let pwd = this.find({ id: userId }).select('pwd');
+
+    if(pwd === newPwd) {
+      return false;
+    } else {
+      this.update(
+        { id: req.body.id },
+        { $set: { pwd: req.body.newpwd } },
+      );
+      return true;
+    }
+  },
+  updateNoti: function (userId, req) {
+    return this.update(
+      { id: userId },
+      {
+        $set: {
+          notiApply: req.body.notiApply,
+          notiRecv: req.body.notiRecv,
+          notiVol: req.body.notiVol,
+        },
+      },
+    );
+  },
+  removeMember: function (userId) {
+    return this.findOneAndDelete({ id: userId });
+  },
+};
+
+
 // 이미지 처리 필요
-
 // 친구 신청 처리 필요
-
 // 친구 추가 (양쪽)
 memberSchema.statics.addFriend = function (req, userId) {
   this.update(
@@ -84,68 +141,6 @@ memberSchema.statics.removeFriend = function (req, userId) {
         },
       },
     );
-};
-
-memberSchema.methods.comparePassword = function (inputPwd, memberPwd, cb) {
-  if (inputPwd === memberPwd) {
-    console.log('same');
-    cb(null, true);
-  } else {
-    console.log('not same');
-    cb('error');
-  }
-};
-
-// 마이페이지에서 개인정보 조회 시
-memberSchema.statics.mypageInfo = function (userId) {
-  return this.find({ id: userId });
-};
-
-// 마이페이지에서 개인정보 변경 시
-memberSchema.statics.updateMyInfo = function (req) {
-  return this.update(
-    { id: req.body.id },
-    {
-      $set: {
-        name: req.body.name,
-        sNum: req.body.sNum,
-        interest1: req.body.interest1,
-        interest2: req.body.interest2,
-        interest3: req.body.interest3,
-        profile: req.body.profile,
-      },
-    },
-  );
-};
-
-// 마이페이지에서 비밀번호 변경 시
-// 현재 비밀번호 같은지 확인하고 새로운 비밀번호로 변경
-memberSchema.statics.updateMyPwd = function (req) {
-  if (!(this.find({ id: req.body.id, pwd: req.body.pwd }))) {
-    return this.update(
-      { id: req.body.id },
-      { $set: { pwd: req.body.newpwd } },
-    );
-  }
-};
-
-// 마이페이지에서 알림 변경 시
-memberSchema.statics.updateMyNoti = function (req) {
-  return this.update(
-    { id: req.body.id },
-    {
-      $set: {
-        notiApply: req.body.notiApply,
-        notiRecv: req.body.notiRecv,
-        notiVol: req.body.notiVol,
-      },
-    },
-  );
-};
-
-// 회원탈퇴
-memberSchema.statics.deleteSign = function (userId) {
-  return this.remove({ id: userId });
 };
 
 export default connection.model('members', memberSchema);

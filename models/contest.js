@@ -1,23 +1,22 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
-import Member from './member';
 
 autoIncrement.initialize(connection);
 
 const contestSchema = new mongoose.Schema({
   num: { type: Number, required: true, unique: true }, // A.I
   kind: { type: String, required: true },
-  mem: { type: mongoose.Schema.Types.ObjectId, required: true },
+  mem: { type: String, required: true },
   topic: { type: String, required: true },
   part: { type: String, required: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
   wantNum: { type: Number, required: true },
-  applyNum: { type: Number, required: true },
+  applyNum: { type: Number, default: 0 },
   // startDay는 createdAt 으로 대신한다
   endDay: { type: Date, required: true },
-  hit: { type: Number, required: true, default: 0 },
+  hit: { type: Number, default: 0 },
   teamChk: { type: Number, default: 0 },
 }, {
   timestamps: true,
@@ -31,77 +30,111 @@ contestSchema.plugin(autoIncrement.plugin, {
   incrementBy: 1,
 });
 
-contestSchema.statics.saveContestItem = function (req) {
-  return this.create({
-    kind: req.body.kind,
-    mem: Member.find({ id: req.body.idApply }),
-    topic: req.body.topic,
-    part: req.body.part,
-    title: req.body.title,
-    content: req.body.content,
-    wantNum: req.body.wantNum,
-    applyNum: req.body.applyNum,
-    endDay: req.body.endDay,
-  });
-};
-
-
-contestSchema.statics.updateHit = function (req) {
-  return this.update(
-    { num: req.body.num },
-    { $inc: { hit: 1 } },
-  );
-};
-
-// 신청 인원이 한 명 이상이라면 수정할 수 없다는 것 명시
-contestSchema.statics.updateItemContest = function (req) {
-  return this.update(
-    { num: req.body.num },
-    {
-      $set: {
-        part: req.body.part,
-        title: req.body.title,
-        content: req.body.content,
-        wantNum: req.body.wantNum,
-        endDay: req.body.endDay,
-      },
-    },
-  );
-};
-
-contestSchema.statics.deleteItemContest = function (req) {
-  return this.remove({ num: req.body.num });
-};
-
-// List 시 검색
-contestSchema.static.allItem = function () {
-  return this.find();
-};
-contestSchema.static.subjectItem = function (kind) {
-  return this.find({ kind });
-};
-
-// View 시 검색
-contestSchema.static.viewItem = function (kind, num) {
-  return this.find({
-    num,
-    kind,
-  });
-};
-
-// 검색
-contestSchema.statics.findItem = function (keyword) {
-  // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
-  return this.find().or(
-    [
-      { id: { $regex: keyword } },
-      { name: { $regex: keyword } },
-      { topic: { $regex: keyword } },
-      { part: { $regex: keyword } },
-      { title: { $regex: keyword } },
-      { content: { $regex: keyword } },
-    ],
-  );
+contestSchema.statics = {
+  // contest 등록
+  createContest: function (userId, req) {
+    return this.create({
+      kind: req.body.kind,
+      mem: userId,
+      topic: req.body.topic,
+      part: req.body.part,
+      title: req.body.title,
+      content: req.body.content,
+      wantNum: req.body.wantNum,
+      applyNum: req.body.applyNum,
+      endDay: req.body.endDay,
+    });
+  },
+  // 모든 contest 받아오기
+  getContests: function () {
+    return this.find({});
+  },
+  // 내가 작성한 모든 contest 받아오기 - listNum과 연결
+  getContestById: function (userId) {
+    return this.find({ mem: userId });
+  },
+  // 내가 작성한 conteset 종류별로 받아오기
+  getContestByKind: function (userId, kind) {
+    return this.find( { mem: userId, kind });
+  },
+  // 현재 contest 받아오기'
+  getContestByNum: function (num) {
+    return this.find({
+      num
+    });
+  },
+  // 검색
+  searchContest: function (keyword) {
+    // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
+    return this.find().or(
+      [
+        { id: { $regex: keyword } },
+        { name: { $regex: keyword } },
+        { topic: { $regex: keyword } },
+        { part: { $regex: keyword } },
+        { title: { $regex: keyword } },
+        { content: { $regex: keyword } },
+      ],
+    );
+  },
+  // 내가 작성한 contest 변경하기
+  updateContest: function (userId, req) {
+    return this.findOneAndUpdate({ mem: userId, num: req.body.num }, {
+      part: req.body.part,
+      title: req.body.title,
+      content: req.body.content,
+      wantNum: req.body.wantNum,
+      endDay: req.body.endDay,
+    }, { returnNewDocument: true });
+  },
+  // 내거 작성한 contest 삭제하기
+  removeContest: function (userId, num) {
+    return this.findOneAndDelete({ mem: userId, num });
+  },
+  // 조회수 하나 올리기
+  updateHit: function (num) {
+    return this.findOneAndUpdate(
+      { num },
+      { $inc: { hit: 1 } },
+    );
+  },
+  // applyNum 하나 올리기
+  updateApplyNum: function (req) {
+    return this.findOneAndUpdate(
+      { num },
+      { $inc: { applyNum: 1 } },
+    );
+  },
+  // 수정이 가능한지 확인 - 신청 인원이 한 명 이상이라면 수정할 수 없음
+  enableModify: function (num) {
+    this.find({
+      num,
+      applyNum: 0
+    }, (err, result) => {
+      if (err) {
+        return false;
+      }
+      // 조건을 충족하면 true
+      if (result.length) {
+        return true;
+      }
+    });
+  },
+  // 신청이 가능한지 확인
+  enableApply: function (num) {
+    this.find({
+      num,
+      teamChk: 0,
+    }, (err, result) => {
+      if (err) {
+        return false;
+      }
+      // 조건을 충족하면 true
+      if (!result.length) {
+        return true;
+      }
+    });
+  }
 };
 
 // 정렬 (1, -1)

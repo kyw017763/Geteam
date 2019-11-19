@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
-import Member from './member';
 
 autoIncrement.initialize(connection);
 
@@ -9,8 +8,8 @@ const applyStudySchema = new mongoose.Schema({
   num: { type: Number, required: true, unique: true }, // A.I
   kind: { type: String, required: true },
   itemNum: { type: Number, required: true },
-  memApply: { type: mongoose.Schema.Types.ObjectId, required: true },
-  memRecv: { type: mongoose.Schema.Types.ObjectId, required: true },
+  memApply: { type: String, required: true },
+  memRecv: { type: String, required: true },
   topic: { type: String, required: true, trim: true },
   title: { type: String, required: true, trim: true },
   portfolio: { type: String, required: true, trim: true },
@@ -27,33 +26,75 @@ applyStudySchema.plugin(autoIncrement.plugin, {
   incrementBy: 1,
 });
 
-applyStudySchema.statics.saveApplyS = function (req) {
-  return this.create({
-    kind: req.body.kind,
-    itemNum: req.body.itemNum,
-    memApply: Member.find({ id: req.body.idApply }),
-    memRecv: Member.find({ id: req.body.idRecv }),
-    topic: req.body.topic,
-    title: req.body.title,
-    portfolio: req.body.portfolio,
-    want: req.body.want,
-  });
-};
-
-applyStudySchema.statics.findApplyS = function (itemKind, itemNum, userId) {
-  // kind, list_num, user_id 비교해서 true면 이미 신청한 것으로 판단
-  this.find({
-    kind: itemKind,
-    num: itemNum,
-    memApply: Member.find({ id: userId }),
-  }, (err, results) => {
-    if (err) {
-      return false;
-    }
-    if (!results.length) {
-      return true;
-    }
-  });
+applyStudySchema.statis = {
+  createApplyStudy: function (req) {
+    return this.create({
+      kind: req.body.kind,
+      itemNum: req.body.itemNum,
+      memApply: req.body.idApply,
+      memRecv: req.body.idRecv,
+      topic: req.body.topic,
+      title: req.body.title,
+      portfolio: req.body.portfolio,
+      want: req.body.want,
+    });
+  },
+  // 모든 신청 받아오기
+  getApplyContests: function () {
+    return this.find({});
+  },
+  // 내가 한 모든 신청 받아오기
+  getApplyContestById: function (userId) {
+    return this.find({ memApply: userId });
+  },
+  // 내가 한 신청 종류별로 받아오기
+  getApplyContestByIdAndKind: function (userId, kind) {
+    return this.find({ memApply: userId, kind });
+  },
+  // 내가 한 신청 변경하기
+  updateApplyContest: function (userId, req) {
+    return this.findOneAndUpdate({ memApply: userId, itemNum: req.body.itemNum }, {
+      topic: req.body.topic,
+      title: req.body.title,
+      portfolio: req.body.portfolio,
+      want: req.body.want,
+    }, { returnNewDocument: true });
+  },
+  // 내가 한 신청 삭제하기
+  removeApplyContest: function (userId, itemNum) {
+    return this.findOneAndDelete({ memApply: userId, itemNum });
+  },
+  // 신청 한 게시물인지 확인
+  isApplied: function (userId, kind, itemNum) {
+    this.find({
+      kind,
+      itemNum,
+      memApply: userId,
+    }, (err, result) => {
+      if (err) {
+        return false;
+      }
+      if (!result.length) {
+        return true;
+      }
+    })
+  },
+  // 신청 한 게시물이 받아들여졌는지 확인
+  isConfirmed: function (userId, kind, itemNum) {
+    this.find({
+      kind,
+      itemNum,
+      memApply: userId,
+      applyChk: 1,
+    }, (err, result) => {
+      if (err) {
+        return false;
+      }
+      if (!result.length) {
+        return true;
+      }
+    });
+  }
 };
 
 export default connection.model('studyApplies', applyStudySchema);

@@ -20,5 +20,4 @@ const models = {
   // $MODEL$ insert new model here
 };
 
-
 export default models;
