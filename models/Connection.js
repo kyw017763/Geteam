@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const url = 'mongodb://localhost:27017/zteam';
 const connection = mongoose.createConnection(
-  url, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true }, (err) => {
+url, { useNewUrlParser: true, useFindAndModify: false, useCreateIndex: true, useUnifiedTopology: true }, (err) => {
     if (err) {
       console.log('Connected failed');
     }

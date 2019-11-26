@@ -4,6 +4,8 @@ import ejs from 'ejs';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import flash from 'connect-flash';
+import redis from 'redis';
+import connectRedis from 'connect-redis';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import parseJson from 'parse-json';
@@ -17,6 +19,9 @@ import mypage from './routes/mypage';
 
 const app = express();
 
+const RedisStore = connectRedis(session);
+const client = redis.createClient();
+
 app.use(session({
   secret: 'yewon kim',
   resave: false,
@@ -24,6 +29,7 @@ app.use(session({
   cookie: {
     maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
   },
+  store: new RedisStore({ client, logErrors: true }),
 }));
 
 app.use(passport.initialize());
