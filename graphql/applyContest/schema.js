@@ -1,21 +1,28 @@
 export const typeDef = `
     extend type Query {
         applyContest: ApplyContest
-        ApplyContest(id: ID!): ApplyContest
+        ApplyContest(userId: String!): ApplyContest
+        applyContestByKind(userId: String!, kind: String!): [ApplyContest]
         allApplyContest(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): [ApplyContest]
-        _allApplyContestMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): ListMetaData
     }
     extend type Mutation {
-        createApplyContest(applyContestId: Int!, applyContestName: String!, teacher: String!, score: String): ApplyContest
-        updateApplyContest(id: ID!, applyContestId: Int!, applyContestName: String!, teacher: String!, score: String): ApplyContest
-        removeApplyContest(id: ID!): ApplyContest
+        createApplyContest(kind: String!, itemNum: Int!, memApply: String!, memRecv: String!, topic: String!, title: String!, part: String!, portfolio: String!, want: String!): ApplyContest
+        updateApplyContest(userId: String!, itemNum: Int!, topic: String!, title: String!, part: String!, portfolio: String!, want: String!): ApplyContest
+        removeApplyContest(userId: String!, itemNum: Int!): ApplyContest
     }
     type ApplyContest implements Node {
         id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
-        applyContestId: Int!
-        applyContestName: String!
-        teacher: String!
-        score: String
+        num: Int!,
+        kind: String!
+        itemNum: Int!
+        memApply: String!
+        memRecv: String!
+        topic: String!
+        title: String!
+        part: String!
+        portfolio: String!
+        want: String!
+        applyChk: Int
     }`;

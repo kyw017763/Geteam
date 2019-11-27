@@ -27,37 +27,28 @@ applyStudySchema.plugin(autoIncrement.plugin, {
 });
 
 applyStudySchema.statis = {
-  createApplyStudy: function (req) {
+  createApplyStudy:
+  function (kind, itemNum, memApply, memRecv, topic, title, portfolio, want) {
     return this.create({
-      kind: req.body.kind,
-      itemNum: req.body.itemNum,
-      memApply: req.body.idApply,
-      memRecv: req.body.idRecv,
-      topic: req.body.topic,
-      title: req.body.title,
-      portfolio: req.body.portfolio,
-      want: req.body.want,
+      kind, itemNum, memApply, memRecv, topic, title, portfolio, want,
     });
   },
   // 모든 신청 받아오기
-  getApplyContests: function () {
+  getApplyStudies: function () {
     return this.find({});
   },
   // 내가 한 모든 신청 받아오기
-  getApplyContestById: function (userId) {
+  getApplyStudyById: function (userId) {
     return this.find({ memApply: userId });
   },
   // 내가 한 신청 종류별로 받아오기
-  getApplyContestByIdAndKind: function (userId, kind) {
+  getApplyStudyByIdAndKind: function (userId, kind) {
     return this.find({ memApply: userId, kind });
   },
   // 내가 한 신청 변경하기
-  updateApplyContest: function (userId, req) {
-    return this.findOneAndUpdate({ memApply: userId, itemNum: req.body.itemNum }, {
-      topic: req.body.topic,
-      title: req.body.title,
-      portfolio: req.body.portfolio,
-      want: req.body.want,
+  updateApplyStudy: function (userId, itemNum, topic, title, portfolio, want) {
+    return this.findOneAndUpdate({ memApply: userId, itemNum }, {
+      topic, title, portfolio, want,
     }, { returnNewDocument: true });
   },
   // 내가 한 신청 삭제하기

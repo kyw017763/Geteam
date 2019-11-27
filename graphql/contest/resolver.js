@@ -2,11 +2,14 @@ import { sortOpt, filterOption } from '../libs';
 
 export const resolver = {
   Query: {
-    contest: async (_parent, { id }, { models }) => {
-      return models.Contest.getContestById(id).lean({ virtuals: true });
+    contest: async (_parent, { userId }, { models }) => {
+      return models.Contest.getContestById(userId).lean({ virtuals: true });
     },
-    Contest: async (_parent, { id }, { models }) => {
-      return models.Contest.getContestById(id).lean({ virtuals: true });
+    Contest: async (_parent, { userId }, { models }) => {
+      return models.Contest.getContestById(userId).lean({ virtuals: true });
+    },
+    contestByKind: async (_parent, { userId, kind }, { models }) => {
+      return models.Contest.getContestByKind(userId, kind).lean({ virtuals: true });
     },
     allContest: async (_parent, {
       page, perPage, sortField, sortOrder, filter,
@@ -17,27 +20,24 @@ export const resolver = {
         .limit(perPage)
         .lean({ virtuals: true });
     },
-    _allContestMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.Contest.countDocuments(filterOption(filter)) };
-    },
   },
   Mutation: {
     createContest: async (_parent, {
-      contestId, contestName, teacher, score,
+      userId, kind, topic, part, title, content, wantNum, applyNum, endDay,
     }, { models }) => {
       return await models.Contest.createContest({
-        contestId, contestName, teacher, score,
+        userId, kind, topic, part, title, content, wantNum, applyNum, endDay,
       });
     },
     updateContest: async (_parent, {
-      id, contestId, contestName, teacher, score,
+      userId, num, part, title, content, wantNum, endDay,
     }, { models }) => {
-      return await models.Contest.updateContest(id, {
-        contestId, contestName, teacher, score,
+      return await models.Contest.updateContest({
+        userId, num, part, title, content, wantNum, endDay,
       }).lean({ virtuals: true });
     },
-    removeContest: async (_parent, { id }, { models }) => {
-      return await models.Contest.removeContest(id);
+    removeContest: async (_parent, { userId, num }, { models }) => {
+      return await models.Contest.removeContest(userId, num);
     },
   },
   Contest: {

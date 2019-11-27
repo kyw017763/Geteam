@@ -29,17 +29,10 @@ applyContestSchema.plugin(autoIncrement.plugin, {
 
 applyContestSchema.statics = {
   // 신청하기
-  createApplyContest: function (req) {
+  createApplyContest:
+  function (kind, itemNum, memApply, memRecv, topic, title, part, portfolio, want) {
     return this.create({
-      kind: req.body.kind,
-      itemNum: req.body.itemNum,
-      memApply: req.body.idApply,
-      memRecv: req.body.idRecv,
-      topic: req.body.topic,
-      title: req.body.title,
-      part: req.body.part,
-      portfolio: req.body.portfolio,
-      want: req.body.want,
+      kind, itemNum, memApply, memRecv, topic, title, part, portfolio, want,
     });
   },
   // 모든 신청 받아오기
@@ -55,13 +48,9 @@ applyContestSchema.statics = {
     return this.find({ memApply: userId, kind });
   },
   // 내가 한 신청 변경하기
-  updateApplyContest: function (userId, req) {
-    return this.findOneAndUpdate({ memApply: userId, itemNum: req.body.itemNum }, {
-      topic: req.body.topic,
-      title: req.body.title,
-      part: req.body.part,
-      portfolio: req.body.portfolio,
-      want: req.body.want,
+  updateApplyContest: function (userId, itemNum, topic, title, part, portfolio, want) {
+    return this.findOneAndUpdate({ memApply: userId, itemNum }, {
+      topic, title, part, portfolio, want,
     }, { returnNewDocument: true });
   },
   // 내가 한 신청 삭제하기

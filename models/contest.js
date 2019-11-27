@@ -32,17 +32,9 @@ contestSchema.plugin(autoIncrement.plugin, {
 
 contestSchema.statics = {
   // contest 등록
-  createContest: function (userId, req) {
+  createContest: function (userId, kind, topic, part, title, content, wantNum, applyNum, endDay) {
     return this.create({
-      kind: req.body.kind,
-      mem: userId,
-      topic: req.body.topic,
-      part: req.body.part,
-      title: req.body.title,
-      content: req.body.content,
-      wantNum: req.body.wantNum,
-      applyNum: req.body.applyNum,
-      endDay: req.body.endDay,
+      kind, mem: userId, topic, part, title, content, wantNum, applyNum, endDay,
     });
   },
   // 모든 contest 받아오기
@@ -78,13 +70,9 @@ contestSchema.statics = {
     );
   },
   // 내가 작성한 contest 변경하기
-  updateContest: function (userId, req) {
-    return this.findOneAndUpdate({ mem: userId, num: req.body.num }, {
-      part: req.body.part,
-      title: req.body.title,
-      content: req.body.content,
-      wantNum: req.body.wantNum,
-      endDay: req.body.endDay,
+  updateContest: function (userId, num, part, title, content, wantNum, endDay) {
+    return this.findOneAndUpdate({ mem: userId, num }, {
+      part, title, content, wantNum, endDay,
     }, { returnNewDocument: true });
   },
   // 내거 작성한 contest 삭제하기
@@ -151,4 +139,4 @@ contestSchema.query.sortByTitle = function (order) {
   return this.sort({ title: order });
 };
 
-export default connection.model('contestBoards', contestSchema);
+export default connection.model('contest', contestSchema);

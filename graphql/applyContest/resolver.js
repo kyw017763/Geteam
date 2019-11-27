@@ -2,11 +2,14 @@ import { sortOpt, filterOption } from '../libs';
 
 export const resolver = {
   Query: {
-    applyContest: async (_parent, { id }, { models }) => {
-      return models.ApplyContest.getApplyContestById(id).lean({ virtuals: true });
+    applyContest: async (_parent, { userId }, { models }) => {
+      return models.ApplyContest.getApplyContestById(userId).lean({ virtuals: true });
     },
-    ApplyContest: async (_parent, { id }, { models }) => {
-      return models.ApplyContest.getApplyContestById(id).lean({ virtuals: true });
+    ApplyContest: async (_parent, { userId }, { models }) => {
+      return models.ApplyContest.getApplyContestById(userId).lean({ virtuals: true });
+    },
+    applyContestByKind: async (_parent, { userId, kind }, { models }) => {
+      return models.ApplyContest.getApplyContestByIdAndKind(userId, kind).lean({ virtuals: true });
     },
     allApplyContest: async (_parent, {
       page, perPage, sortField, sortOrder, filter,
@@ -17,27 +20,24 @@ export const resolver = {
         .limit(perPage)
         .lean({ virtuals: true });
     },
-    _allApplyContestMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.ApplyContest.countDocuments(filterOption(filter)) };
-    },
   },
   Mutation: {
     createApplyContest: async (_parent, {
-      applyContestId, applyContestName, teacher, score,
+      kind, itemNum, memApply, memRecv, topic, title, part, portfolio, want,
     }, { models }) => {
-      return await models.ApplyContest.createApplyContest({
-        applyContestId, applyContestName, teacher, score,
-      });
+      return await models.ApplyContest.createApplyContest(
+        kind, itemNum, memApply, memRecv, topic, title, part, portfolio, want,
+      );
     },
     updateApplyContest: async (_parent, {
-      id, applyContestId, applyContestName, teacher, score,
+      userId, itemNum, topic, title, part, portfolio, want,
     }, { models }) => {
-      return await models.ApplyContest.updateApplyContest(id, {
-        applyContestId, applyContestName, teacher, score,
-      }).lean({ virtuals: true });
+      return await models.ApplyContest.updateApplyContest(
+        userId, itemNum, topic, title, part, portfolio, want,
+      ).lean({ virtuals: true });
     },
-    removeApplyContest: async (_parent, { id }, { models }) => {
-      return await models.ApplyContest.removeApplyContest(id);
+    removeApplyContest: async (_parent, { userId, itemNum }, { models }) => {
+      return await models.ApplyContest.removeApplyContest(userId, itemNum);
     },
   },
   ApplyContest: {

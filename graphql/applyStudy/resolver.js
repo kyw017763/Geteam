@@ -2,11 +2,14 @@ import { sortOpt, filterOption } from '../libs';
 
 export const resolver = {
   Query: {
-    applyStudy: async (_parent, { id }, { models }) => {
-      return models.ApplyStudy.getApplyStudyById(id).lean({ virtuals: true });
+    applyStudy: async (_parent, { userId }, { models }) => {
+      return models.ApplyStudy.getApplyStudyById(userId).lean({ virtuals: true });
     },
-    ApplyStudy: async (_parent, { id }, { models }) => {
-      return models.ApplyStudy.getApplyStudyById(id).lean({ virtuals: true });
+    ApplyStudy: async (_parent, { userId }, { models }) => {
+      return models.ApplyStudy.getApplyStudyById(userId).lean({ virtuals: true });
+    },
+    applyStudyByKind: async (_parent, { userId, kind }, { models }) => {
+      return models.ApplyStudy.getApplyStudyByIdAndKind(userId, kind).lean({ virtuals: true });
     },
     allApplyStudy: async (_parent, {
       page, perPage, sortField, sortOrder, filter,
@@ -17,27 +20,24 @@ export const resolver = {
         .limit(perPage)
         .lean({ virtuals: true });
     },
-    _allApplyStudyMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.ApplyStudy.countDocuments(filterOption(filter)) };
-    },
   },
   Mutation: {
     createApplyStudy: async (_parent, {
-      applyStudyId, applyStudyName, teacher, score,
+      kind, itemNum, memApply, memRecv, topic, title, portfolio, want,
     }, { models }) => {
       return await models.ApplyStudy.createApplyStudy({
-        applyStudyId, applyStudyName, teacher, score,
+        kind, itemNum, memApply, memRecv, topic, title, portfolio, want,
       });
     },
     updateApplyStudy: async (_parent, {
-      id, applyStudyId, applyStudyName, teacher, score,
+      userId, itemNum, topic, title, portfolio, want,
     }, { models }) => {
-      return await models.ApplyStudy.updateApplyStudy(id, {
-        applyStudyId, applyStudyName, teacher, score,
+      return await models.ApplyStudy.updateApplyStudy({
+        userId, itemNum, topic, title, portfolio, want,
       }).lean({ virtuals: true });
     },
-    removeApplyStudy: async (_parent, { id }, { models }) => {
-      return await models.ApplyStudy.removeApplyStudy(id);
+    removeApplyStudy: async (_parent, { userId, itemNum }, { models }) => {
+      return await models.ApplyStudy.removeApplyStudy(userId, itemNum);
     },
   },
   ApplyStudy: {

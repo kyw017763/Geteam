@@ -31,16 +31,9 @@ studySchema.plugin(autoIncrement.plugin, {
 
 studySchema.statics = {
   // study 등록
-  createStudy: function (userId, req) {
+  createStudy: function (userId, kind, topic, title, content, wantNum, applyNum, endDay) {
     return this.create({
-      kind: req.body.kind,
-      mem: userId,
-      topic: req.body.topic,
-      title: req.body.title,
-      content: req.body.content,
-      wantNum: req.body.wantNum,
-      applyNum: req.body.applyNum,
-      endDay: req.body.endDay,
+      mem: userId, kind, topic, title, content, wantNum, applyNum, endDay,
     });
   },
   // 모든 study 받아오기
@@ -75,13 +68,9 @@ studySchema.statics = {
     );
   },
   // 내가 작성한 study 변경하기
-  updateStudy: function (userId, req) {
-    return this.findOneAndUpdate({ mem: userId, num: req.body.num }, {
-      part: req.body.part,
-      title: req.body.title,
-      content: req.body.content,
-      wantNum: req.body.wantNum,
-      endDay: req.body.endDay,
+  updateStudy: function (userId, num, part, title, content, wantNum, endDay) {
+    return this.findOneAndUpdate({ mem: userId, num }, {
+      part, title, content, wantNum, endDay,
     }, { returnNewDocument: true });
   },
   // 내거 작성한 study 삭제하기
@@ -140,4 +129,4 @@ studySchema.query.sortById = (order) => this.sort({ id: order });
 studySchema.query.sortByAuthor = (order) => this.sort({ name: order });
 studySchema.query.sortByTitle = (order) => this.sort({ title: order });
 
-export default connection.model('studyboards', studySchema);
+export default connection.model('study', studySchema);
