@@ -2,11 +2,11 @@ import { sortOpt, filterOption } from '../libs';
 
 export const resolver = {
   Query: {
-    member: async (_parent, { id }, { models }) => {
-      return models.Member.getMemberById(id).lean({ virtuals: true });
+    member: async (_parent, { userId }, { models }) => {
+      return models.Member.getMemberById(userId).lean({ virtuals: true });
     },
-    Member: async (_parent, { id }, { models }) => {
-      return models.Member.getMemberById(id).lean({ virtuals: true });
+    Member: async (_parent, { userId }, { models }) => {
+      return models.Member.getMemberById(userId).lean({ virtuals: true });
     },
     allMember: async (_parent, {
       page, perPage, sortField, sortOrder, filter,
@@ -17,27 +17,24 @@ export const resolver = {
         .limit(perPage)
         .lean({ virtuals: true });
     },
-    _allMemberMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.Member.countDocuments(filterOption(filter)) };
-    },
   },
   Mutation: {
     createMember: async (_parent, {
-      memberId, memberName, teacher, score,
+      id, name, pwd, sNum, interest1, interest2, interest3, profile,
     }, { models }) => {
       return await models.Member.createMember({
-        memberId, memberName, teacher, score,
+        id, name, pwd, sNum, interest1, interest2, interest3, profile,
       });
     },
     updateMember: async (_parent, {
-      id, memberId, memberName, teacher, score,
+      userId, name, sNum, interest1, interest2, interest3, profile,
     }, { models }) => {
-      return await models.Member.updateMember(id, {
-        memberId, memberName, teacher, score,
+      return await models.Member.updateMember({
+        userId, name, sNum, interest1, interest2, interest3, profile,
       }).lean({ virtuals: true });
     },
-    removeMember: async (_parent, { id }, { models }) => {
-      return await models.Member.removeMember(id);
+    removeMember: async (_parent, { userId }, { models }) => {
+      return await models.Member.removeMember(userId);
     },
   },
   Member: {

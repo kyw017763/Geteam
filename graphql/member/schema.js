@@ -1,21 +1,28 @@
 export const typeDef = `
     extend type Query {
         Member: Member
-        Member(id: ID!): Member
+        Member(useId: String!): Member
         allMember(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): [Member]
-        _allMemberMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): ListMetaData
     }
     extend type Mutation {
-        createMember(memberId: Int!, memberName: String!, teacher: String!, score: String): Member
-        updateMember(id: ID!, memberId: Int!, memberName: String!, teacher: String!, score: String): Member
-        removeMember(id: ID!): Member
+        createMember(id: String!, name: String!, pwd: String!, sNum: Int!, interest1: String!, interest2: String!, interest3: String!, profile: String!): Member
+        updateMember(userId: String!, name: String!, sNum: Int!, interest1: String!, interest2: String!, interest3: String!, profile: String!): Member
+        removeMember(userId: String!): Member
     }
     type Member implements Node {
         id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
-        memberId: Int!
-        memberName: String!
-        teacher: String!
-        score: String
+        id: String!
+        name: String!
+        pwd: String!
+        sNum: Int!
+        interest1: String!
+        interest2: String!
+        interest3: String!
+        profile: String!
+        listNum: Int
+        notiApply: Int
+        notiRecv: Int
+        notiVol: Int
     }`;

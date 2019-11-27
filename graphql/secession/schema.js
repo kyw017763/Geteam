@@ -14,8 +14,7 @@ export const typeDef = `
         id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
-        secessionId: Int!
+        secessionId: String!
         secessionName: String!
-        teacher: String!
-        score: String
+        approach: Int
     }`;

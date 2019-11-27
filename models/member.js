@@ -36,30 +36,21 @@ const memberSchema = new mongoose.Schema({
 }, { minimize: false, timestamps: true });
 
 memberSchema.statics = {
-  createMember: function (req) {
+  createMember: function (id, name, pwd, sNum, interest1, interest2, interest3, profile) {
     return this.create({
-      id: req.body.id,
-      name: req.body.name,
-      pwd: req.body.pwd,
-      sNum: req.body.sNum,
-      interest1: req.body.interest1,
-      interest2: req.body.interest2,
-      interest3: req.body.interest3,
-      profile: req.body.profile,
+      id, name, pwd, sNum, interest1, interest2, interest3, profile,
     });
   },
-  getMember: function (userId) {
+  getMembers: function (userId) {
     return this.find({ id: userId });
   },
-  updateMember: function (userId, req) {
+  getMemberById: function (userId) {
+    return this.find({ id: userId });
+  },
+  updateMember: function (userId, name, sNum, interest1, interest2, interest3, profile) {
     return this.findOneAndUpdate({ id: userId }, {
       $set: {
-        name: req.body.name,
-        sNum: req.body.sNum,
-        interest1: req.body.interest1,
-        interest2: req.body.interest2,
-        interest3: req.body.interest3,
-        profile: req.body.profile,
+        name, sNum, interest1, interest2, interest3, profile,
       },
     });
   },
@@ -77,14 +68,12 @@ memberSchema.statics = {
       return true;
     }
   },
-  updateNoti: function (userId, req) {
+  updateNoti: function (userId, notiApply, notiRecv, notiVol) {
     return this.update(
       { id: userId },
       {
         $set: {
-          notiApply: req.body.notiApply,
-          notiRecv: req.body.notiRecv,
-          notiVol: req.body.notiVol,
+          notiApply, notiRecv, notiVol,
         },
       },
     );
@@ -93,18 +82,18 @@ memberSchema.statics = {
     return this.findOneAndDelete({ id: userId });
   },
 
-  addFriend: function (userId, req) {
+  addFriend: function (userId, fId) {
     this.update(
       { id: userId },
       { // 내쪽에 추가
         $push: {
           friend: {
-            fId: req.body.fId,
+            fId,
           },
         },
       },
     ).update(
-      { id: req.body.fId },
+      { id: fId },
       { // 쟤쪽에 추가
         $push: {
           friend: {

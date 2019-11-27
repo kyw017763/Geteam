@@ -14,8 +14,9 @@ export const typeDef = `
         id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
-        noteId: Int!
-        noteName: String!
-        teacher: String!
-        score: String
+        memRecv: String!
+        memSend: String!
+        content: String!
+        recvChk: Int
+        reChk: Int
     }`;

@@ -14,8 +14,15 @@ export const typeDef = `
         id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
-        studyId: Int!
-        studyName: String!
-        teacher: String!
-        score: String
+        num: Int!
+        kind: String!
+        mem: String!
+        topic: String!
+        title: String!
+        content: String!
+        wantNum: Int!
+        applyNum: Int
+        endDay: Date!
+        hit: Int
+        teamChk: Int
     }`;

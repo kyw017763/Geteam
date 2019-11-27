@@ -1,11 +1,8 @@
 import mongoose from 'mongoose';
-import autoIncrement from 'mongoose-auto-increment';
 import connection from './Connection';
 
-autoIncrement.initialize(connection);
-
 const noteSchema = new mongoose.Schema({
-  idx: { type: Number, required: true, unique: true }, // A.I
+  // idx 는 createdAt 으로 sort 해서 대체함
   memRecv: { type: String, required: true },
   memSend: { type: String, required: true },
   content: { type: String, required: true },
@@ -13,13 +10,6 @@ const noteSchema = new mongoose.Schema({
   reChk: { type: Number, default: 0 }, // 대답인지
 }, {
   timestamps: true,
-});
-
-noteSchema.plugin(autoIncrement.plugin, {
-  model: 'Note',
-  field: 'idx',
-  startAt: 1,
-  incrementBy: 1,
 });
 
 noteSchema.statics = {
@@ -56,4 +46,4 @@ noteSchema.statics = {
   },
 };
 
-export default mongoose.model('notes', noteSchema);
+export default connection.model('notes', noteSchema);
