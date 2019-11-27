@@ -13,36 +13,39 @@ const noteSchema = new mongoose.Schema({
 });
 
 noteSchema.statics = {
-  createNote: function (req) {
-    return this.create({
-      memRecv: req.body.recvId,
-      memSend: req.body.sendId,
-      content: req.body.content,
+  getNotesByRecvId: function (userId) {
+    return this.find({
+      memRecv: userId,
     });
   },
-  createNoteReturn: function (req) {
+  getNotesBySendId: function (userId) {
+    return this.find({
+      memSend: userId,
+    });
+  },
+  createNote: function (recvId, sendId, content) {
     return this.create({
-      memRecv: req.body.recvId,
-      memSend: req.body.sendId,
-      content: req.body.content,
+      memRecv: recvId,
+      memSend: sendId,
+      content,
+    });
+  },
+  createNoteReturned: function (recvId, sendId, content) {
+    return this.create({
+      memRecv: recvId,
+      memSend: sendId,
+      content,
       reChk: 1,
     });
   },
-  updateNote: function (userId, content) {
-    return this.findOneAndUpdate({ id: userId }, {
-      $set: {
-        content,
-      },
-    });
-  },
-  removeNote: function (idx) {
-    return this.findOneAndDelete({ idx });
-  },
-  updateReadChk: function (idx) {
+  updateReadChk: function (id) {
     this.update(
-      { idx },
+      { _id: id },
       { $set: { recvChk: 1 } },
     );
+  },
+  removeNote: function (id) {
+    return this.findOneAndDelete({ _id: id });
   },
 };
 

@@ -2,11 +2,11 @@ import { sortOpt, filterOption } from '../libs';
 
 export const resolver = {
   Query: {
-    secession: async (_parent, { id }, { models }) => {
-      return models.Secession.getSecessionById(id).lean({ virtuals: true });
+    secession: async (_parent, { userId }, { models }) => {
+      return models.Secession.getSecessionById(userId).lean({ virtuals: true });
     },
-    Secession: async (_parent, { id }, { models }) => {
-      return models.Secession.getSecessionById(id).lean({ virtuals: true });
+    Secession: async (_parent, { userId }, { models }) => {
+      return models.Secession.getSecessionById(userId).lean({ virtuals: true });
     },
     allSecession: async (_parent, {
       page, perPage, sortField, sortOrder, filter,
@@ -17,27 +17,21 @@ export const resolver = {
         .limit(perPage)
         .lean({ virtuals: true });
     },
-    _allSecessionMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.Secession.countDocuments(filterOption(filter)) };
-    },
   },
   Mutation: {
     createSecession: async (_parent, {
-      secessionId, secessionName, teacher, score,
+      secessionId, secessionName,
     }, { models }) => {
       return await models.Secession.createSecession({
-        secessionId, secessionName, teacher, score,
+        secessionId, secessionName,
       });
     },
     updateSecession: async (_parent, {
-      id, secessionId, secessionName, teacher, score,
+      secessionId,
     }, { models }) => {
-      return await models.Secession.updateSecession(id, {
-        secessionId, secessionName, teacher, score,
+      return await models.Secession.updateSecession({
+        secessionId,
       }).lean({ virtuals: true });
-    },
-    removeSecession: async (_parent, { id }, { models }) => {
-      return await models.Secession.removeSecession(id);
     },
   },
   Secession: {

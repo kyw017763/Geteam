@@ -1,39 +1,38 @@
-import { sortOpt, filterOption } from '../libs';
-
 export const resolver = {
   Query: {
-    note: async (_parent, { id }, { models }) => {
-      return models.Note.getNoteById(id).lean({ virtuals: true });
+    recvNote: async (_parent, { userId }, { models }) => {
+      return models.Note.getNotesByRecvId(userId).lean({ virtuals: true });
     },
-    Note: async (_parent, { id }, { models }) => {
-      return models.Note.getNoteById(id).lean({ virtuals: true });
+    RecvNote: async (_parent, { userId }, { models }) => {
+      return models.Note.getNotesByRecvId(userId).lean({ virtuals: true });
     },
-    allNote: async (_parent, {
-      page, perPage, sortField, sortOrder, filter,
-    }, { models }) => {
-      return models.Note.getNotes(filterOption(filter))
-        .sort(sortOpt(sortField, sortOrder))
-        .skip(page * perPage)
-        .limit(perPage)
-        .lean({ virtuals: true });
+    sendNote: async (_parent, { userId }, { models }) => {
+      return models.Note.getNotesBySendId(userId).lean({ virtuals: true });
     },
-    _allNoteMeta: async (_parent, { filter }, { models }) => {
-      return { count: await models.Note.countDocuments(filterOption(filter)) };
+    SendNote: async (_parent, { userId }, { models }) => {
+      return models.Note.getNotesBySendId(userId).lean({ virtuals: true });
     },
   },
   Mutation: {
     createNote: async (_parent, {
-      noteId, noteName, teacher, score,
+      recvId, sendId, content,
     }, { models }) => {
       return await models.Note.createNote({
-        noteId, noteName, teacher, score,
+        recvId, sendId, content,
       });
     },
-    updateNote: async (_parent, {
-      id, noteId, noteName, teacher, score,
+    createNoteReturned: async (_parent, {
+      recvId, sendId, content,
     }, { models }) => {
-      return await models.Note.updateNote(id, {
-        noteId, noteName, teacher, score,
+      return await models.Note.createNoteReturned({
+        recvId, sendId, content,
+      });
+    },
+    updateNoteReadChk: async (_parent, {
+      id,
+    }, { models }) => {
+      return await models.Note.updateNote({
+        id,
       }).lean({ virtuals: true });
     },
     removeNote: async (_parent, { id }, { models }) => {

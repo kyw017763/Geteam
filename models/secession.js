@@ -9,11 +9,25 @@ const secessionSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-secessionSchema.statics.saveSecession = function (req) {
-  return this.create({
-    secessionId: req.body.secessionId,
-    secessionName: req.body.secessionName,
-  });
+secessionSchema.statics = {
+  createSecession: function (secessionId, secessionName) {
+    return this.create({
+      secessionId, secessionName,
+    });
+  },
+  updateSecession: function (secessionId) {
+    return this.findOneAndUpdate({ secessionId }, {
+      $set: {
+        approach: 1,
+      },
+    });
+  },
+  getSecessionById: function (userId) {
+    return this.find({ id: userId });
+  },
+  getSecessions: function () {
+    return this.find({});
+  },
 };
 
 export default connection.model('secessions', secessionSchema);

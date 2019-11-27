@@ -1,22 +1,23 @@
 export const typeDef = `
     extend type Query {
-        note: Note
-        Note(id: ID!): Note
-        allNote(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): [Note]
-        _allNoteMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: SearchFilter): ListMetaData
+      recvNote: Note
+      RecvNote(userId: String!): Note
+      sendNote: Note
+      SendNote(userId: String!): Note
     }
     extend type Mutation {
-        createNote(noteId: Int!, noteName: String!, teacher: String!, score: String): Note
-        updateNote(id: ID!, noteId: Int!, noteName: String!, teacher: String!, score: String): Note
-        removeNote(id: ID!): Note
+      createNote(recvId: String!, sendId: String!, content: String!): Note
+      createNoteReturned(recvId: String!, sendId: String!, content: String!): Note
+      updateNoteReadChk(id: ID!): Note
+      removeNote(id: ID!): Note
     }
     type Note implements Node {
-        id: ID!
-        createdAt: DateTime!
-        updatedAt: DateTime!
-        memRecv: String!
-        memSend: String!
-        content: String!
-        recvChk: Int
-        reChk: Int
+      id: ID!
+      createdAt: DateTime!
+      updatedAt: DateTime!
+      memRecv: String!
+      memSend: String!
+      content: String!
+      recvChk: Int
+      reChk: Int
     }`;
