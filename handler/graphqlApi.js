@@ -5,7 +5,7 @@ import { merge } from 'lodash';
 import models from '../models/index';
 // import { AuthDirective } from './directives';
 
-import { typeDef as indexSchema } from '../graphql/graphql.index';
+import { typeDef as indexSchema, resolverMap as dateResolver } from '../graphql/graphql.index';
 import { typeDef as ApplyContest, resolver as applyContestResolver } from '../graphql/applyContest/index';
 import { typeDef as ApplyStudy, resolver as applyStudyResolver } from '../graphql/applyStudy/index';
 import { typeDef as Contest, resolver as contestResolver } from '../graphql/contest/index';
@@ -14,7 +14,6 @@ import { typeDef as Note, resolver as noteResolver } from '../graphql/note/index
 import { typeDef as Secession, resolver as secessionResolver } from '../graphql/secession/index';
 import { typeDef as Study, resolver as studyResolver } from '../graphql/study/index';
 // $IMPORT$ add new graphql definition here...
-
 
 const mem = () => process.memoryUsage();
 // const schemaDirectives = {
@@ -32,6 +31,7 @@ const schema = [
   // $MODEL$ add new schema here
 ];
 const resolvs = merge({},
+  dateResolver,
   applyContestResolver,
   applyStudyResolver,
   contestResolver,

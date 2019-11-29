@@ -12,7 +12,7 @@ export const typeDef = `
       content: String!
       wantNum: Int!
       applyNum: Int
-      endDay: String!
+      endDay: Date!
       hit: Int
       teamChk: Int
     }
@@ -23,7 +23,7 @@ export const typeDef = `
         allContest(page: Int, perPage: Int, sortField: String, sortOrder: String): [Contest]
     }
     extend type Mutation {
-        createContest(userId: String!, kind: String!, topic: String!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Contest
-        updateContest(userId: String!, num: Int!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Contest
+        createContest(userId: String!, kind: String!, topic: String!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: Date!): Contest
+        updateContest(userId: String!, num: Int!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: Date!): Contest
         removeContest(userId: String!, num: Int!): Contest
     }`;

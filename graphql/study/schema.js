@@ -11,7 +11,7 @@ export const typeDef = `
         content: String!
         wantNum: Int!
         applyNum: Int
-        endDay: String!
+        endDay: Date!
         hit: Int
         teamChk: Int
     }
@@ -23,6 +23,6 @@ export const typeDef = `
     }
     extend type Mutation {
         createStudy(userId: String!, kind: String!, topic: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Study
-        updateStudy(num: Int!, userId: String!, kind: String!, topic: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Study
+        updateStudy(num: Int!, userId: String!, kind: String!, topic: String!, title: String!, content: String!, wantNum: Int!, endDay: Date!): Study
         removeStudy(num: Int!): Study
     }`;
