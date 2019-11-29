@@ -5,6 +5,7 @@ import { merge } from 'lodash';
 import models from '../models/index';
 // import { AuthDirective } from './directives';
 
+import { typeDef as indexSchema } from '../graphql/graphql.index';
 import { typeDef as ApplyContest, resolver as applyContestResolver } from '../graphql/applyContest/index';
 import { typeDef as ApplyStudy, resolver as applyStudyResolver } from '../graphql/applyStudy/index';
 import { typeDef as Contest, resolver as contestResolver } from '../graphql/contest/index';
@@ -20,6 +21,7 @@ const mem = () => process.memoryUsage();
 //   auth: AuthDirective,
 // };
 const schema = [
+  indexSchema,
   ApplyContest,
   ApplyStudy,
   Contest,

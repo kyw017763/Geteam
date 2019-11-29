@@ -23,10 +23,10 @@ export const resolver = {
   },
   Mutation: {
     createStudy: async (_parent, {
-      userId, kind, topic, title, content, wantNum, applyNum, endDay,
+      userId, kind, topic, title, content, wantNum, endDay,
     }, { models }) => {
       return await models.Study.createStudy({
-        userId, kind, topic, title, content, wantNum, applyNum, endDay,
+        userId, kind, topic, title, content, wantNum, endDay,
       });
     },
     updateStudy: async (_parent, {

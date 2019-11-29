@@ -1,6 +1,6 @@
 export const typeDef = `
     type Member {
-        id: ID!
+        _id: ID!
         createdAt: String!
         updatedAt: String!
         id: String!
@@ -16,12 +16,12 @@ export const typeDef = `
         notiRecv: Int
         notiVol: Int
     }
-    type Query {
-        Member: Member
+    extend type Query {
+        member: Member
         Member(useId: String!): Member
         allMember(page: Int, perPage: Int, sortField: String, sortOrder: String): [Member]
     }
-    type Mutation {
+    extend type Mutation {
         createMember(id: String!, name: String!, pwd: String!, sNum: Int!, interest1: String!, interest2: String!, interest3: String!, profile: String!): Member
         updateMember(userId: String!, name: String!, sNum: Int!, interest1: String!, interest2: String!, interest3: String!, profile: String!): Member
         removeMember(userId: String!): Member

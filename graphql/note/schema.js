@@ -1,6 +1,6 @@
 export const typeDef = `
     type Note {
-      id: ID!
+      _id: ID!
       createdAt: String!
       updatedAt: String!
       memRecv: String!
@@ -9,13 +9,13 @@ export const typeDef = `
       recvChk: Int
       reChk: Int
     }
-    type Query {
+    extend type Query {
       recvNote: Note
       RecvNote(userId: String!): Note
       sendNote: Note
       SendNote(userId: String!): Note
     }
-    type Mutation {
+    extend type Mutation {
       createNote(recvId: String!, sendId: String!, content: String!): Note
       createNoteReturned(recvId: String!, sendId: String!, content: String!): Note
       updateNoteReadChk(id: ID!): Note

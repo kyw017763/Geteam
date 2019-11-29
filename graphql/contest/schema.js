@@ -1,6 +1,6 @@
 export const typeDef = `
     type Contest {
-      id: ID!
+      _id: ID!
       createdAt: String!
       updatedAt: String!
       num: Int!
@@ -12,18 +12,18 @@ export const typeDef = `
       content: String!
       wantNum: Int!
       applyNum: Int
-      endDay: Date!
+      endDay: String!
       hit: Int
       teamChk: Int
     }
-    type Query {
+    extend type Query {
         contest: Contest
         Contest(userId: String!): Contest
         contestByKind(userId: String!, kind: String!): [Contest]
         allContest(page: Int, perPage: Int, sortField: String, sortOrder: String): [Contest]
     }
-    type Mutation {
-        createContest(userId: String!, kind: String!, topic: String!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: Date!): Contest
-        updateContest(userId: String!, num: Int!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: Date!): Contest
+    extend type Mutation {
+        createContest(userId: String!, kind: String!, topic: String!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Contest
+        updateContest(userId: String!, num: Int!, part: String!, title: String!, content: String!, wantNum: Int!, endDay: String!): Contest
         removeContest(userId: String!, num: Int!): Contest
     }`;
