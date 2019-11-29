@@ -15,7 +15,7 @@ custom:
 
 functions:
   graphql:
-    handler: ./graphqlApi.graphql
+    handler: handler/graphqlApi.graphql
     events:
       - http:
           method: post

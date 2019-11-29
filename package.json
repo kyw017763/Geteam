@@ -62,7 +62,7 @@
   },
   "scripts": {
     "start:app": "babel-node app.js",
-    "dev": "webpack-dev-server",
+    "dev": "webpack-dev-server --config webpack.dev.config",
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:graphql": "sls offline start --useSeparateProcesses",

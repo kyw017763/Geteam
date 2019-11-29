@@ -1,43 +1,24 @@
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
-
-// warning
-const babelCore = require('@babel/core').transform('code', {
-  plugins: ['@babel/plugin-proposal-class-properties'],
-});
+const slsw = require('serverless-webpack');
 
 module.exports = {
-  target: 'node',
-  externals: [nodeExternals()],
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),
-    port: 9000,
+  mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
+  entry: slsw.lib.entries,
+  devtool: 'source-map',
+  resolve: {
+    extensions: ['.mjs', '.js', '.jsx', '.json', '.ts', '.tsx'],
   },
-  mode: 'development',
-  entry: ['@babel/polyfill', path.join(__dirname, 'app.js')],
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
+    libraryTarget: 'commonjs',
+    path: path.join(__dirname, '.webpack'),
+    filename: '[name].js',
   },
-  node: {
-    child_process: 'empty',
-    dns: 'empty',
-    fs: 'empty',
-    net: 'empty',
-    tls: 'empty',
-  },
+  target: 'node',
   module: {
     rules: [
-      {
-        test: /\.js?$/,
-        include: __dirname,
-        loaders: 'babel-loader',
-        options: {
-          presets: [
-            '@babel/preset-env',
-          ],
-        },
-      },
+      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+      { test: /\.tsx?$/, loader: 'ts-loader' },
+      { test: /\.graphql$/, loader: 'graphql-tag/loader', exclude: /node_modules/ },
     ],
   },
 };
