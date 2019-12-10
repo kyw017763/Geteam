@@ -22,10 +22,10 @@ export const resolver = {
       });
     },
     createNoteReturned: async (_parent, {
-      recvId, sendId, content,
+      recvId, sendId, content, returnedId,
     }, { models }) => {
       return await models.Note.createNoteReturned({
-        recvId, sendId, content,
+        recvId, sendId, content, returnedId,
       });
     },
     updateNoteReadChk: async (_parent, {

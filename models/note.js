@@ -7,7 +7,7 @@ const noteSchema = new mongoose.Schema({
   memSend: { type: String, required: true },
   content: { type: String, required: true },
   recvChk: { type: Number, default: 0 }, // 읽음 체크
-  reChk: { type: Number, default: 0 }, // 대답인지
+  reChk: { type: Number, required: true }, // 대답인지
 }, {
   timestamps: true,
 });
@@ -30,12 +30,12 @@ noteSchema.statics = {
       content,
     });
   },
-  createNoteReturned: function (recvId, sendId, content) {
+  createNoteReturned: function (recvId, sendId, content, returnedId) {
     return this.create({
       memRecv: recvId,
       memSend: sendId,
       content,
-      reChk: 1,
+      reChk: returnedId,
     });
   },
   updateReadChk: function (id) {

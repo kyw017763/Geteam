@@ -1,6 +1,11 @@
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
+import * as passportLocal from 'passport-local';
+import * as passportJWT from 'passport-jwt';
+import config from '../config';
 import Member from '../models/member';
+
+const JWTStrategy = passportJWT.Strategy;
+const extractJWT = passportJWT.ExtractJwt;
 
 export default () => {
   passport.serializeUser((member, done) => { // Strategy 성공 시 호출됨
@@ -15,7 +20,7 @@ export default () => {
     done(null, user); // 여기의 user가 req.user가 됨
   });
 
-  passport.use(new LocalStrategy({ // local 전략을 세움
+  passport.use(new passportLocal.LocalStrategy({ // local 전략을 세움
     usernameField: 'signin_email',
     passwordField: 'signin_pwd',
     session: true, // 세션에 저장 여부
@@ -41,4 +46,29 @@ export default () => {
       });
     });
   }));
+
+  passport.use(new JWTStrategy({
+    jwtFromRequest: extractJWT.fromAuthHeaderAsBearerToken(),
+    secretOrKey: config.jwtSecret,
+  }, ((payload, cb) => {
+    const iv = Buffer.alloc(16, 0);
+    const decipher = crypto.createDecipheriv('sha256', config.jwtSecret, iv);
+    let decryptedId = '';
+    decipher.on(payload.id, () => {
+      const chunk = decipher.read();
+      while (!chunk) {
+        decryptedId = chunk.toString('utf8');
+      }
+    });
+    return Member.findOneById(decryptedId)
+      .then((user) => {
+        const encryptedId = crypto.createHmac('sha256', config.jwtSecret)
+          .update(user.id)
+          .digest('base64');
+        return cb(null, encryptedId);
+      })
+      .catch((err) => {
+        return cb(err);
+      });
+  })));
 };

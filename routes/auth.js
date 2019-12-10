@@ -1,10 +1,10 @@
 import express from 'express';
 import path from 'path';
-import passport from 'passport';
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import nodemailer from 'nodemailer';
+import passportConfig from './passport';
 
 import Member from '../models/member';
 import Counting from '../models/counting';
@@ -172,26 +172,15 @@ router.get('/signin', (req, res) => {
   res.end();
 });
 
-router.post('/signin', (req, res, next) => {
-  passport.authenticate('local', (errOut, user, info) => {
-    if (errOut) { return next(errOut); }
-    if (!user) {
-      // checkbox 체크 시 쿠키
-      if (req.body.id_ck === 'yes') {
-        res.cookie('cookie_id', req.body.signin_email);
-      }
+router.post('/signin', (req, res) => {
+  if (req.body.id_ck === 'yes') {
+    res.cookie('cookie_id', req.body.signin_email);
+  }
 
-      const str = '해당 이메일 또는 비밀번호가 틀렸습니다';
-      req.flash('message', str);
+  const str = '해당 이메일 또는 비밀번호가 틀렸습니다';
+  req.flash('message', str);
 
-      return res.redirect('/signin');
-    }
-
-    req.logIn(user, (errIn) => {
-      if (errIn) { return next(errIn); }
-      return res.redirect('/');
-    });
-  })(req, res, next);
+  return res.redirect('/signin');
 });
 
 router.post('/signin/find', (req, res) => {

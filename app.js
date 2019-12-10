@@ -9,7 +9,7 @@ import connectRedis from 'connect-redis';
 import nodemailer from 'nodemailer';
 import fs from 'fs';
 import parseJson from 'parse-json';
-import sha256 from 'sha256';
+import methodOverride from 'method-override';
 import passport from 'passport';
 import passportConfig from './routes/passport';
 import auth from './routes/auth';
@@ -56,6 +56,7 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 app.engine('.ejs', ejs.renderFile);
 
+app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cookieParser());
@@ -63,9 +64,9 @@ app.use(express.static(path.resolve(__dirname, 'assets')));
 
 // routes 사용
 app.use('/', auth);
-app.use('/board', board);
-app.use('/note', note);
-app.use('/mypage', mypage);
+app.use('/board', passportConfig.authenticate('jwt', { session: false }), board);
+app.use('/note', passportConfig.authenticate('jwt', { session: false }), note);
+app.use('/mypage', passportConfig.authenticate('jwt', { session: false }), mypage);
 
 app.use((req, res, next) => { // 404 처리 부분
   res.status(404).send('일치하는 주소가 없습니다!');

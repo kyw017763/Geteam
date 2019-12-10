@@ -17,7 +17,7 @@ export const typeDef = `
     }
     extend type Mutation {
       createNote(recvId: String!, sendId: String!, content: String!): Note
-      createNoteReturned(recvId: String!, sendId: String!, content: String!): Note
+      createNoteReturned(recvId: String!, sendId: String!, content: String!, returnedId: Int!): Note
       updateNoteReadChk(id: ID!): Note
       removeNote(id: ID!): Note
     }`;
