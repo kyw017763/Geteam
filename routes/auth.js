@@ -2,26 +2,16 @@ import express from 'express';
 import path from 'path';
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
-import session from 'express-session';
 import nodemailer from 'nodemailer';
 import passportConfig from './passport';
-
 import Member from '../models/member';
 import Counting from '../models/counting';
+import authorization from '../middleware/authorization';
 
 const router = express.Router();
 export default router;
 
 router.use(flash());
-
-router.use(session({
-  secret: 'yewon kim',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
-  },
-}));
 
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
@@ -172,15 +162,25 @@ router.get('/signin', (req, res) => {
   res.end();
 });
 
-router.post('/signin', (req, res) => {
-  if (req.body.id_ck === 'yes') {
-    res.cookie('cookie_id', req.body.signin_email);
-  }
+router.post('/signin', (req, res, next) => {
+  passportConfig.authenticate('local', { session: false }, (errOut, userId) => {
+    if (errOut) {
+      return next(errOut);
+    }
+    if (!userId) {
+      // checkbox 체크 시 쿠키
+      if (req.body.id_ck === 'yes') {
+        res.cookie('cookie_id', req.body.signin_email);
+      }
 
-  const str = '해당 이메일 또는 비밀번호가 틀렸습니다';
-  req.flash('message', str);
+      const str = '해당 이메일 또는 비밀번호가 틀렸습니다';
+      req.flash('message', str);
 
-  return res.redirect('/signin');
+      return res.redirect('/signin');
+    } else {
+      return res.redirect('/');
+    }
+  });
 });
 
 router.post('/signin/find', (req, res) => {
@@ -231,9 +231,7 @@ router.post('/signin/find', (req, res) => {
   return res.redirect('/signin');
 });
 
-router.get('/signout', (req, res) => {
-  console.log('signout page');
-
-  req.logOut();
+router.get('/signout', authorization, (req, res) => {
+  // TODO: signout
   res.redirect('/');
 });
