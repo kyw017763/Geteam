@@ -145,6 +145,19 @@ router.post('/signup', (req, res) => {
   });
 });
 
+router.post('/signup/compareEmail', (req, res) => {
+  Member.findOne({ id: req.body.id }, (err, result) => {
+    if (err) {
+      return res.status(500).end();
+    }
+    if (!result) {
+      return res.status(200).json(JSON.stringify({ result: true })).send();
+    } else {
+      return res.status(200).json(JSON.stringify({ result: false })).send();
+    }
+  });
+});
+
 router.get('/signin', (req, res) => {
   console.log('signin page');
 
