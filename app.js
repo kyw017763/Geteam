@@ -52,6 +52,7 @@ app.use((req, res, next) => {
 app.set('views', './views');
 app.set('view engine', 'ejs');
 app.engine('.ejs', ejs.renderFile);
+app.engine('.html', ejs.renderFile);
 
 app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: false }));

@@ -33,7 +33,6 @@ router.get('/:kind/list', (req, res) => {
   console.log('It\'s board list page');
 
   const kind = req.params.kind;
-  const sess = req.session;
   let itemList = null;
   let pageTitle = null;
   let page;
@@ -106,7 +105,6 @@ router.get('/:kind/list/search', (req, res) => {
   const key = req.body.search;
 
   const kind = req.params.kind;
-  const sess = req.session;
   let itemList = null;
   let pageTitle = null;
   let page;
@@ -166,7 +164,6 @@ router.get('/:kind/list/:subject', (req, res) => {
   let pageTitle = null;
   let page;
   let scale;
-  const sess = req.session;
 
   // cookies
   if (req.cookies.scale !== undefined) {
@@ -232,7 +229,6 @@ router.get('/:kind/list/:subject', (req, res) => {
 router.get('/:kind/view', (req, res) => {
   console.log('It\'s board view page');
 
-  const sess = req.session;
   const id = req.params.id; // view id
 
   res.setHeader('Content-Type', 'text/html');

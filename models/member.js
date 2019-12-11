@@ -15,6 +15,15 @@ const memberSchema = new mongoose.Schema({
   notiApply: { type: Number, default: 1 },
   notiRecv: { type: Number, default: 1 },
   notiVol: { type: Number, default: 1 },
+  // 인증여부
+  isVerified: { type: Boolean, required: true, default: false },
+  // 인증코드
+  verifyKey: { type: String, required: true },
+  verifyExpireAt: {
+    type: Date,
+    required: true,
+    default: new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), new Date().getHours() + 24),
+  },
   image: {
     data: Buffer,
     contentsType: String,
@@ -36,9 +45,9 @@ const memberSchema = new mongoose.Schema({
 }, { minimize: false, timestamps: true });
 
 memberSchema.statics = {
-  createMember: function (id, name, pwd, sNum, interest1, interest2, interest3, profile) {
+  createMember: function (id, name, pwd, sNum, interest1, interest2, interest3, profile, verifyKey) {
     return this.create({
-      id, name, pwd, sNum, interest1, interest2, interest3, profile,
+      id, name, pwd, sNum, interest1, interest2, interest3, profile, verifyKey,
     });
   },
   getMembers: function (userId) {

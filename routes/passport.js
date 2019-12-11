@@ -45,7 +45,7 @@ export default () => {
     session: false, // 세션에 저장 여부
     passReqToCallback: false,
   }, (id, password, done) => {
-    Member.findOne({ id, pwd: password }, (findError, user) => {
+    Member.findOne({ id, pwd: password, isVerified: true }, (findError, user) => {
       if (findError) {
         return done(findError);
       }

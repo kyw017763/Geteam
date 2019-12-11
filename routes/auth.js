@@ -3,6 +3,7 @@ import path from 'path';
 import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
+import crypto from 'crypto';
 import passportConfig from './passport';
 import Member from '../models/member';
 import authorization from '../middleware/authorization';
@@ -73,11 +74,40 @@ function sendQuestionEmail(kind, title, content) {
   });
 }
 
+function sendAuthEmail(userEmail, key) {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: config.email,
+      pass: config.pwd,
+    },
+  });
+  const mailOptions = {
+    from: config.email,
+    to: userEmail,
+    subject: 'Geteam 이메일 인증',
+    html: `<h3>Geteam 이메일 인증용 링크</h3>
+    Geteam 계정에 등록하신 이메일 주소(${userEmail})가 올바른지 확인하기 위한 인증 링크입니다.
+    아래의 인증 링크를 클릭하여 이메일 인증을 완료해 주세요.
+    <div>인증 링크: <a href="http://127.0.0.1:3000/signup/verify/${key}" style="color: #efdc05;">http://127.0.0.1:3000/signup/verify/${key}</a></div>
+    개인정보 보호를 위해 인증 링크는 하루동안만 유효합니다!
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(`Message sent : ${info.response}`);
+    }
+    transporter.close();
+  });
+}
+
 router.get('/', (req, res) => {
   console.log('index page');
 
   res.setHeader('Content-Type', 'text/html');
-  console.log(`signin : ${req.session.userid}`);
 
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
 
@@ -109,52 +139,78 @@ router.get('/signup', (req, res) => {
   res.render(path.join(__dirname, '..', 'views', 'signup.ejs'), {
     message: req.flash('message'),
   });
-  res.send();
 });
 
 router.post('/signup', (req, res) => {
   console.log('signup db connect page');
 
-  Member.create({
-    id: req.body.signup_email,
-    name: req.body.signup_name,
-    pwd: req.body.signup_pwd,
-    s_num: req.body.signup_num,
-    interest1: req.body.signup_inter1,
-    interest2: req.body.signup_inter2,
-    interest3: req.body.signup_inter3,
-    profile: req.body.signup_profile,
-  }, (err) => {
-    if (err) {
-      if (err.name === 'MongoError' && err.code === 11000) {
-        console.log('go to signup');
-        return res.redirect('/signup');
-      }
-    }
+  try {
+    const firstKey = crypto.randomBytes(256).toString('hex').substr(100, 5);
+    const secondKey = crypto.randomBytes(256).toString('base64').substr(50, 5);
+    const resultKey = firstKey + secondKey;
 
-    console.log('go to signin');
-    return res.redirect('/signup/verify');
-  });
+    sendAuthEmail(req.body.signup_email, resultKey);
+
+    Member.findOneAndDelete({
+      id: req.body.signup_email,
+      isVerified: false,
+    }, (err, rr) => {
+      console.log(rr);
+    });
+
+    Member.createMember(
+      req.body.signup_email,
+      req.body.signup_name,
+      req.body.signup_pwd,
+      req.body.signup_num,
+      req.body.signup_inter1,
+      req.body.signup_inter2,
+      req.body.signup_inter3,
+      req.body.signup_profile,
+      resultKey,
+    );
+  } catch (err) {
+    if (err.name === 'MongoError' && err.code === 11000) {
+      console.log('go to signup');
+      return res.redirect('/signup');
+    }
+  }
+  return res.redirect('/signup/verify');
 });
 
 router.get('/signup/verify', (req, res) => {
   console.log('verify page');
 
   res.setHeader('Content-Type', 'text/html');
-  res.html(path.join(__dirname, '..', 'views', 'verify.html'));
-  res.send();
+  res.render(path.join(__dirname, '..', 'views', 'verify.ejs'));
 });
 
-router.post('/signup/verify/:key', (req, res) => {
+router.get('/signup/verify/:key', (req, res) => {
   console.log('verify page');
 
-  res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'verifyClear.html'));
-  res.send();
+  Member.updateOne({
+    verifyKey: req.params.key,
+    verifyExpireAt: {
+      $lte: new Date(),
+    },
+  }, {
+    $set: {
+      email_verified: true,
+    },
+  }, (err, member) => {
+    if (err) {
+      console.log(err);
+    } else if (!member) {
+      res.redirect('/');
+    } else {
+      res.setHeader('Content-Type', 'text/html');
+      res.render(path.join(__dirname, '..', 'views', 'verifyClear.ejs'));
+    }
+  });
 });
 
 router.post('/signup/compareEmail', (req, res) => {
-  Member.findOne({ id: req.body.id }, (err, result) => {
+  Member.findOne({ id: req.body.id, isVerified: true }, (err, result) => {
     if (err) {
       return res.status(500).end();
     }
@@ -180,7 +236,6 @@ router.get('/signin', (req, res) => {
     message: req.flash('message'),
     cookie_id: cid,
   });
-  res.send();
 });
 
 router.post('/signin', (req, res, next) => {
