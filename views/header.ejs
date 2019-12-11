@@ -1,5 +1,5 @@
 <link rel="icon" type="/image/png" href=""> <!-- 파비콘 추가 -->
-        
+
 <link rel="stylesheet" href="/css/slick.css">
 <link rel="stylesheet" href="/css/slick-theme.css">
 <link rel="stylesheet" href="/css/animate.css">
@@ -27,77 +27,77 @@
 <script src="/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 
 <nav class="navbar navbar-default navbar-fixed white bootsnav">
-    <!-- Start Top Search -->
-    <div class="top-search">
-        <div class="container">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search">
-                <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
-            </div>
-        </div>
+  <!-- Start Top Search -->
+  <div class="top-search">
+    <div class="container">
+      <div class="input-group">
+        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+        <input type="text" class="form-control" placeholder="Search">
+        <span class="input-group-addon close-search"><i class="fa fa-times"></i></span>
+      </div>
     </div>
-    <!-- End Top Search -->
+  </div>
+  <!-- End Top Search -->
 
-    <div class="container" style="user-select:none;">   
-    
-        <%
+  <div class="container" style="user-select:none;">
+
+    <%
         // if(isset($userid)) {
         //     $sql_badge_cal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
         //     $sql_badge_cal = mysqli_num_rows($sql_badge_cal);
         %>
-        <!-- Start Atribute Navigation -->
-        <%
+    <!-- Start Atribute Navigation -->
+    <%
         if(sess){
         %>
-        <div class="attr-nav">
-            <ul>
-                <li class="dropdown">
-                    <a href="note/recv">
-                        <i class="fa fa-envelope-o"></i>
-                        <span class="badge"><%= badge_cal %></span>
-                    </a>
-                </li>
-            </ul>
-        </div>   
-        <%
+    <div class="attr-nav">
+      <ul>
+        <li class="dropdown">
+          <a href="note/recv">
+            <i class="fa fa-envelope-o"></i>
+            <span class="badge"><%= badge_cal %></span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <%
         }
         %>
-        <!-- End Atribute Navigation -->
+    <!-- End Atribute Navigation -->
 
-        <!-- Start Header Navigation -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="/">
-                <!-- 로고 이미지 -->
-                <img src="/images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
-            </a>
-        </div>
-        <!-- End Header Navigation -->
-        
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="navbar-menu">
-            <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-                <li><a href="/board/study/list" target="_self">스터디</a></li>
-                <li><a href="/board/contest/list" target="_self">공모전</a></li>
-                <li><a href="/mypage" target="_self">My Page</a></li>
-                
-                <%
+    <!-- Start Header Navigation -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+        <i class="fa fa-bars"></i>
+      </button>
+      <a class="navbar-brand" href="/">
+        <!-- 로고 이미지 -->
+        <img src="/images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
+      </a>
+    </div>
+    <!-- End Header Navigation -->
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-menu">
+      <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+        <li><a href="/board/study/list" target="_self">스터디</a></li>
+        <li><a href="/board/contest/list" target="_self">공모전</a></li>
+        <li><a href="/mypage" target="_self">My Page</a></li>
+
+        <%
                 if(sess) {
                 %>
-                    <li><a href="/signout" target="_self">SignOut</a></li>
-                <%
+        <li><a href="/signout" target="_self">SignOut</a></li>
+        <%
                 } else {
                 %>
-                    <li><a href="/signin" target="_self">SignIn</a></li>
-                    <li><a href="/signup" target="_self">SignUp</a></li>  
-                <%
+        <li><a href="/signin" target="_self">SignIn</a></li>
+        <li><a href="/signup" target="_self">SignUp</a></li>
+        <%
                 }
                 %>
-                
-            </ul>
-        </div><!-- /.navbar-collapse -->
-    </div>  
+
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div>
 </nav>

@@ -2,101 +2,104 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-    
-    <!--Designerd by: http://bootstrapthemes.co-->
-    <head>
-        <meta charset="utf-8">
-        <title>즐팀 : 보낸 쪽지함</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        
-        <script>
-          function note_write_chk() {
-            var p_set = document.frm_note_write;
-            
-            var double_result = document.getElementById("note_write_double_result");
-            var topic_result = document.getElementById("note_write_topic_result");
-            var title_result = document.getElementById("note_write_title_result");
-            var content_result = document.getElementById("note_write_content_result");
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
 
-            if(p_set.write_send.value=="" || p_set.write_recv.value=="") {
-              double_result.innerHTML = "값을 입력해주세요";
-              p_set.write_topic.focus();
-            } else if(p_set.write_content.value=="") {
-              title_result.innerHTML = "";
-              content_result.innerHTML = "내용을 입력해주세요";
-              p_set.write_content.focus();
-            } else {
-              p_set.submit();
-            }
+<!--Designerd by: http://bootstrapthemes.co-->
+
+<head>
+  <meta charset="utf-8">
+  <title>즐팀 : 보낸 쪽지함</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script>
+    function note_write_chk() {
+      let p_set = document.frm_note_write;
+
+      let double_result = document.getElementById("note_write_double_result");
+      let topic_result = document.getElementById("note_write_topic_result");
+      let title_result = document.getElementById("note_write_title_result");
+      let content_result = document.getElementById("note_write_content_result");
+
+      if (p_set.write_send.value == "" || p_set.write_recv.value == "") {
+        double_result.innerHTML = "값을 입력해주세요";
+        p_set.write_topic.focus();
+      } else if (p_set.write_content.value == "") {
+        title_result.innerHTML = "";
+        content_result.innerHTML = "내용을 입력해주세요";
+        p_set.write_content.focus();
+      } else {
+        p_set.submit();
+      }
+    }
+
+    function lengCounter() {
+      document.getElementById("counter").innerHTML = document.getElementById("textarea").value.length;
+    }
+
+    function text_lengCounter() {
+      document.getElementById("text_counter").innerHTML = document.getElementById("text").value.length;
+    }
+
+    function form_delete() {
+      let form = document.formm;
+      //alert(form);
+      let b = 0;
+      //alert(form.elements);
+      for (i = 0; i < form.elements.length; i++) {
+        if (form.elements[i].name == "mnum[]") {
+          if (form.elements[i].checked == true) {
+            b++;
           }
+        }
+      }
 
-          function lengCounter() {
-          document.getElementById("counter").innerHTML=document.getElementById("textarea").value.length;
-          }
+      if (!confirm("정말 삭제하시겠습니까?")) {
+        return;
+      }
 
-          function text_lengCounter() {
-          document.getElementById("text_counter").innerHTML=document.getElementById("text").value.length;
-          }
+      if (b == 0) {
+        alert("하나 이상의 쪽지를 선택해주세요!");
+        return;
+      }
+      form.gb.value = "2";
+      form.submit();
+    }
+  </script>
+</head>
 
-          function form_delete(){
-            var form = document.formm;
-            //alert(form);
-            var b = 0;
-            //alert(form.elements);
-            for(i=0; i<form.elements.length;i++){
-              if(form.elements[i].name=="mnum[]"){
-                if(form.elements[i].checked == true){
-                  b++;
-                } 
-              }
-            }
+<body data-spy="scroll" data-target=".navbar-collapse">
 
-            if (!confirm("정말 삭제하시겠습니까?")) {
-              return;
-            }
+  <div class="culmn">
 
-            if(b==0){
-              alert("하나 이상의 쪽지를 선택해주세요!");
-              return;
-            }
-            form.gb.value="2";
-            form.submit();
-          }
-    	</script>
-    </head>
+    <% include header %>
 
-    <body data-spy="scroll" data-target=".navbar-collapse">
-    
-        <div class="culmn">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 col-sm-offset-2">
+          <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
+            <li class="nav-item">
+              <a class="nav-link" href="/note/recv" target="_self" style="color: #efdc05; font-size: 1.1rem;">받은 쪽지함</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/note/send" target="_self" style="color: #efdc05; font-size: 1.1rem;">보낸 쪽지함</a>
+            </li>
+          </ul>
+        </div>
 
-              <% include header %>
+        <div class="separator_auto"></div>
 
-            <div class="container">
-                <div class="row">
-                  <div class="col-sm-8 col-sm-offset-2">
-                      <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
-                          <li class="nav-item">
-                              <a class="nav-link" href="/note/recv" target="_self" style="color: #efdc05; font-size: 1.1rem;">받은 쪽지함</a>           
-                          </li>
-                          <li class="nav-item">
-                              <a class="nav-link" href="/note/send" target="_self" style="color: #efdc05; font-size: 1.1rem;">보낸 쪽지함</a>    
-                          </li>
-                      </ul>
-                  </div>
+        <div class="col-sm-12">
 
-                  <div class="separator_auto"></div>
-                    
-                  <div class="col-sm-12">
+          <div class="page_title text-center">
+            <h2>보낸 쪽지함</h2>
+            <div class="separator_auto"></div>
+          </div>
+        </div>
 
-                      <div class="page_title text-center">
-                          <h2>보낸 쪽지함</h2>
-                          <div class="separator_auto"></div>
-                      </div>
-                  </div>
-
-                  <%
+        <%
                     //보낸 쪽지함 DB에서 가져오기(recv_note)
                     //recv_note의 send_id가 세션 userid가 같은 것만 가져오기
                       
@@ -123,48 +126,49 @@
                     //   //표시할 페이지($page)에 따라 $start 계산 => 각각의 페이지의 시작번호
                     //   $start = ($page-1) * $scale;
                   %>
-                  
-                  <div class="col-sm-12">
-                    <div class="col-sm-3">
-                        <form method="post" action="note_send.php?kind=<%= // $kind; %>">
-                            <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
-                            <option value="note_send.php?range=num">날짜</option>
-                            <option value="note_send.php?range=author">작성자</option>
-                            <option value="note_send.php?range=content">내용</option>
-                            </select>
-                        </form>
-                    </div>
-                    
-                    <div class="col-sm-3">
-                      <button type='button' class="home_btns form-control btn btn-primary" data-toggle="modal" data-target="#modal_note_write">쪽지 쓰기</button>
-                    </div>
 
-                    <div class="col-sm-3">
-                      <a href="javascript:form_delete()">
-                      <button type="button" class="btn btn-primary_delete" style="padding: 1em 1em; border-radius: 50%;">
-                      <i class='fa fa-trash text-primary'></i>
-                      </button>
-                      </a>
-                    </div>
-                  </div>      
-                <!-- study목록 각 하나의 article -->
-                <!--블럭 내에 보여 줄 데이터들 DB에서 가져온 값이 저장된 $row 변수에서 한 속성씩 빼냄-->
+        <div class="col-sm-12">
+          <div class="col-sm-3">
+            <form method="post" action="note_send.php?kind=<%= // $kind; %>">
+              <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
+                <option value="note_send.php?range=num">날짜</option>
+                <option value="note_send.php?range=author">작성자</option>
+                <option value="note_send.php?range=content">내용</option>
+              </select>
+            </form>
+          </div>
 
-                <form action="send_delete.php" method="post" name="formm">
-                <div class="col-sm-12 m-top-50">
-                <table class="table table-bordered table-hover" style="width: 100%; font-size: 13px;">
-                <input type="hidden" name="gb">
-                <thead>
-                  <tr>
-                    <th width="2%"></th>
-                    <th width="7.5%">No</th>
-                    <th width="20%">받은사람</th>
-                    <th width="47.5%">내용</th>
-                    <th width="15%">받은날짜</th>
-                    <th width="7.5%">확인</th>
-                  </tr>
-                </thead>
-                <tbody>
+          <div class="col-sm-3">
+            <button type='button' class="home_btns form-control btn btn-primary" data-toggle="modal"
+              data-target="#modal_note_write">쪽지 쓰기</button>
+          </div>
+
+          <div class="col-sm-3">
+            <a href="javascript:form_delete()">
+              <button type="button" class="btn btn-primary_delete" style="padding: 1em 1em; border-radius: 50%;">
+                <i class='fa fa-trash text-primary'></i>
+              </button>
+            </a>
+          </div>
+        </div>
+        <!-- study목록 각 하나의 article -->
+        <!--블럭 내에 보여 줄 데이터들 DB에서 가져온 값이 저장된 $row 변수에서 한 속성씩 빼냄-->
+
+        <form action="send_delete.php" method="post" name="formm">
+          <div class="col-sm-12 m-top-50">
+            <table class="table table-bordered table-hover" style="width: 100%; font-size: 13px;">
+              <input type="hidden" name="gb">
+              <thead>
+                <tr>
+                  <th width="2%"></th>
+                  <th width="7.5%">No</th>
+                  <th width="20%">받은사람</th>
+                  <th width="47.5%">내용</th>
+                  <th width="15%">받은날짜</th>
+                  <th width="7.5%">확인</th>
+                </tr>
+              </thead>
+              <tbody>
                 <%
                   // for($i = $start; $i < $start+$scale && $i < $total_record; $i++){
                   //   $result_list2 = mysqli_query($conn, "SELECT * FROM note_recv WHERE send_id='$userid' ORDER BY idx, send_id DESC");
@@ -192,7 +196,7 @@
                 %>
 
                 <tr>
-                  <td><input type="checkbox" name="mnum[]" value="<%= // $recv_row['idx'] %>" >
+                  <td><input type="checkbox" name="mnum[]" value="<%= // $recv_row['idx'] %>">
                   <td><%= // $note_idx %></td>
                   <td><%= // $note_recv_id %></td>
                   <td><%= // $note_content %></td>
@@ -203,135 +207,144 @@
                 <%
                   // } //for문
                 %>
-                </tbody>
-                </table>
-                </div>
-              </form>
+              </tbody>
+            </table>
+          </div>
+        </form>
 
-                  <div class="col-sm-4 col-sm-offset-4 text-center m-top-50">
-                  <!--페이지 번호 표시-->
-                  <nav aria-labesl="...">
-                  <div>
-                    <ul class="pagination pagination-lg">
-                          <%
+        <div class="col-sm-4 col-sm-offset-4 text-center m-top-50">
+          <!--페이지 번호 표시-->
+          <nav aria-labesl="...">
+            <div>
+              <ul class="pagination pagination-lg">
+                <%
                           // if(page-5 >= 1) {
                           %>
-                          <li class="page-item">
-                            <a class="page-link" href="note_recv.php?page=<%= // $page-5 %>&kind=<%= // $kind%>" style="background: rgb(247,247,247); color: #FF8489; border: 0;">&laquo;</a>
-                          </li>
-                          <%
+                <li class="page-item">
+                  <a class="page-link" href="note_recv.php?page=<%= // $page-5 %>&kind=<%= // $kind%>"
+                    style="background: rgb(247,247,247); color: #FF8489; border: 0;">&laquo;</a>
+                </li>
+                <%
                           // } else {
                           %>
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&laquo;</a>
-                          </li>
-                          <%
+                <li class="page-item disabled">
+                  <a class="page-link" href="#"
+                    style="background: rgb(247,247,247); color: #efdc05; border: 0;">&laquo;</a>
+                </li>
+                <%
                           // }
                           %>
-                          
-                          <%
+
+                <%
                           // for($i=1; $i<=$total_page; $i++){
                           //   if($page == $i) {
                           %>
-                          <li class="page-item active">
-                            <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
-                          </li>
-                          <%
+                <li class="page-item active">
+                  <a class="page-link" href="#"
+                    style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
+                </li>
+                <%
                             // } else {
                           %>
-                          <li class="page-item disabled">
-                            <a class="page-link" href="note_recv.php?page=<%= // $i %>&kind=<%= // $kind %>" style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
-                          </li>
-                          <%
+                <li class="page-item disabled">
+                  <a class="page-link" href="note_recv.php?page=<%= // $i %>&kind=<%= // $kind %>"
+                    style="background: rgb(247,247,247); color: #efdc05; border: 0;"><%= // $i %></a>
+                </li>
+                <%
                           //     }
                           // }
                           %>
-                          
-                          <% 
+
+                <% 
                           // if(page+5 <= $total_page) {
                           %>
-                          <li class="page-item">
-                            <a class="page-link" href="note_recv.php?page=<%= // $page+5 %>" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
-                          </li>
-                          <%
+                <li class="page-item">
+                  <a class="page-link" href="note_recv.php?page=<%= // $page+5 %>"
+                    style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
+                </li>
+                <%
                           // } else {
                           %>
-                          <li class="page-item disabled">
-                            <a class="page-link" href="#" style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
-                          </li>
-                          <%
+                <li class="page-item disabled">
+                  <a class="page-link" href="#"
+                    style="background: rgb(247,247,247); color: #efdc05; border: 0;">&raquo;</a>
+                </li>
+                <%
                           // }
                           %>
-                            </ul>
-                      </div>
-                      </nav>
-                  </div>
-                </div> <!-- row -->
-	          </div> <!-- container -->
-              <% include footer %>
-        </div> <!-- culmn -->  
+              </ul>
+            </div>
+          </nav>
+        </div>
+      </div> <!-- row -->
+    </div> <!-- container -->
+    <% include footer %>
+  </div> <!-- culmn -->
 
-           
-<!-- Insert Modal -->
-<div class="modal fade" id="modal_note_write" role="dialog">
+
+  <!-- Insert Modal -->
+  <div class="modal fade" id="modal_note_write" role="dialog">
     <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-        
-    <!-- Modal content-->
-        <div class="modal-content">
+
+      <!-- Modal content-->
+      <div class="modal-content">
 
         <div class="modal-header">
-            <h6 class="modal-title" style="display: inline-block;">쪽지</h6>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h6 class="modal-title" style="display: inline-block;">쪽지</h6>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div> <!-- modal header -->
 
         <div class="modal-body" style="padding: 50px;">
-                <form name="frm_note_write" class="form_write" method="post" action="note_write_process.php">
-                    <label>
-                        보내는 사람
-                    <input type="text" class="form-control" name="write_send" value="<%= // "$userid" %>" (<%= // $username %>) readonly>
-                    </label>
+          <form name="frm_note_write" class="form_write" method="post" action="note_write_process.php">
+            <label>
+              보내는 사람
+              <input type="text" class="form-control" name="write_send" value="<%= // "$userid" %>"
+                (<%= // $username %>) readonly>
+            </label>
 
-                    <label>
-                        받는 사람
-                    <input type="text" class="form-control" name="write_recv" >
-                    </label>
+            <label>
+              받는 사람
+              <input type="text" class="form-control" name="write_recv">
+            </label>
 
-                    <span id="note_write_double_result" class="fail"></span>
-                    
-                    <div class="textarea_counter">
-                        <label>
-                            쪽지 내용
-                        <textarea id="textarea" name="write_content" class="note_content" maxlength="70" onkeyup="lengCounter()"></textarea>
-                        
-                        </label>
-                        <span id="note_write_content_result" class="fail"></span>
-                    </div>
+            <span id="note_write_double_result" class="fail"></span>
+
+            <div class="textarea_counter">
+              <label>
+                쪽지 내용
+                <textarea id="textarea" name="write_content" class="note_content" maxlength="70"
+                  onkeyup="lengCounter()"></textarea>
+
+              </label>
+              <span id="note_write_content_result" class="fail"></span>
+            </div>
 
         </div> <!-- modal body -->
 
         <div class="modal-footer">
-            <div class="col-sm-3 col-sm-offset-9">
-                <button onClick="note_write_chk()" class="form-control btn btn-primary">보내기</button>
+          <div class="col-sm-3 col-sm-offset-9">
+            <button onClick="note_write_chk()" class="form-control btn btn-primary">보내기</button>
             </form>
-            </div>
+          </div>
         </div> <!-- modal footer -->
 
-    </div> <!-- modal content -->
+      </div> <!-- modal content -->
 
     </div> <!-- modal-dialog -->
-</div> <!-- modal -->
+  </div> <!-- modal -->
 
-        <!-- JS includes -->
-        <script src="js/vendor/jquery-1.11.2.min.js"></script>
-        <script src="js/vendor/bootstrap.min.js"></script>
+  <!-- JS includes -->
+  <script src="js/vendor/jquery-1.11.2.min.js"></script>
+  <script src="js/vendor/bootstrap.min.js"></script>
 
-        <script src="js/jquery.magnific-popup.js"></script>
-        <script src="js/jquery.easing.1.3.js"></script>
-        <script src="js/slick.min.js"></script>
-        <script src="js/jquery.collapse.js"></script>
-        <script src="js/bootsnav.js"></script>
+  <script src="js/jquery.magnific-popup.js"></script>
+  <script src="js/jquery.easing.1.3.js"></script>
+  <script src="js/slick.min.js"></script>
+  <script src="js/jquery.collapse.js"></script>
+  <script src="js/bootsnav.js"></script>
 
-        <script src="js/plugins.js"></script>
-        <script src="js/main.js"></script>
-    </body>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
 </html>
