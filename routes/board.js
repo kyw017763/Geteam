@@ -10,24 +10,6 @@ import Contest from '../models/contest';
 const router = express.Router();
 export default router;
 
-router.use(express.urlencoded({ extended: false }));
-router.use(cookieParser());
-
-let cid = null;
-let cname = null;
-
-router.use((req, res, next) => { // cookies
-  if (!req.cookies.cookie_id) {
-    cid = req.cookies.cookie_id;
-    console.log(`cookie_id : ${cid}`);
-  }
-  if (!req.cookies.cookie_id) {
-    cname = req.cookies.cookie_name;
-    console.log(`cookie_name : ${cname}`);
-  }
-  next();
-});
-
 // board list
 router.get('/:kind/list', (req, res) => {
   console.log('It\'s board list page');

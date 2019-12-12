@@ -138,6 +138,14 @@ router.post('/', (req, res) => {
   res.redirect('/');
 });
 
+router.use('/sign*', (req, res, next) => {
+  if (req.user) {
+    res.redirect('/');
+  } else {
+    next();
+  }
+});
+
 // login, signup, logout
 router.get('/signup', (req, res) => {
   console.log('signup page');

@@ -7,10 +7,6 @@ import Member from '../models/member';
 const router = express.Router();
 export default router;
 
-router.use(express.urlencoded({ extended: false }));
-router.use(cookieParser());
-
-
 router.get('/', (req, res) => {
   console.log('mypage page');
 

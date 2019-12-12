@@ -37,7 +37,6 @@ app.use(passport.session());
 passportConfig();
 
 app.use((req, res, next) => {
-  console.log(req.user);
   res.locals.sess = !!req.user;
   res.locals.badgeCal = req.session.badgeCal || 0;
   next();
