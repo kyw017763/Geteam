@@ -10,7 +10,7 @@ import parseJson from 'parse-json';
 import methodOverride from 'method-override';
 import passport from 'passport';
 import passportConfig from './routes/passport';
-import authorization from './middleware/authorization';
+import authMiddleware from './middleware/authorization';
 import auth from './routes/auth';
 import board from './routes/board';
 import note from './routes/note';
@@ -33,16 +33,13 @@ app.use(session({
 }));
 
 app.use(passport.initialize());
+app.use(passport.session());
 passportConfig();
 
 app.use((req, res, next) => {
-  // header에서 사용해야하는 값
-  if (req.user) {
-    res.locals.sess = true;
-  } else {
-    res.locals.sess = false;
-  }
-  res.locals.badge_cal = 0;
+  console.log(req.user);
+  res.locals.sess = !!req.user;
+  res.locals.badgeCal = req.session.badgeCal || 0;
   next();
 });
 
@@ -71,9 +68,9 @@ app.set('jwt-secret', config.secret);
 
 // routes 사용
 app.use('/', auth);
-app.use('/board', authorization, board);
-app.use('/note', authorization, note);
-app.use('/mypage', authorization, mypage);
+app.use('/board', authMiddleware, passport.authenticate('jwt'), board);
+app.use('/note', authMiddleware, passport.authenticate('jwt'), note);
+app.use('/mypage', authMiddleware, passport.authenticate('jwt'), mypage);
 
 app.use((req, res, next) => { // 404 처리 부분
   res.status(404).send('일치하는 주소가 없습니다!');

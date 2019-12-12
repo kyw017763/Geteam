@@ -12,13 +12,10 @@ const LocalStrategy = passportLocal.Strategy;
 
 export default () => {
   passport.serializeUser((member, done) => { // Strategy 성공 시 호출됨
-    const encryptedId = crypto.createHmac('sha256', config.jwtSecret)
-      .update(member.id)
-      .digest('base64');
-
     const payload = {
     // eslint-disable-next-line no-underscore-dangle
       _id: member._id,
+      id: member.id,
       name: member.name,
     };
 
@@ -30,29 +27,29 @@ export default () => {
       if (err) {
         return done(null, false, { message: '오류가 발생했습니다' });
       }
-      return done(null, encryptedId); // 두 번째 인자는 deserializeUser의 첫 번째 매개변수로 이동
+      return done(null, token); // 두 번째 인자는 deserializeUser의 첫 번째 매개변수로 이동
     });
   });
 
-  passport.deserializeUser((userId, done) => { // 매개변수 user는 serializeUser의 done의 두 번째 인자를 받은 것
-    done(null, userId); // 두 번째 인자는 req.{second argument's name} 로 저장된다
+  passport.deserializeUser((user, done) => { // 매개변수 user는 serializeUser의 done의 두 번째 인자를 받은 것
+    done(null, user); // 두 번째 인자는 req.{second argument's name} 로 저장된다
   });
 
   // eslint-disable-next-line new-cap
   passport.use(new LocalStrategy({ // local 전략을 세움
     usernameField: 'signin_email',
     passwordField: 'signin_pwd',
-    session: false, // 세션에 저장 여부
+    session: true, // 세션에 저장 여부
     passReqToCallback: false,
   }, (id, password, done) => {
-    Member.findOne({ id, pwd: password, isVerified: true }, (findError, user) => {
+    Member.findOne({ id, pwd: password, isVerified: true }, (findError, member) => {
       if (findError) {
         return done(findError);
       }
-      if (!user) {
-        return done(null, false, { message: '입력하신 이메일 또는 비밀번호가 틀렸습니다' });
+      if (!member) {
+        return done(null, false);
       } else {
-        return done(null, user);
+        return done(null, member);
       }
     });
   }));
@@ -61,21 +58,10 @@ export default () => {
     jwtFromRequest: extractJWT.fromAuthHeaderAsBearerToken(),
     secretOrKey: config.jwtSecret,
   }, ((payload, cb) => {
-    const iv = Buffer.alloc(16, 0);
-    const decipher = crypto.createDecipheriv('sha256', config.jwtSecret, iv);
-    let decryptedId = '';
-    decipher.on(payload.id, () => {
-      const chunk = decipher.read();
-      while (!chunk) {
-        decryptedId = chunk.toString('utf8');
-      }
-    });
-    return Member.findOneById(decryptedId)
+    // eslint-disable-next-line no-underscore-dangle
+    return Member.findOneById(payload._id)
       .then((user) => {
-        const encryptedId = crypto.createHmac('sha256', config.jwtSecret)
-          .update(user.id)
-          .digest('base64');
-        return cb(null, encryptedId);
+        return cb(null, user);
       })
       .catch((err) => {
         return cb(err);

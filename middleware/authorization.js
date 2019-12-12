@@ -2,8 +2,7 @@ import jwt from 'jsonwebtoken';
 
 // eslint-disable-next-line consistent-return
 const authMiddleware = (req, res, next) => {
-  const token = req.headers['x-access-token'] || req.query.token;
-
+  const token = req.user;
   if (!token) {
     req.flash('로그인 후 접근할 수 있습니다');
     res.status(403).redirect('/signin');

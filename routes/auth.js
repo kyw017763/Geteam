@@ -4,10 +4,10 @@ import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
-import passportConfig from './passport';
+import passport from 'passport';
 import Member from '../models/member';
-import authorization from '../middleware/authorization';
 import config from '../config';
+import authMiddleware from '../middleware/authorization';
 
 const router = express.Router();
 export default router;
@@ -118,7 +118,6 @@ router.get('/', (req, res) => {
   res.setHeader('Content-Type', 'text/html');
 
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
-
   res.render(path.join(__dirname, '..', 'views', 'index.ejs'), {
     message: req.flash('message'),
     c: {
@@ -273,25 +272,10 @@ router.get('/signin', (req, res) => {
   });
 });
 
-router.post('/signin', (req, res, next) => {
-  passportConfig.authenticate('local', { session: false }, (errOut, userId) => {
-    if (errOut) {
-      return next(errOut);
-    }
-    if (!userId) {
-      // checkbox 체크 시 쿠키
-      if (req.body.id_ck === 'yes') {
-        res.cookie('cookie_id', req.body.signin_email);
-      }
-
-      const str = '해당 이메일 또는 비밀번호가 틀렸습니다';
-      req.flash('message', str);
-
-      return res.redirect('/signin');
-    } else {
-      return res.redirect('/');
-    }
-  });
+router.post('/signin', passport.authenticate('local', {
+  failureRedirect: '/signin',
+}), (req, res) => {
+  res.redirect('/');
 });
 
 router.post('/signin/find', (req, res) => {
@@ -313,7 +297,7 @@ router.post('/signin/find', (req, res) => {
   return res.redirect('/signin');
 });
 
-router.get('/signout', authorization, (req, res) => {
-  // TODO: signout
+router.get('/signout', authMiddleware, (req, res) => {
+  // TODO: Redis - jwt
   res.redirect('/');
 });
