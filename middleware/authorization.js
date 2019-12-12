@@ -24,6 +24,7 @@ const authMiddleware = (req, res, next) => {
   };
 
   p.then((decoded) => {
+    console.log(`decoded: ${decoded}`);
     req.decoded = decoded;
     next();
   }).catch(onError); // onError() 형태로 넣으면 함수가 바로 실행돼서 문제가 된다

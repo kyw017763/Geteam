@@ -17,6 +17,12 @@ router.use(flash());
 router.use(express.urlencoded({ extended: false }));
 router.use(cookieParser());
 
+function createKey() {
+  const firstKey = crypto.randomBytes(256).toString('hex').substr(100, 5);
+  const secondKey = crypto.randomBytes(256).toString('base64').substr(50, 5);
+  return firstKey + secondKey;
+}
+
 function sendPwdEmail(subject, dest, userId, userPwd) {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -88,9 +94,11 @@ function sendAuthEmail(userEmail, key) {
     subject: 'Geteam 이메일 인증',
     html: `<h3>Geteam 이메일 인증용 링크</h3>
     Geteam 계정에 등록하신 이메일 주소(${userEmail})가 올바른지 확인하기 위한 인증 링크입니다.
-    아래의 인증 링크를 클릭하여 이메일 인증을 완료해 주세요.
-    <div>인증 링크: <a href="http://127.0.0.1:3000/signup/verify/${key}" style="color: #efdc05;">http://127.0.0.1:3000/signup/verify/${key}</a></div>
-    개인정보 보호를 위해 인증 링크는 하루동안만 유효합니다!
+    이 <a href="http://127.0.0.1:3000/signup/verify/${key}" style="color: #efdc05;">인증 링크</a>를 클릭하여 이메일 인증을 완료해 주세요!
+    <br>
+    개인정보 보호를 위해 인증 링크는 하루동안만 유효합니다.
+    <br>
+    만약 인증 메일의 재발송을 원하신다면 <a href="http://127.0.0.1:3000/signup/verify/new/${key}?email=${userEmail}" style="color: #efdc05;">이 링크</a>를 클릭해주세요!
     `,
   };
 
@@ -145,9 +153,7 @@ router.post('/signup', (req, res) => {
   console.log('signup db connect page');
 
   try {
-    const firstKey = crypto.randomBytes(256).toString('hex').substr(100, 5);
-    const secondKey = crypto.randomBytes(256).toString('base64').substr(50, 5);
-    const resultKey = firstKey + secondKey;
+    const resultKey = createKey();
 
     sendAuthEmail(req.body.signup_email, resultKey);
 
@@ -188,23 +194,52 @@ router.get('/signup/verify', (req, res) => {
 router.get('/signup/verify/:key', (req, res) => {
   console.log('verify page');
 
-  Member.updateOne({
+  Member.findOneAndUpdate({
     verifyKey: req.params.key,
     verifyExpireAt: {
-      $lte: new Date(),
+      $gte: new Date(),
     },
+    isVerified: false,
   }, {
     $set: {
-      email_verified: true,
+      isVerified: true,
     },
+  }, {
+    returnOriginal: true,
   }, (err, member) => {
-    if (err) {
-      console.log(err);
-    } else if (!member) {
-      res.redirect('/');
+    if (err || !member) {
+      res.setHeader('Content-Type', 'text/html');
+      res.render(path.join(__dirname, '..', 'views', 'verifyError.ejs'));
     } else {
       res.setHeader('Content-Type', 'text/html');
       res.render(path.join(__dirname, '..', 'views', 'verifyClear.ejs'));
+    }
+  });
+});
+
+router.get('/signup/verify/new/:key', (req, res) => {
+  console.log('verify new page');
+
+  const resultKey = createKey();
+
+  Member.findOneAndUpdate({
+    id: req.query.email,
+    verifyKey: req.params.key,
+    isVerified: false,
+  }, {
+    $set: {
+      verifyKey: resultKey,
+    },
+  }, {
+    returnOriginal: true,
+  }, (err, member) => {
+    if (err || !member) {
+      res.setHeader('Content-Type', 'text/html');
+      res.render(path.join(__dirname, '..', 'views', 'verifyError.ejs'));
+    } else {
+      sendAuthEmail(req.query.email, resultKey);
+      res.setHeader('Content-Type', 'text/html');
+      res.render(path.join(__dirname, '..', 'views', 'verify.ejs'));
     }
   });
 });
