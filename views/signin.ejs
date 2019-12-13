@@ -80,17 +80,17 @@
               <label>
                 이메일
                 <%
-                            if(cookie_id){
-                            %>
+                  if(cookie_id){
+                %>
                 <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email'
                   value='<%= cookie_id%>'>
                 <%
-                            } else {
-                            %>
+                  } else {
+                %>
                 <input type='email' class='form-control' placeholder='학교 이메일을 입력해주세요' name='signin_email'>
                 <%
-                            }
-                            %>
+                  }
+                %>
               </label>
 
               <label>
@@ -114,12 +114,12 @@
               <span id="singnin_find_result" class="fail"></span>
 
               <% 
-                        if(message) { 
-                            %>
+                if(message) { 
+              %>
               <span id='signup_result' class='fail'><%= message %></span>
               <% 
-                        } 
-                        %>
+                } 
+              %>
             </form>
           </div>
         </div>

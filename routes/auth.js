@@ -4,10 +4,10 @@ import flash from 'connect-flash';
 import cookieParser from 'cookie-parser';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import Member from '../models/member';
 import config from '../config';
-import authMiddleware from '../middleware/authorization';
 
 const router = express.Router();
 export default router;
@@ -114,7 +114,6 @@ function sendAuthEmail(userEmail, key) {
 
 router.get('/', (req, res) => {
   console.log('index page');
-
   res.setHeader('Content-Type', 'text/html');
 
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
@@ -280,10 +279,39 @@ router.get('/signin', (req, res) => {
   });
 });
 
-router.post('/signin', passport.authenticate('local', {
-  failureRedirect: '/signin',
-}), (req, res) => {
-  res.redirect('/');
+router.post('/signin', (req, res) => {
+  const id = req.body.signin_email;
+  const pwd = req.body.signin_pwd;
+  console.log(id);
+  console.log(pwd);
+  Member.findOne({ id, pwd, isVerified: true }, (err, member) => {
+    if (err) {
+      req.flash('message', '오류가 발생했습니다');
+      res.redirect('/signin');
+    } else {
+      const payload = {
+        // eslint-disable-next-line no-underscore-dangle
+        _id: member._id,
+        id: member.id,
+        name: member.name,
+      };
+
+      const options = {
+        issuer: 'woni',
+        expiresIn: 60 * 60 * 24,
+      };
+
+      jwt.sign(payload, config.jwtSecret, options, (errJwt, token) => {
+        if (errJwt) {
+          req.flash('message', '오류가 발생했습니다');
+          res.redirect('/signin');
+        } else {
+          res.cookie('token', token);
+          res.redirect('/');
+        }
+      });
+    }
+  });
 });
 
 router.post('/signin/find', (req, res) => {
@@ -305,7 +333,8 @@ router.post('/signin/find', (req, res) => {
   return res.redirect('/signin');
 });
 
-router.get('/signout', authMiddleware, (req, res) => {
+router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
   // TODO: Redis - jwt
+  res.cookie('token', '');
   res.redirect('/');
 });

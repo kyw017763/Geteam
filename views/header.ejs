@@ -48,8 +48,8 @@
         %>
     <!-- Start Atribute Navigation -->
     <%
-        if(sess){
-        %>
+      if(statusAuth){
+    %>
     <div class="attr-nav">
       <ul>
         <li class="dropdown">
@@ -85,17 +85,17 @@
         <li><a href="/mypage" target="_self">My Page</a></li>
 
         <%
-                if(sess) {
-                %>
+          if(statusAuth) {
+        %>
         <li><a href="/signout" target="_self">SignOut</a></li>
         <%
-                } else {
-                %>
+          } else {
+        %>
         <li><a href="/signin" target="_self">SignIn</a></li>
         <li><a href="/signup" target="_self">SignUp</a></li>
         <%
-                }
-                %>
+          }
+        %>
 
       </ul>
     </div><!-- /.navbar-collapse -->
