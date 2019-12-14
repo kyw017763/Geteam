@@ -114,6 +114,8 @@ function sendAuthEmail(userEmail, key) {
 
 router.get('/', (req, res) => {
   console.log('index page');
+
+  console.log(req.decoded || null);
   res.setHeader('Content-Type', 'text/html');
 
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
@@ -266,24 +268,16 @@ router.post('/signup/compareEmail', (req, res) => {
 router.get('/signin', (req, res) => {
   console.log('signin page');
 
-  let cid = null;
-  if (req.cookies.cookie_id !== undefined) {
-    cid = req.cookies.cookie_id;
-    console.log(`cookie_id : ${cid}`);
-  }
-
   res.setHeader('Content-Type', 'text/html');
   res.render(path.join(__dirname, '..', 'views', 'signin.ejs'), {
     message: req.flash('message'),
-    cookie_id: cid,
+    cookieEmail: req.cookies.cookieEmail || null,
   });
 });
 
 router.post('/signin', (req, res) => {
   const id = req.body.signin_email;
   const pwd = req.body.signin_pwd;
-  console.log(id);
-  console.log(pwd);
   Member.findOne({ id, pwd, isVerified: true }, (err, member) => {
     if (err) {
       req.flash('message', '오류가 발생했습니다');
@@ -306,6 +300,9 @@ router.post('/signin', (req, res) => {
           req.flash('message', '오류가 발생했습니다');
           res.redirect('/signin');
         } else {
+          if (req.body.emailCookie === 'yes') {
+            res.cookie('cookieEmail', req.body.signin_email);
+          }
           res.cookie('token', token);
           res.redirect('/');
         }
@@ -335,6 +332,6 @@ router.post('/signin/find', (req, res) => {
 
 router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
   // TODO: Redis - jwt
-  res.cookie('token', '');
+  res.clearCookie('token');
   res.redirect('/');
 });

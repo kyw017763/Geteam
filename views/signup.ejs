@@ -119,6 +119,12 @@
       }
     }
 
+    function enterChkEmail() {
+      if (window.event.keyCode == 13) {
+        compareEmail();
+      }
+    }
+
     function lengCounter() {
       document.getElementById("counter").innerHTML = document.getElementById("textarea").value.length;
     }
@@ -159,7 +165,7 @@
 
               <label>
                 이메일
-                <input type="email" name="signup_email" placeholder="학교 이메일을 입력해주세요">
+                <input type="text" name="signup_email" placeholder="학교 이메일을 입력해주세요">
               </label>
               <button type="button" id="compareBtn" onClick="compareEmail()" class="form-control btn btn-primary">
                 이메일 중복 확인
@@ -211,7 +217,7 @@
               </div>
               <span id="signup_profile_result" class="fail"></span>
 
-              <button type="button" id="signupBtn" name="signup" onClick="signup_chk()" class="form-control btn btn-primary" disabled>회원가입</button>
+              <button type="button" id="signupBtn" onClick="signup_chk()" class="form-control btn btn-primary" disabled>회원가입</button>
 
             </form>
           </div>

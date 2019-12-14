@@ -54,8 +54,6 @@ app.use(express.static(path.resolve(__dirname, 'assets')));
 app.set('jwt-secret', config.secret);
 
 app.use((req, res, next) => {
-  req.header('Authorization', req.cookies.token || null);
-
   jwt.verify(req.cookies.token || null, config.jwtSecret, (err, decoded) => {
     if (err) {
       res.locals.statusAuth = false;

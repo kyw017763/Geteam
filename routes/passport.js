@@ -7,6 +7,10 @@ const JWTStrategy = passportJWT.Strategy;
 const extractJWT = passportJWT.ExtractJwt;
 
 export default () => {
+  const cookieExtractor = (req) => {
+    return req.cookies.token || null;
+  };
+
   passport.serializeUser((member, done) => { // Strategy 성공 시 호출됨
     done(null, member);
   });
@@ -15,19 +19,20 @@ export default () => {
     done(null, user); // 두 번째 인자는 req.{second argument's name} 로 저장된다
   });
 
-  passport.use(new JWTStrategy({
-    jwtFromRequest: extractJWT.fromAuthHeaderWithScheme('jwt'),
+  passport.use('jwt', new JWTStrategy({
+    jwtFromRequest: cookieExtractor,
     secretOrKey: config.jwtSecret,
   }, ((payload, done) => {
     // eslint-disable-next-line no-underscore-dangle
-    Member.findOneById(payload._id)
+    Member.findOne({ _id: payload._id })
       .then((user) => {
-        console.log(payload);
-        console.log('payload지롱~');
-        return done(null, user);
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(true, user);
+        }
       })
       .catch((err) => {
-        console.log('err지롱~');
         return done(err);
       });
   })));
