@@ -3,10 +3,9 @@ import path from 'path';
 import ejs from 'ejs';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
-import redis from 'redis';
-import connectRedis from 'connect-redis';
 import fs from 'fs';
 import parseJson from 'parse-json';
+import connectRedis from 'connect-redis';
 import methodOverride from 'method-override';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
@@ -16,21 +15,27 @@ import board from './routes/board';
 import note from './routes/note';
 import mypage from './routes/mypage';
 import config from './config';
+import redisClient from './redis';
+import getBlackList from './function/getBlackList';
 
 const app = express();
 
 const RedisStore = connectRedis(session);
-const client = redis.createClient();
 
 app.use(session({
-  secret: 'yewonKim',
+  secret: config.sessionSecret,
   resave: false,
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
     maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
   },
-  store: new RedisStore({ client, logErrors: true }),
+  store: new RedisStore({
+    client: redisClient,
+    host: '127.0.0.1',
+    port: 6379,
+    logErrors: true,
+  }),
 }));
 
 app.use(passport.initialize());
@@ -53,22 +58,48 @@ app.use(express.static(path.resolve(__dirname, 'assets')));
 
 app.set('jwt-secret', config.secret);
 
+// TODO: Redis - jwt blacklisting
 app.use((req, res, next) => {
-  jwt.verify(req.cookies.token || null, config.jwtSecret, (err, decoded) => {
-    if (err) {
-      res.locals.statusAuth = false;
-    } else {
-      res.locals.statusAuth = true;
-      req.decoded = decoded;
-      // TODO: 로그인 하면서 res.locals.badgeCal 지정하도록
-      res.locals.badgeCal = 0;
-    }
-  });
-
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'content-type, x-access-token, authorization');
-  next();
+
+  function jwtVerify() {
+    return new Promise((resolve, reject) => {
+      if (req.cookies.token) {
+        jwt.verify(req.cookies.token || null, config.jwtSecret, (err, decoded) => {
+          if (err) {
+            reject(err);
+          } else {
+            getBlackList()
+              .then((result) => {
+                if (result.indexOf(req.cookies.token) !== -1) {
+                  resolve(false);
+                } else {
+                  resolve(decoded);
+                }
+              });
+          }
+        });
+      } else {
+        resolve(false);
+      }
+    });
+  }
+
+  jwtVerify()
+    .then((result) => {
+      if (result) {
+        // TODO: 로그인 하면서 res.locals.badgeCal 지정하도록
+        res.locals.badgeCal = 0;
+        res.locals.statusAuth = true;
+        req.decoded = result;
+      } else {
+        res.locals.statusAuth = false;
+      }
+
+      next();
+    });
 });
 
 // routes 사용

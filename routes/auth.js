@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import Member from '../models/member';
 import config from '../config';
+import redisClient from '../redis';
 
 const router = express.Router();
 export default router;
@@ -115,7 +116,6 @@ function sendAuthEmail(userEmail, key) {
 router.get('/', (req, res) => {
   console.log('index page');
 
-  console.log(req.decoded || null);
   res.setHeader('Content-Type', 'text/html');
 
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
@@ -139,16 +139,22 @@ router.post('/', (req, res) => {
   res.redirect('/');
 });
 
-router.use('/sign*', (req, res, next) => {
-  if (req.user) {
+router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
+  redisClient.lpush('jwtBlack', req.cookies.token);
+  res.clearCookie('token');
+  res.redirect('/');
+});
+
+const checkStatusAuth = (req, res, next) => {
+  if (res.locals.statusAuth) {
     res.redirect('/');
   } else {
     next();
   }
-});
+};
 
 // login, signup, logout
-router.get('/signup', (req, res) => {
+router.get('/signup', checkStatusAuth, (req, res) => {
   console.log('signup page');
 
   res.setHeader('Content-Type', 'text/html');
@@ -157,7 +163,7 @@ router.get('/signup', (req, res) => {
   });
 });
 
-router.post('/signup', (req, res) => {
+router.post('/signup', checkStatusAuth, (req, res) => {
   console.log('signup db connect page');
 
   try {
@@ -192,14 +198,14 @@ router.post('/signup', (req, res) => {
   return res.redirect('/signup/verify');
 });
 
-router.get('/signup/verify', (req, res) => {
+router.get('/signup/verify', checkStatusAuth, (req, res) => {
   console.log('verify page');
 
   res.setHeader('Content-Type', 'text/html');
   res.render(path.join(__dirname, '..', 'views', 'verify.ejs'));
 });
 
-router.get('/signup/verify/:key', (req, res) => {
+router.get('/signup/verify/:key', checkStatusAuth, (req, res) => {
   console.log('verify page');
 
   Member.findOneAndUpdate({
@@ -225,7 +231,7 @@ router.get('/signup/verify/:key', (req, res) => {
   });
 });
 
-router.get('/signup/verify/new/:key', (req, res) => {
+router.get('/signup/verify/new/:key', checkStatusAuth, (req, res) => {
   console.log('verify new page');
 
   const resultKey = createKey();
@@ -252,7 +258,7 @@ router.get('/signup/verify/new/:key', (req, res) => {
   });
 });
 
-router.post('/signup/compareEmail', (req, res) => {
+router.post('/signup/compareEmail', checkStatusAuth, (req, res) => {
   Member.findOne({ id: req.body.id, isVerified: true }, (err, result) => {
     if (err) {
       return res.status(500).end();
@@ -265,7 +271,7 @@ router.post('/signup/compareEmail', (req, res) => {
   });
 });
 
-router.get('/signin', (req, res) => {
+router.get('/signin', checkStatusAuth, (req, res) => {
   console.log('signin page');
 
   res.setHeader('Content-Type', 'text/html');
@@ -275,12 +281,15 @@ router.get('/signin', (req, res) => {
   });
 });
 
-router.post('/signin', (req, res) => {
+router.post('/signin', checkStatusAuth, (req, res) => {
   const id = req.body.signin_email;
   const pwd = req.body.signin_pwd;
   Member.findOne({ id, pwd, isVerified: true }, (err, member) => {
     if (err) {
       req.flash('message', '오류가 발생했습니다');
+      res.redirect('/signin');
+    } else if (!member) {
+      req.flash('message', '해당 이메일 또는 비밀번호가 틀렸습니다');
       res.redirect('/signin');
     } else {
       const payload = {
@@ -311,7 +320,7 @@ router.post('/signin', (req, res) => {
   });
 });
 
-router.post('/signin/find', (req, res) => {
+router.post('/signin/find', checkStatusAuth, (req, res) => {
   console.log('find pwd page');
 
   try {
@@ -328,10 +337,4 @@ router.post('/signin/find', (req, res) => {
   }
 
   return res.redirect('/signin');
-});
-
-router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
-  // TODO: Redis - jwt
-  res.clearCookie('token');
-  res.redirect('/');
 });
