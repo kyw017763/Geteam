@@ -16,7 +16,6 @@ import note from './routes/note';
 import mypage from './routes/mypage';
 import config from './config';
 import redisClient from './redis';
-import getBlackList from './function/getBlackList';
 
 const app = express();
 
@@ -68,18 +67,13 @@ app.use((req, res, next) => {
     return new Promise((resolve, reject) => {
       if (req.cookies.token) {
         jwt.verify(req.cookies.token || null, config.jwtSecret, (err, decoded) => {
-          if (err) {
-            reject(err);
-          } else {
-            getBlackList()
-              .then((result) => {
-                if (result.indexOf(req.cookies.token) !== -1) {
-                  resolve(false);
-                } else {
-                  resolve(decoded);
-                }
-              });
-          }
+          redisClient.exists(`jwt-blacklist-${req.cookies.coken}`, ((reply) => {
+            if (reply === 1) {
+              resolve(false);
+            } else {
+              resolve(decoded);
+            }
+          }));
         });
       } else {
         resolve(false);

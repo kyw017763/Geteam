@@ -24,7 +24,7 @@ export default () => {
     secretOrKey: config.jwtSecret,
   }, ((payload, done) => {
     // eslint-disable-next-line no-underscore-dangle
-    Member.findOne({ _id: payload._id })
+    Member.findOne({ id: payload.jti })
       .then((user) => {
         if (user) {
           return done(null, user);

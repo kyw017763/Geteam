@@ -140,7 +140,8 @@ router.post('/', (req, res) => {
 });
 
 router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
-  redisClient.lpush('jwtBlack', req.cookies.token);
+  redisClient.set(`jwt-blacklist-${req.cookies.token}`, 0);
+  redisClient.expire(`jwt-blacklist-${req.cookies.token}`, Number.parseInt(req.decoded.exp - (new Date().getTime() / 1000), 10));
   res.clearCookie('token');
   res.redirect('/');
 });
@@ -294,12 +295,11 @@ router.post('/signin', checkStatusAuth, (req, res) => {
     } else {
       const payload = {
         // eslint-disable-next-line no-underscore-dangle
-        _id: member._id,
-        id: member.id,
         name: member.name,
       };
 
       const options = {
+        jwtid: member.id,
         issuer: 'woni',
         expiresIn: 60 * 60 * 24,
       };
