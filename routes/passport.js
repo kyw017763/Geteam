@@ -1,5 +1,6 @@
 import passport from 'passport';
 import passportJWT from 'passport-jwt';
+import jwt from 'jsonwebtoken';
 import config from '../config';
 import Member from '../models/member';
 
@@ -9,6 +10,10 @@ const extractJWT = passportJWT.ExtractJwt;
 export default () => {
   const cookieExtractor = (req) => {
     return req.cookies.token || null;
+  };
+
+  const refreshCookieExtractor = (req) => {
+    return req.cookies.refreshToken || null;
   };
 
   passport.serializeUser((member, done) => { // Strategy 성공 시 호출됨
@@ -24,7 +29,7 @@ export default () => {
     secretOrKey: config.jwtSecret,
   }, ((payload, done) => {
     // eslint-disable-next-line no-underscore-dangle
-    Member.findOne({ id: payload.jti })
+    Member.findOne({ _id: payload._id })
       .then((user) => {
         if (user) {
           return done(null, user);
@@ -35,5 +40,33 @@ export default () => {
       .catch((err) => {
         return done(err);
       });
+  })));
+
+  passport.use('jwtRefresh', new JWTStrategy({
+    jwtFromRequest: refreshCookieExtractor,
+    secretOrKey: config.jwtSecret,
+    passReqToCallback: true,
+  }, ((req, payload, done) => {
+    if (req.cookies.refreshToken) {
+      jwt.verify(req.cookies.refreshToken, config.refreshTokenSecret, (err, decoded) => {
+        if (err) {
+          done(true, null);
+        }
+        // eslint-disable-next-line no-underscore-dangle
+        Member.findOne({ _id: decoded._id })
+          .then((user) => {
+            if (user) {
+              return done(null, user);
+            } else {
+              return done(true, user);
+            }
+          })
+          .catch((memberErr) => {
+            return done(memberErr);
+          });
+      });
+    } else {
+      done(true, null);
+    }
   })));
 };

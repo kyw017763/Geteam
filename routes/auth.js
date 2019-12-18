@@ -139,7 +139,7 @@ router.post('/', (req, res) => {
   res.redirect('/');
 });
 
-router.get('/signout', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/signout', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), (req, res) => {
   redisClient.set(`jwt-blacklist-${req.cookies.token}`, 0);
   redisClient.expire(`jwt-blacklist-${req.cookies.token}`, Number.parseInt(req.decoded.exp - (new Date().getTime() / 1000), 10));
   res.clearCookie('token');
@@ -295,29 +295,60 @@ router.post('/signin', checkStatusAuth, (req, res) => {
     } else {
       const payload = {
         // eslint-disable-next-line no-underscore-dangle
+        _id: member._id,
         name: member.name,
       };
 
       const options = {
         jwtid: member.id,
         issuer: 'woni',
-        expiresIn: 60 * 60 * 24,
+        expiresIn: config.tokenLife,
       };
 
-      jwt.sign(payload, config.jwtSecret, options, (errJwt, token) => {
-        if (errJwt) {
-          req.flash('message', '오류가 발생했습니다');
-          res.redirect('/signin');
-        } else {
-          if (req.body.emailCookie === 'yes') {
-            res.cookie('cookieEmail', req.body.signin_email);
-          }
-          res.cookie('token', token);
-          res.redirect('/');
-        }
-      });
+      const refreshOptions = {
+        jwtid: member.id,
+        issuer: 'woni',
+        expiresIn: config.refreshTokenLife,
+      };
+
+      const token = jwt.sign(payload, config.jwtSecret, options);
+      const refreshToken = jwt.sign(payload, config.refreshTokenSecret, refreshOptions);
+
+      if (req.body.emailCookie === 'yes') {
+        res.cookie('cookieEmail', req.body.signin_email);
+      }
+      res.cookie('token', token);
+      res.cookie('refreshToken', refreshToken);
+      res.redirect('/');
     }
   });
+});
+
+router.get('/signin/refresh', (req, res, next) => {
+  passport.authenticate('jwtRefresh', {
+    session: false,
+  }, (err, user, info) => {
+    if (err || !user) {
+      res.redirect('/signin');
+    }
+    if (user) {
+      const newpayload = {
+        // eslint-disable-next-line no-underscore-dangle
+        _id: user._id,
+        name: user.name,
+      };
+
+      const newoptions = {
+        jwtid: user.id,
+        issuer: 'woni',
+        expiresIn: config.tokenLife,
+      };
+
+      const token = jwt.sign(newpayload, config.jwtSecret, newoptions);
+      res.cookie('token', token);
+      res.redirect('/');
+    }
+  })(req, res, next);
 });
 
 router.post('/signin/find', checkStatusAuth, (req, res) => {

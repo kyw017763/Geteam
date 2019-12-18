@@ -66,16 +66,23 @@ app.use((req, res, next) => {
   function jwtVerify() {
     return new Promise((resolve, reject) => {
       if (req.cookies.token) {
-        jwt.verify(req.cookies.token || null, config.jwtSecret, (err, decoded) => {
+        jwt.verify(req.cookies.token, config.jwtSecret, (err, decoded) => {
           redisClient.exists(`jwt-blacklist-${req.cookies.coken}`, ((reply) => {
-            if (reply === 1) {
+            if (err) {
+              // statusAuth = false
+              // 위에거처럼 보내면 안되는데, expired 에러 나거든
+              resolve(false);
+            } else if (reply === 1) {
+              // 블랙리스팅 됐으면 statusAuth = false
               resolve(false);
             } else {
-              resolve(decoded);
+              // token이 있지만 블랙리스팅 되지 않았으면 유일하게 true 값 resolve
+              resolve(true);
             }
           }));
         });
       } else {
+        // 토큰이 없으면 statusAuth = false
         resolve(false);
       }
     });
@@ -83,24 +90,26 @@ app.use((req, res, next) => {
 
   jwtVerify()
     .then((result) => {
-      if (result) {
+      if (result) { // blacklisting 되지 않은 토큰 - 유효한 토큰
+        res.redirect('/signin/refresh');
+      } else if (req.cookies.token) { // 토큰이 있는데 블랙리스팅 되어 있음
+        res.locals.statusAuth = false;
+      } else {
         // TODO: 로그인 하면서 res.locals.badgeCal 지정하도록
         res.locals.badgeCal = 0;
         res.locals.statusAuth = true;
         req.decoded = result;
-      } else {
-        res.locals.statusAuth = false;
       }
-
+      // refresh해야 하는 토큰은 redirect 해야함
       next();
     });
 });
 
 // routes 사용
 app.use('/', auth);
-app.use('/board', passport.authenticate('jwt', { session: false }), board);
-app.use('/note', passport.authenticate('jwt', { session: false }), note);
-app.use('/mypage', passport.authenticate('jwt', { session: false }), mypage);
+app.use('/board', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), board);
+app.use('/note', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), note);
+app.use('/mypage', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), mypage);
 
 app.use((req, res, next) => { // 404 처리 부분
   res.status(404).send('일치하는 주소가 없습니다!');
