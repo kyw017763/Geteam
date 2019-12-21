@@ -44,29 +44,23 @@ export default () => {
 
   passport.use('jwtRefresh', new JWTStrategy({
     jwtFromRequest: refreshCookieExtractor,
-    secretOrKey: config.jwtSecret,
-    passReqToCallback: true,
-  }, ((req, payload, done) => {
-    if (req.cookies.refreshToken) {
-      jwt.verify(req.cookies.refreshToken, config.refreshTokenSecret, (err, decoded) => {
-        if (err) {
-          done(true, null);
+    secretOrKey: config.refreshTokenSecret,
+  }, ((payload, done) => {
+    console.log('패스포트 통과중');
+    // eslint-disable-next-line no-underscore-dangle
+    Member.findOne({ _id: payload._id })
+      .then((user) => {
+        if (user) {
+          return done(null, user);
+        } else {
+          return done(true, user);
         }
-        // eslint-disable-next-line no-underscore-dangle
-        Member.findOne({ _id: decoded._id })
-          .then((user) => {
-            if (user) {
-              return done(null, user);
-            } else {
-              return done(true, user);
-            }
-          })
-          .catch((memberErr) => {
-            return done(memberErr);
-          });
+      })
+      .catch((memberErr) => {
+        if (memberErr) {
+          console.log(memberErr);
+          return done(true);
+        }
       });
-    } else {
-      done(true, null);
-    }
   })));
 };

@@ -121,6 +121,7 @@ router.get('/', (req, res) => {
   // 접근 권한 없이 board, note, mypage에 접근했을 경우
   res.render(path.join(__dirname, '..', 'views', 'index.ejs'), {
     message: req.flash('message'),
+
     c: {
       member: 0,
       list: 0,
@@ -143,6 +144,7 @@ router.get('/signout', passport.authenticate('jwt', { session: false, failureRed
   redisClient.set(`jwt-blacklist-${req.cookies.token}`, 0);
   redisClient.expire(`jwt-blacklist-${req.cookies.token}`, Number.parseInt(req.decoded.exp - (new Date().getTime() / 1000), 10));
   res.clearCookie('token');
+  res.clearCookie('refreshToken');
   res.redirect('/');
 });
 
@@ -328,10 +330,12 @@ router.get('/signin/refresh', (req, res, next) => {
   passport.authenticate('jwtRefresh', {
     session: false,
   }, (err, user, info) => {
-    if (err || !user) {
-      res.redirect('/signin');
-    }
-    if (user) {
+    if (err) {
+      console.log(err);
+      // res.clearCookie('token');
+      // res.clearCookie('refreshToken');
+      return res.redirect('/signin');
+    } else {
       const newpayload = {
         // eslint-disable-next-line no-underscore-dangle
         _id: user._id,
@@ -345,10 +349,12 @@ router.get('/signin/refresh', (req, res, next) => {
       };
 
       const token = jwt.sign(newpayload, config.jwtSecret, newoptions);
+      console.log('이것이 새로 만든 토큰~');
+      console.log(token);
       res.cookie('token', token);
-      res.redirect('/');
+      return res.redirect('/');
     }
-  })(req, res, next);
+  });
 });
 
 router.post('/signin/find', checkStatusAuth, (req, res) => {
