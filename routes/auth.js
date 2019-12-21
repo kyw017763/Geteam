@@ -177,8 +177,8 @@ router.post('/signup', checkStatusAuth, (req, res) => {
     Member.findOneAndDelete({
       id: req.body.signup_email,
       isVerified: false,
-    }, (err, rr) => {
-      console.log(rr);
+    }, (err, result) => {
+      console.log(result);
     });
 
     Member.createMember(
@@ -324,35 +324,6 @@ router.post('/signin', checkStatusAuth, (req, res) => {
       res.redirect('/');
     }
   });
-});
-
-router.get('/signin/refresh', (req, res, next) => {
-  passport.authenticate('jwtRefresh', {
-    session: false,
-  }, (err, user, info) => {
-    if (err || !user) {
-      res.clearCookie('token');
-      res.clearCookie('refreshToken');
-      res.redirect('/signin');
-    }
-    if (user) {
-      const newpayload = {
-        // eslint-disable-next-line no-underscore-dangle
-        _id: user._id,
-        name: user.name,
-      };
-
-      const newoptions = {
-        jwtid: user.id,
-        issuer: 'woni',
-        expiresIn: config.tokenLife,
-      };
-
-      const token = jwt.sign(newpayload, config.jwtSecret, newoptions);
-      res.cookie('token', token);
-      res.redirect('/');
-    }
-  })(req, res, next);
 });
 
 router.post('/signin/find', checkStatusAuth, (req, res) => {
