@@ -143,8 +143,8 @@ router.post('/', (req, res) => {
 router.get('/signout', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), (req, res) => {
   redisClient.set(`jwt-blacklist-${req.cookies.token}`, 0);
   redisClient.expire(`jwt-blacklist-${req.cookies.token}`, Number.parseInt(req.decoded.exp - (new Date().getTime() / 1000), 10));
-  res.clearCookie('token');
-  res.clearCookie('refreshToken');
+  // res.clearCookie('token');
+  // res.clearCookie('refreshToken');
   res.redirect('/');
 });
 
@@ -330,12 +330,12 @@ router.get('/signin/refresh', (req, res, next) => {
   passport.authenticate('jwtRefresh', {
     session: false,
   }, (err, user, info) => {
-    if (err) {
-      console.log(err);
-      // res.clearCookie('token');
-      // res.clearCookie('refreshToken');
-      return res.redirect('/signin');
-    } else {
+    if (err || !user) {
+      res.clearCookie('token');
+      res.clearCookie('refreshToken');
+      res.redirect('/signin');
+    }
+    if (user) {
       const newpayload = {
         // eslint-disable-next-line no-underscore-dangle
         _id: user._id,
@@ -349,12 +349,10 @@ router.get('/signin/refresh', (req, res, next) => {
       };
 
       const token = jwt.sign(newpayload, config.jwtSecret, newoptions);
-      console.log('이것이 새로 만든 토큰~');
-      console.log(token);
       res.cookie('token', token);
-      return res.redirect('/');
+      res.redirect('/');
     }
-  });
+  })(req, res, next);
 });
 
 router.post('/signin/find', checkStatusAuth, (req, res) => {

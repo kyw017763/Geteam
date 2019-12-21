@@ -46,7 +46,6 @@ export default () => {
     jwtFromRequest: refreshCookieExtractor,
     secretOrKey: config.refreshTokenSecret,
   }, ((payload, done) => {
-    console.log('패스포트 통과중');
     // eslint-disable-next-line no-underscore-dangle
     Member.findOne({ _id: payload._id })
       .then((user) => {
@@ -58,7 +57,6 @@ export default () => {
       })
       .catch((memberErr) => {
         if (memberErr) {
-          console.log(memberErr);
           return done(true);
         }
       });

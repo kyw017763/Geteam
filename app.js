@@ -65,26 +65,28 @@ app.use((req, res, next) => {
 
   if (req.cookies.token) {
     jwt.verify(req.cookies.token, config.jwtSecret, (err, decoded) => {
-      if (err) {
+      if (err) { // expired된 token - 이쪽에서 '리디렉션한 횟수가 너무 많습니다.'
         console.log('can publish access token');
-        return res.redirect('/signin/refresh');
-      } else {
-        redisClient.exists(`jwt-blacklist-${req.cookies.coken}`, ((reply) => {
-          if (reply === 1) {
-            console.log('It\'s blacklist token ');
-            return res.redirect('/signin');
-          } else {
-            console.log('It\'s not blacklist token ');
+        res.redirect('/signin/refresh');
+        next();
+      } else { // 유효한 token
+        redisClient.exists(`jwt-blacklist-${req.cookies.token}`, ((redisErr, reply) => {
+          if (reply === 1) { // 블랙리스팅 된 token
+            console.log('It\'s blacklist token');
+            res.locals.statusAuth = false;
+            next();
+          } else { // 블랙리스팅 되지 않은 token
             // TODO: 로그인 하면서 res.locals.badgeCal 지정하도록
+            console.log('normal auth');
             res.locals.badgeCal = 0;
             res.locals.statusAuth = true;
             req.decoded = decoded;
+            next();
           }
         }));
       }
-      next();
     });
-  } else {
+  } else { // token 없음
     res.locals.statusAuth = false;
     next();
   }
@@ -95,11 +97,6 @@ app.use('/', auth);
 app.use('/board', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), board);
 app.use('/note', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), note);
 app.use('/mypage', passport.authenticate('jwt', { session: false, failureRedirect: '/signin/refresh' }), mypage);
-
-app.use((req, res, next) => { // 404 처리 부분
-  res.status(404).send('일치하는 주소가 없습니다!');
-  res.end();
-});
 
 app.listen(3000, () => {
   console.log('zteam on port 3000!');
