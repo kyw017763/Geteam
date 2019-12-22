@@ -20,10 +20,12 @@ router.get('/:kind/list/:category', async (req, res) => {
 
   if (kind === 'study') {
     itemList = await Study.getStudiesByCategory(req.params.category, page - 1, listOrder);
-    pageTitle = `${req.params.category} 스터디`;
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 스터디`;
   } else if (kind === 'contest') {
     itemList = await Contest.getContestsByCategory(req.params.category, page - 1, listOrder);
-    pageTitle = `${req.params.category} 공모전`;
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 공모전`;
+  } else {
+    res.redirect('board/study/list/develop');
   }
 
   // userListNum
@@ -42,6 +44,46 @@ router.get('/:kind/list/:category', async (req, res) => {
     page,
   });
   res.end();
+});
+
+router.post('/:kind', (req, res) => {
+  if (req.params.kind === 'study') {
+    Study.createStudy(
+      req.body.writeMem,
+      req.body.writeKind,
+      req.body.writeTopic,
+      req.body.writeTitle,
+      req.body.writeContent,
+      req.body.writeWantNum,
+      req.body.writeEndDay,
+    );
+  } else if (req.params.kind === 'contest') {
+    Contest.createContest(
+      req.body.writeMem,
+      req.body.writeKind,
+      req.body.writeTopic,
+      req.body.writeTitle,
+      req.body.writeContent,
+      req.body.writeWantNum,
+      req.body.writeEndDay,
+    );
+  } else {
+    res.redirect('board/study/list/develop');
+  }
+
+  res.redirect(`/board/${req.params.kind}/list/${req.body.writeKind}`);
+});
+
+router.delete('/:kind', (req, res) => {
+  if (req.params.kind === 'study') {
+    Study.removeStudy(req.query.itemId);
+  } else if (req.params.kind === 'contest') {
+    Contest.removeContest(req.query.itemId);
+  } else {
+    res.redirect('board/study/list/develop');
+  }
+
+  res.redirect(`/board/${req.params.kind}/list/develop`);
 });
 
 router.get('/:kind/list/search', (req, res) => {

@@ -31,9 +31,9 @@ studySchema.plugin(autoIncrement.plugin, {
 
 studySchema.statics = {
   // study 등록
-  createStudy: function (userId, kind, topic, title, content, wantNum, applyNum, endDay) {
+  createStudy: function (mem, kind, topic, title, content, wantNum, endDay) {
     return this.create({
-      mem: userId, kind, topic, title, content, wantNum, applyNum, endDay,
+      mem, kind, topic, title, content, wantNum, endDay,
     });
   },
   // 모든 study 받아오기
@@ -82,8 +82,11 @@ studySchema.statics = {
     }, { returnNewDocument: true });
   },
   // 내거 작성한 study 삭제하기
-  removeStudy: function (userId, num) {
-    return this.findOneAndDelete({ mem: userId, num });
+  removeStudy: function (itemId) {
+    return this.findByIdAndRemove(itemId)
+      .then((result) => {
+        return result;
+      });
   },
   // 조회수 하나 올리기
   updateHit: function (num) {

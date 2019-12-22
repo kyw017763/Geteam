@@ -84,8 +84,11 @@ contestSchema.statics = {
     }, { returnNewDocument: true });
   },
   // 내거 작성한 contest 삭제하기
-  removeContest: function (userId, num) {
-    return this.findOneAndDelete({ mem: userId, num });
+  removeContest: function (itemId) {
+    return this.findByIdAndRemove(itemId)
+      .then((result) => {
+        return result;
+      });
   },
   // 조회수 하나 올리기
   updateHit: function (num) {

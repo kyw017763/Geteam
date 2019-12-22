@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
   <%
-    function getFormatDate(date) {
+    function getFormatDate(paramDate) {
+      let date = new Date(paramDate);
       let year = date.getFullYear(); //yyyy 
       let month = (1 + date.getMonth()); //M
       month = month >= 10 ? month : '0' + month; //month 두자리로 저장 
@@ -76,9 +77,16 @@
 
 <%
   const listLen = itemList.length;
-  const listStart = page * 10 + 1;
-  const listEnd = (page + 1) * 10 ;
   const totalPage = listLen % 10 === 0 ? listLen : listLen + 1;
+
+  let endDay = new Date();
+  let maxEndDay = new Date();
+
+  endDay.setDate(endDay.getDate() + 7);
+  endDay = getFormatDate(endDay);
+
+  maxEndDay.setDate(maxEndDay.getDate() + 60);
+  maxEndDay = getFormatDate(maxEndDay);
 %>
 
 <body data-spy="scroll" data-target=".navbar-collapse">
@@ -119,7 +127,7 @@
 
         <div class="col-sm-12">
           <div class="pageTitle text-center">
-            <h2><%= pageTitle %></h2>
+            <h4><%= pageTitle %></h4>
 
             <div class="separator_auto"></div>
 
@@ -173,73 +181,73 @@
           } else {
         %>
         <%
-          for(let i = listStart; i < listEnd; i++) {
+          for(let i = 0; i < itemList.length; i++) {
             let item = itemList[i];
-            item.createdAt = item.createdAt.substr(0, 10);
-            item.updatedAt = item.updatedAt.substr(0, 10);
-            item.endDay = item.endDay.substr(0, 10);
+            item.createdAt = getFormatDate(item.createdAt);
+            item.updatedAt = getFormatDate(item.updatedAt);
+            item.endDay = getFormatDate(item.endDay);
             item.content = item.content.replace(/(<([^>]+)>)/ig,"");
 
-            let today = new Date();
-            let tDate = getFormatDate(item.endDay);
-            let dateArray = dateString.split("-");
-            let dateObj = new Date(dateArray[0], Number(dateArray[1]) - 1, dateArray[2]);
-            let betweenDay = (today.getTime() - dateObj.getTime()) / 1000 / 60 / 60 / 24;
-            let diffDate = betweenDay;
+            const endDayTime = new Date(item.endDay.slice(0, 4), Number(item.endDay.slice(5, 7)) - 1, item.endDay.slice(8, 10)).getTime();
+            const diffDate = Math.round(((endDayTime - new Date().getTime()) / 1000 / 60 / 60 / 24));
 
-            if(diffDate < 0) {
+            if(diffDate > 0) {
         %>
-        <div class='col-sm-6 m-top-10'>
-          <div class='not_list'>
-            <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
-              D - <%= diffDate %>
-            </span>
-            <span>No.<%= item.num %></span>
-            <span>작성자 | <%= item.id %> (<%= item.name %>)
-            <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span> <!-- 주제, 제목 -->
-            <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
-            <span>신청 기간 | <%= item.createdAt %> ~ <%= item.endDay %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span style='float: left;'>
-              신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              조회수 | <%= item.hit %>
-            </span>
-          </div>
-        </div>
+            <a href='/board/<%= kind %>/view/<%= category %>' style='text-decoration: none;'>
+              <div class='col-sm-6 m-top-10'>
+                <div class='list'>
+                  <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
+                    D - <%= diffDate %>
+                  </span>
+                  <span>No.<%= item.num %></span>
+                  <span>작성자 | <%= item.mem %></span>
+                  <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span>
+                  <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
+                  <span>신청일 | <%= item.createdAt %> ~ <%= item.endDay %></span>
+                  <span>
+                    신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    조회수 | <%= item.hit %>
+                  </span>
+                </div>
+              </div>
+            </a>
         <%
           } else {
         %>
         <%
           if(Math.abs(diffDate) < 10) { // 신청 마감일과 현재 날짜가 10일 이상 차이나면 아예 안보임
         %>
-        <a href='/board/<%= kind %>/view/<%= category %>' style='text-decoration: none;'>
-          <div class='col-sm-6 m-top-10'>
-            <div class='list'>
-              <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
-                D - <% diffDate %>
-              </span>
-              <span>No.<%= item.num %></span>
-              <span>작성자 | <%= item.id %> (<%= item.name %>)</span>
-              <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span>
-              <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
-              <span>신청일 | <%= item.createdAt %> ~ <%= item.endDay %></span>
-              <span>
-                신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                조회수 | <%= item.hit %>
-              </span>
-
-              <a href="/board/<%= kind %>/delete?itemId=<%= item._id %>&_method=DELETE">
-                <button type="button" class="btn btn-primary_delete"
-                  style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
-                  <i class='fa fa-trash text-primary'></i>
-                </button>
-              </a>
+            <div class='col-sm-6 m-top-10'>
+              <div class='not_list'>
+                <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
+                  <%= Math.abs(diffDate) + '일 지남' %>
+                </span>
+                <span>No.<%= item.num %></span>
+                <span>작성자 | <%= item.mem %>
+                <span class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></span> <!-- 주제, 제목 -->
+                <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
+                <span>신청 기간 | <%= item.createdAt %> ~ <%= item.endDay %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span style='float: left;'>
+                  신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  조회수 | <%= item.hit %>
+                </span>
+              <%
+                if(userId === item.mem){ //신청기간 지난 게시물의 삭제 버튼
+              %>
+                <form method="post" action="/board/<%= kind %>?_method=DELETE&itemId=<%= item._id %>">
+                  <button type="submit" class="btn btn-primary_delete" style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
+                    <i class='fa fa-trash text-primary'></i>
+                  </button>
+                </form>
+              <%
+                }
+              %>
+              </div>
             </div>
-          </div>
-        </a>
         <%
-          } // diffDate control
+          } 
         %>
         <%
           } // end of if
@@ -336,10 +344,10 @@
           <button type="button" class="close" data-dismiss="modal">&times;</button>
         </div> <!-- modal header -->
 
-        <form name="frm_item" class="form_write" method="post" action="/board/<%= kind %>">
+        <form name="frmItem" class="form_write" method="post" action="/board/<%= kind %>">
 
           <div class="modal-body" style="padding: 50px;">
-            <select name="writeKind">
+            <select class="form-control" name="writeKind">
               <option value="develop">개발</option>
               <option value="design">디자인</option>
               <%
@@ -366,7 +374,7 @@
 
             <label class="short" style="display: inline-block; margin-left: 20px;">
               신청 마감일
-              <input type="date" class="short" name="writeEndDay" value="<%= getFormatDate(new Date()) %>">
+              <input type="date" class="short" name="writeEndDay" value="<%= endDay %>" min="<%= endDay %>" max="<%= maxEndDay %>">
             </label>
 
             <span id="itemDoubleResult" class="fail"></span>
