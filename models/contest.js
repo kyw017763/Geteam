@@ -41,6 +41,14 @@ contestSchema.statics = {
   getContests: function () {
     return this.find({});
   },
+  getContestsByCategory: function (kind, page, listOrder) {
+    return this.find({ kind }).sort(listOrder).skip(page * 10)
+      .lean()
+      .exec()
+      .then((contests) => {
+        return contests;
+      });
+  },
   // 내가 작성한 모든 contest 받아오기 - listNum과 연결
   getContestById: function (userId) {
     return this.find({ mem: userId });

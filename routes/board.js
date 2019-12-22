@@ -1,7 +1,6 @@
 /* eslint-disable prefer-destructuring */
 import express from 'express';
 import path from 'path';
-import cookieParser from 'cookie-parser';
 
 import Member from '../models/member';
 import Study from '../models/study';
@@ -10,73 +9,37 @@ import Contest from '../models/contest';
 const router = express.Router();
 export default router;
 
-// board list
-router.get('/:kind/list', (req, res) => {
+router.get('/:kind/list/:category', async (req, res) => {
   console.log('It\'s board list page');
 
   const kind = req.params.kind;
-  let itemList = null;
-  let pageTitle = null;
-  let page;
-  let scale;
+  const page = req.query.page || 1;
+  const listOrder = req.query.order || 'num';
+  let itemList;
+  let pageTitle;
 
-  // itemList, pageTitle
   if (kind === 'study') {
-    itemList = Study.allItem();
-    pageTitle = '모든 스터디';
+    itemList = await Study.getStudiesByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category} 스터디`;
   } else if (kind === 'contest') {
-    itemList = Contest.allItem();
-    pageTitle = '모든 공모전';
+    itemList = await Contest.getContestsByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category} 공모전`;
   }
 
-  // range
-  let range = null;
-  if (req.query.range) {
-    range = req.query.range;
-    if (range === 'num') {
-      itemList.sort((now, next) => now.num - next.num);
-    } else if (range === 'author') {
-      itemList.sort((now, next) => now.author - next.author);
-    } else if (range === 'topic') {
-      itemList.sort((now, next) => now.topic - next.topic);
-    } else if (range === 'title') {
-      itemList.sort((now, next) => now.title - next.title);
-    }
-  }
-
-  // scale, page
-  if (req.cookies.scale !== undefined) {
-    scale = req.cookies.scale;
-  } else {
-    const s = 10;
-    res.cookie('scale', s);
-    scale = s;
-  }
-  console.log(`scale : ${scale}`);
-
-  if (req.query.page) {
-    page = req.query.page;
-  } else {
-    page = 1;
-  }
-
-  // user_list_num
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
-  });
-  console.log(`list_num : ${user_list_num}`);
+  // userListNum
+  const userListNum = await Member.getMemberListNumById(req.decoded.jti);
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    list: itemList,
-    ptitle: pageTitle,
+
+  res.render('./itemList.ejs', {
+    userId: req.decoded.jti,
+    userName: req.decoded.name,
+    userListNum,
+    pageTitle,
     kind,
-    user_list_num,
+    category: req.params.category,
+    itemList,
     page,
-    scale,
   });
   res.end();
 });
@@ -117,116 +80,49 @@ router.get('/:kind/list/search', (req, res) => {
     page = 1;
   }
 
-  // user_list_num
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
+  let listNum;
+  Member.findOne({ id: req.cookie.id }).select('list_num').exec((err, userNum) => {
+    listNum = userNum.list_num;
   });
-  console.log(`list_num : ${user_list_num}`);
+  console.log(`listNum : ${listNum}`);
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
+  res.render(path.join(__dirname, '..', 'views', 'item_List.ejs'), {
+    userId: req.cookie.id,
+    userName: req.cookie.name,
     list: itemList,
     ptitle: pageTitle,
     kind,
-    user_list_num,
+    listNum,
     key,
   });
 });
 
-// board list subject
-router.get('/:kind/list/:subject', (req, res) => {
-  console.log('It\'s board list subject page');
-
-  const kind = req.params.kind;
-  const subject = req.params.subject;
-  let itemList = null;
-  let pageTitle = null;
-  let page;
-  let scale;
-
-  // cookies
-  if (req.cookies.scale !== undefined) {
-    scale = req.cookies.scale;
-    console.log(`scale : ${scale}`);
-  } else {
-    const s = 10;
-    res.cookie('scale', s);
-    scale = s;
-  }
-
-  if (req.query.page) {
-    page = req.query.page;
-  } else {
-    page = 1;
-  }
-
-  // item_list, page_title
-  if (kind === 'study') {
-    itemList = Study.subjectItem(subject);
-    if (subject === 'develop') {
-      pageTitle = '개발 관련 스터디';
-    } else if (subject === 'design') {
-      pageTitle = '디자인 관련 스터디';
-    } else if (subject === 'etc') {
-      pageTitle = '기타 스터디 및 모임';
-    }
-  } else if (kind === 'contest') {
-    itemList = Contest.subjectItem(subject);
-    if (subject === 'develop') {
-      pageTitle = '개발 관련 공모전';
-    } else if (subject === 'design') {
-      pageTitle = '디자인 관련 공모전';
-    } else if (subject === 'etc') {
-      pageTitle = '기타 공모전';
-    } else if (subject === 'idea') {
-      pageTitle = '아이디어 관련 공모전';
-    }
-  }
-
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
-  });
-  console.log(`list_num : ${user_list_num}`);
-
-  res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    list: itemList,
-    ptitle: pageTitle,
-    kind,
-    subject,
-    user_list_num,
-    page,
-    scale,
-  });
-  res.end();
-});
-
 // board view
-router.get('/:kind/view', (req, res) => {
+router.get('/:kind/view/:id', (req, res) => {
   console.log('It\'s board view page');
 
   const id = req.params.id; // view id
 
   res.setHeader('Content-Type', 'text/html');
   res.render(path.join(__dirname, '..', 'views', 'item_view.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    // 게시판 상세보기용 값들 필요함
-    // list: itemList,
-    // ptitle: pageTitle,
-    // kind,
-    // subject,
-    // user_list_num,
-    // page,
-    // scale,
+    userId: req.cookie.id,
+    userName: req.cookie.name,
   });
   res.end();
 });
 
 // wirte, modify, delete, apply, apply_delete
+router.post('/:kind/view', (req, res) => {
+  console.log('It\'s board view page');
+
+  const id = req.params.id; // view id
+
+  res.setHeader('Content-Type', 'text/html');
+  res.render(path.join(__dirname, '..', 'views', 'item_view.ejs'), {
+    userId: req.cookie.id,
+    userName: req.cookie.name,
+    // scale,
+  });
+  res.end();
+});

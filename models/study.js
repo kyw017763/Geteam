@@ -40,6 +40,14 @@ studySchema.statics = {
   getStydies: function () {
     return this.find({});
   },
+  getStudiesByCategory: function (kind, page, listOrder) {
+    return this.find({ kind }).sort(listOrder).skip(page * 10)
+      .lean()
+      .exec()
+      .then((studies) => {
+        return studies;
+      });
+  },
   // 내가 작성한 모든 study 받아오기 - listNum과 연결
   getStudyById: function (userId) {
     return this.find({ mem: userId });

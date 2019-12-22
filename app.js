@@ -45,7 +45,7 @@ passportConfig();
 // const language = require('@google-cloud/language');
 
 // view engine setup
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.engine('.ejs', ejs.renderFile);
 app.engine('.html', ejs.renderFile);
@@ -79,7 +79,7 @@ const authMiddleware = (req, res, next) => {
             console.log('normal auth');
             res.locals.badgeCal = 0;
             res.locals.statusAuth = true;
-            req.decoded = decoded;
+            req.decoded = JSON.parse(JSON.stringify(decoded));
           }
           next();
         }));
