@@ -6,7 +6,6 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
-  <%
     function getFormatDate(paramDate) {
       let date = new Date(paramDate);
       let year = date.getFullYear(); //yyyy 
@@ -16,7 +15,7 @@
       day = day >= 10 ? day : '0' + day; //day 두자리로 저장 
       return year + '-' + month + '-' + day;
     }
-  %>
+
     String.prototype.trim = function () {
       return this.replace(/(^\s*)|(\s*$)/gi, "");
     }

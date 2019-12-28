@@ -141,15 +141,41 @@ router.get('/:kind/list/search', (req, res) => {
 });
 
 // board view
-router.get('/:kind/view/:id', (req, res) => {
+router.get('/:kind/view/:category/:id', async (req, res) => {
   console.log('It\'s board view page');
 
-  const id = req.params.id; // view id
+  const kind = req.params.kind;
+  const page = req.query.page || 1;
+  const listOrder = req.query.order || 'num';
+  let itemList;
+  let pageTitle;
+
+  if (kind === 'study') {
+    // itemList = await Study.getStudiesByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 스터디`;
+  } else if (kind === 'contest') {
+    // itemList = await Contest.getContestsByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 공모전`;
+  } else {
+    // res.redirect('board/study/list/develop');
+  }
+
+  // item.memName 추가
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_view.ejs'), {
-    userId: req.cookie.id,
-    userName: req.cookie.name,
+
+  res.render('./itemView.ejs', {
+    userId: req.decoded.jti,
+    userName: req.decoded.name,
+    // userListNum,
+    pageTitle,
+    kind,
+    category: req.params.category,
+    itemList,
+    page,
+    // item,
+    // isApplied,
+    // createdAt
   });
   res.end();
 });

@@ -11,7 +11,7 @@ const studySchema = new mongoose.Schema({
   topic: { type: String, required: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
-  wantNum: { type: Number, required: true },
+  wantNum: {  type: Number, required: true },
   applyNum: { type: Number, default: 0 },
   // startDay는 createdAt 으로 대신한다
   endDay: { type: Date, required: true },
