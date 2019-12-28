@@ -2,10 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>즐팀 : <%=itemTitle %></title>
+    <title>즐팀 : <%= item.title %></title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
+    <%
     function getFormatDate(paramDate) {
       let date = new Date(paramDate);
       let year = date.getFullYear(); //yyyy 
@@ -15,6 +16,7 @@
       day = day >= 10 ? day : '0' + day; //day 두자리로 저장 
       return year + '-' + month + '-' + day;
     }
+    %>
 
     function itemModifyChk() {
       let pSet = document.frmItemModify;
@@ -136,11 +138,11 @@
       }
 
       function confirmDelete() {
-          let deleteSet = document.frmDelete;
+        let deleteSet = document.frmDelete;
 
-          if(confirm("정말 삭제하시겠습니까?")) {
-            deleteSet.submit();
-          }
+        if(confirm("정말 삭제하시겠습니까?")) {
+          deleteSet.submit();
+        }
       }
 
       function notDelete(){

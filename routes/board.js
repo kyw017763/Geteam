@@ -5,6 +5,8 @@ import path from 'path';
 import Member from '../models/member';
 import Study from '../models/study';
 import Contest from '../models/contest';
+import StudyApply from '../models/applyStudy';
+import ContestApply from '../models/applyContest';
 
 const router = express.Router();
 export default router;
@@ -146,51 +148,31 @@ router.get('/:kind/view/:category/:id', async (req, res) => {
 
   const kind = req.params.kind;
   const page = req.query.page || 1;
-  const listOrder = req.query.order || 'num';
-  let itemList;
-  let pageTitle;
+  let item;
+  let isApplied;
 
   if (kind === 'study') {
-    // itemList = await Study.getStudiesByCategory(req.params.category, page - 1, listOrder);
-    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 스터디`;
+    item = await Study.getStudyByItemId(req.params.id);
+    isApplied = await StudyApply.isApplied(req.decoded.jti, kind, item.num);
   } else if (kind === 'contest') {
-    // itemList = await Contest.getContestsByCategory(req.params.category, page - 1, listOrder);
-    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 공모전`;
+    item = await Contest.getContestByItemId(req.params.id);
+    isApplied = await ContestApply.isApplied(req.decoded.jti, kind, item.num);
   } else {
-    // res.redirect('board/study/list/develop');
+    res.redirect('board/study/list/develop');
   }
 
-  // item.memName 추가
+  item.memName = await Member.getMemberById(item.mem);
 
   res.setHeader('Content-Type', 'text/html');
 
   res.render('./itemView.ejs', {
     userId: req.decoded.jti,
     userName: req.decoded.name,
-    // userListNum,
-    pageTitle,
     kind,
     category: req.params.category,
-    itemList,
+    item,
     page,
-    // item,
-    // isApplied,
-    // createdAt
-  });
-  res.end();
-});
-
-// wirte, modify, delete, apply, apply_delete
-router.post('/:kind/view', (req, res) => {
-  console.log('It\'s board view page');
-
-  const id = req.params.id; // view id
-
-  res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_view.ejs'), {
-    userId: req.cookie.id,
-    userName: req.cookie.name,
-    // scale,
+    isApplied,
   });
   res.end();
 });

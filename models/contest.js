@@ -63,6 +63,9 @@ contestSchema.statics = {
       num,
     });
   },
+  getContestByItemId: function (id) {
+    return this.findById(id);
+  },
   // 검색
   searchContest: function (keyword) {
     // keyword 하나 받아서 id, 이름, 주제, 파트, 제목, 내용 검색
