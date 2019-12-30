@@ -50,9 +50,6 @@ memberSchema.statics = {
       id, name, pwd, sNum, interest1, interest2, interest3, profile, verifyKey,
     });
   },
-  getMembers: function (userId) {
-    return this.find({ id: userId });
-  },
   getMemberById: function (userId) {
     return this.find({ id: userId });
   },
@@ -89,6 +86,12 @@ memberSchema.statics = {
   },
   removeMember: function (userId) {
     return this.findOneAndDelete({ id: userId });
+  },
+  getMemberListNumById: function (userId) {
+    return this.findOne({ id: userId }).select('listNum').lean().exec()
+      .then((user) => {
+        return user.listNum;
+      });
   },
 
   addFriend: function (userId, fId) {

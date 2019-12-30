@@ -10,24 +10,12 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="/css/magnific-popup.css">
-<link rel="stylesheet" href="/css/bootsnav.css">
-
-
-<!--For Plugins external css-->
-<!--<link rel="stylesheet" href="assets/css/plugins.css" />-->
-
-<!--Theme custom css -->
-<link rel="stylesheet" href="/css/style.css">
-<!--<link rel="stylesheet" href="assets/css/colors/maron.css">-->
-
-<!--Theme Responsive css-->
+<link rel="stylesheet" href="/css/magnific-popup.css" />
+<link rel="stylesheet" href="/css/bootsnav.css" />
+<link rel="stylesheet" href="/css/style.css" />
 <link rel="stylesheet" href="/css/responsive.css" />
 
-<script src="/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
-
 <nav class="navbar navbar-default navbar-fixed white bootsnav">
-  <!-- Start Top Search -->
   <div class="top-search">
     <div class="container">
       <div class="input-group">
@@ -37,16 +25,15 @@
       </div>
     </div>
   </div>
-  <!-- End Top Search -->
 
   <div class="container" style="user-select:none;">
 
     <%
-        // if(isset($userid)) {
-        //     $sql_badgeCal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
-        //     $sql_badgeCal = mysqli_num_rows($sql_badgeCal);
-        %>
-    <!-- Start Atribute Navigation -->
+    // if(isset($userid)) {
+    //     $sql_badgeCal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
+    //     $sql_badgeCal = mysqli_num_rows($sql_badgeCal);
+    %>
+
     <%
       if(statusAuth){
     %>
@@ -61,11 +48,9 @@
       </ul>
     </div>
     <%
-        }
-        %>
-    <!-- End Atribute Navigation -->
+      }
+    %>
 
-    <!-- Start Header Navigation -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
         <i class="fa fa-bars"></i>
@@ -75,13 +60,11 @@
         <img src="/images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
       </a>
     </div>
-    <!-- End Header Navigation -->
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-menu">
       <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-        <li><a href="/board/study/list" target="_self">스터디</a></li>
-        <li><a href="/board/contest/list" target="_self">공모전</a></li>
+        <li><a href="/board/study/list/develop" target="_self">스터디</a></li>
+        <li><a href="/board/contest/list/develop" target="_self">공모전</a></li>
         <li><a href="/mypage" target="_self">My Page</a></li>
 
         <%
@@ -98,6 +81,6 @@
         %>
 
       </ul>
-    </div><!-- /.navbar-collapse -->
+    </div>
   </div>
 </nav>

@@ -1,84 +1,91 @@
 /* eslint-disable prefer-destructuring */
 import express from 'express';
 import path from 'path';
-import cookieParser from 'cookie-parser';
 
 import Member from '../models/member';
 import Study from '../models/study';
 import Contest from '../models/contest';
+import StudyApply from '../models/applyStudy';
+import ContestApply from '../models/applyContest';
 
 const router = express.Router();
 export default router;
 
-// board list
-router.get('/:kind/list', (req, res) => {
+router.get('/:kind/list/:category', async (req, res) => {
   console.log('It\'s board list page');
 
   const kind = req.params.kind;
-  let itemList = null;
-  let pageTitle = null;
-  let page;
-  let scale;
+  const page = req.query.page || 1;
+  const listOrder = req.query.order || 'num';
+  let itemList;
+  let pageTitle;
 
-  // itemList, pageTitle
   if (kind === 'study') {
-    itemList = Study.allItem();
-    pageTitle = '모든 스터디';
+    itemList = await Study.getStudiesByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 스터디`;
   } else if (kind === 'contest') {
-    itemList = Contest.allItem();
-    pageTitle = '모든 공모전';
-  }
-
-  // range
-  let range = null;
-  if (req.query.range) {
-    range = req.query.range;
-    if (range === 'num') {
-      itemList.sort((now, next) => now.num - next.num);
-    } else if (range === 'author') {
-      itemList.sort((now, next) => now.author - next.author);
-    } else if (range === 'topic') {
-      itemList.sort((now, next) => now.topic - next.topic);
-    } else if (range === 'title') {
-      itemList.sort((now, next) => now.title - next.title);
-    }
-  }
-
-  // scale, page
-  if (req.cookies.scale !== undefined) {
-    scale = req.cookies.scale;
+    itemList = await Contest.getContestsByCategory(req.params.category, page - 1, listOrder);
+    pageTitle = `${req.params.category.charAt(0).toUpperCase() + req.params.category.slice(1)} 공모전`;
   } else {
-    const s = 10;
-    res.cookie('scale', s);
-    scale = s;
-  }
-  console.log(`scale : ${scale}`);
-
-  if (req.query.page) {
-    page = req.query.page;
-  } else {
-    page = 1;
+    res.redirect('board/study/list/develop');
   }
 
-  // user_list_num
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
-  });
-  console.log(`list_num : ${user_list_num}`);
+  // userListNum
+  const userListNum = await Member.getMemberListNumById(req.decoded.jti);
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    list: itemList,
-    ptitle: pageTitle,
+
+  res.render('./itemList.ejs', {
+    userId: req.decoded.jti,
+    userName: req.decoded.name,
+    userListNum,
+    pageTitle,
     kind,
-    user_list_num,
+    category: req.params.category,
+    itemList,
     page,
-    scale,
   });
   res.end();
+});
+
+router.post('/:kind', (req, res) => {
+  if (req.params.kind === 'study') {
+    Study.createStudy(
+      req.body.writeMem,
+      req.body.writeKind,
+      req.body.writeTopic,
+      req.body.writeTitle,
+      req.body.writeContent,
+      req.body.writeWantNum,
+      req.body.writeEndDay,
+    );
+  } else if (req.params.kind === 'contest') {
+    Contest.createContest(
+      req.body.writeMem,
+      req.body.writeKind,
+      req.body.writeTopic,
+      req.body.writeTitle,
+      req.body.writeContent,
+      req.body.writeWantNum,
+      req.body.writeEndDay,
+    );
+  } else {
+    res.redirect('board/study/list/develop');
+  }
+
+  res.redirect(`/board/${req.params.kind}/list/${req.body.writeKind}`);
+});
+
+router.delete('/:kind', (req, res) => {
+  if (req.params.kind === 'study') {
+    Study.removeStudy(req.query.itemId);
+  } else if (req.params.kind === 'contest') {
+    Contest.removeContest(req.query.itemId);
+  } else {
+    res.redirect('board/study/list/develop');
+  }
+
+  res.redirect(`/board/${req.params.kind}/list/develop`);
 });
 
 router.get('/:kind/list/search', (req, res) => {
@@ -117,116 +124,55 @@ router.get('/:kind/list/search', (req, res) => {
     page = 1;
   }
 
-  // user_list_num
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
+  let listNum;
+  Member.findOne({ id: req.cookie.id }).select('list_num').exec((err, userNum) => {
+    listNum = userNum.list_num;
   });
-  console.log(`list_num : ${user_list_num}`);
+  console.log(`listNum : ${listNum}`);
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
+  res.render(path.join(__dirname, '..', 'views', 'item_List.ejs'), {
+    userId: req.cookie.id,
+    userName: req.cookie.name,
     list: itemList,
     ptitle: pageTitle,
     kind,
-    user_list_num,
+    listNum,
     key,
   });
 });
 
-// board list subject
-router.get('/:kind/list/:subject', (req, res) => {
-  console.log('It\'s board list subject page');
-
-  const kind = req.params.kind;
-  const subject = req.params.subject;
-  let itemList = null;
-  let pageTitle = null;
-  let page;
-  let scale;
-
-  // cookies
-  if (req.cookies.scale !== undefined) {
-    scale = req.cookies.scale;
-    console.log(`scale : ${scale}`);
-  } else {
-    const s = 10;
-    res.cookie('scale', s);
-    scale = s;
-  }
-
-  if (req.query.page) {
-    page = req.query.page;
-  } else {
-    page = 1;
-  }
-
-  // item_list, page_title
-  if (kind === 'study') {
-    itemList = Study.subjectItem(subject);
-    if (subject === 'develop') {
-      pageTitle = '개발 관련 스터디';
-    } else if (subject === 'design') {
-      pageTitle = '디자인 관련 스터디';
-    } else if (subject === 'etc') {
-      pageTitle = '기타 스터디 및 모임';
-    }
-  } else if (kind === 'contest') {
-    itemList = Contest.subjectItem(subject);
-    if (subject === 'develop') {
-      pageTitle = '개발 관련 공모전';
-    } else if (subject === 'design') {
-      pageTitle = '디자인 관련 공모전';
-    } else if (subject === 'etc') {
-      pageTitle = '기타 공모전';
-    } else if (subject === 'idea') {
-      pageTitle = '아이디어 관련 공모전';
-    }
-  }
-
-  let user_list_num;
-  Member.findOne({ id: cid }).select('list_num').exec((err, userNum) => {
-    user_list_num = userNum.list_num;
-  });
-  console.log(`list_num : ${user_list_num}`);
-
-  res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_list.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    list: itemList,
-    ptitle: pageTitle,
-    kind,
-    subject,
-    user_list_num,
-    page,
-    scale,
-  });
-  res.end();
-});
-
 // board view
-router.get('/:kind/view', (req, res) => {
+router.get('/:kind/view/:category/:id', async (req, res) => {
   console.log('It\'s board view page');
 
-  const id = req.params.id; // view id
+  const kind = req.params.kind;
+  const page = req.query.page || 1;
+  let item;
+  let isApplied;
+
+  if (kind === 'study') {
+    item = await Study.getStudyByItemId(req.params.id);
+    isApplied = await StudyApply.isApplied(req.decoded.jti, kind, item.num);
+  } else if (kind === 'contest') {
+    item = await Contest.getContestByItemId(req.params.id);
+    isApplied = await ContestApply.isApplied(req.decoded.jti, kind, item.num);
+  } else {
+    res.redirect('board/study/list/develop');
+  }
+
+  item.memName = await Member.getMemberById(item.mem);
 
   res.setHeader('Content-Type', 'text/html');
-  res.render(path.join(__dirname, '..', 'views', 'item_view.ejs'), {
-    cookie_id: cid,
-    cookie_name: cname,
-    // 게시판 상세보기용 값들 필요함
-    // list: itemList,
-    // ptitle: pageTitle,
-    // kind,
-    // subject,
-    // user_list_num,
-    // page,
-    // scale,
+
+  res.render('./itemView.ejs', {
+    userId: req.decoded.jti,
+    userName: req.decoded.name,
+    kind,
+    category: req.params.category,
+    item,
+    page,
+    isApplied,
   });
   res.end();
 });
-
-// wirte, modify, delete, apply, apply_delete

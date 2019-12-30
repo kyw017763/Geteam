@@ -11,7 +11,7 @@ const studySchema = new mongoose.Schema({
   topic: { type: String, required: true },
   title: { type: String, required: true },
   content: { type: String, required: true },
-  wantNum: { type: Number, required: true },
+  wantNum: {  type: Number, required: true },
   applyNum: { type: Number, default: 0 },
   // startDay는 createdAt 으로 대신한다
   endDay: { type: Date, required: true },
@@ -31,14 +31,22 @@ studySchema.plugin(autoIncrement.plugin, {
 
 studySchema.statics = {
   // study 등록
-  createStudy: function (userId, kind, topic, title, content, wantNum, applyNum, endDay) {
+  createStudy: function (mem, kind, topic, title, content, wantNum, endDay) {
     return this.create({
-      mem: userId, kind, topic, title, content, wantNum, applyNum, endDay,
+      mem, kind, topic, title, content, wantNum, endDay,
     });
   },
   // 모든 study 받아오기
   getStydies: function () {
     return this.find({});
+  },
+  getStudiesByCategory: function (kind, page, listOrder) {
+    return this.find({ kind }).sort(listOrder).skip(page * 10)
+      .lean()
+      .exec()
+      .then((studies) => {
+        return studies;
+      });
   },
   // 내가 작성한 모든 study 받아오기 - listNum과 연결
   getStudyById: function (userId) {
@@ -53,6 +61,9 @@ studySchema.statics = {
     return this.find({
       num,
     });
+  },
+  getStudyByItemId: function (id) {
+    return this.findById(id);
   },
   // 검색
   searchStudy: function (keyword) {
@@ -74,8 +85,11 @@ studySchema.statics = {
     }, { returnNewDocument: true });
   },
   // 내거 작성한 study 삭제하기
-  removeStudy: function (userId, num) {
-    return this.findOneAndDelete({ mem: userId, num });
+  removeStudy: function (itemId) {
+    return this.findByIdAndRemove(itemId)
+      .then((result) => {
+        return result;
+      });
   },
   // 조회수 하나 올리기
   updateHit: function (num) {

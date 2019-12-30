@@ -41,6 +41,14 @@ contestSchema.statics = {
   getContests: function () {
     return this.find({});
   },
+  getContestsByCategory: function (kind, page, listOrder) {
+    return this.find({ kind }).sort(listOrder).skip(page * 10)
+      .lean()
+      .exec()
+      .then((contests) => {
+        return contests;
+      });
+  },
   // 내가 작성한 모든 contest 받아오기 - listNum과 연결
   getContestById: function (userId) {
     return this.find({ mem: userId });
@@ -54,6 +62,9 @@ contestSchema.statics = {
     return this.find({
       num,
     });
+  },
+  getContestByItemId: function (id) {
+    return this.findById(id);
   },
   // 검색
   searchContest: function (keyword) {
@@ -76,8 +87,11 @@ contestSchema.statics = {
     }, { returnNewDocument: true });
   },
   // 내거 작성한 contest 삭제하기
-  removeContest: function (userId, num) {
-    return this.findOneAndDelete({ mem: userId, num });
+  removeContest: function (itemId) {
+    return this.findByIdAndRemove(itemId)
+      .then((result) => {
+        return result;
+      });
   },
   // 조회수 하나 올리기
   updateHit: function (num) {
