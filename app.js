@@ -79,7 +79,7 @@ const authMiddleware = (req, res, next) => {
             console.log('normal auth');
             res.locals.badgeCal = 0;
             res.locals.statusAuth = true;
-            req.decoded = JSON.parse(JSON.stringify(decoded));
+            req.decoded = decoded;
           }
           next();
         }));
