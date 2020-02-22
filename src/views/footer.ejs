@@ -1,0 +1,87 @@
+<script>
+  // footer mesasge 유효성검사
+  function footer_note_question_chk() {
+    let footer_set = document.footer_note_question;
+    let footer_result = document.getElementById("footer_note_question_result");
+    let footerTitle = document.getElementById("footerTitle");
+    let footerContent = document.getElementById("footerContent");
+    if (footerTitle.value == "" || footerContent.value == "") {
+      footer_result.innerHTML = "문의 내용을 입력해주세요!";
+    } else {
+      footer_set.submit();
+    }
+  }
+</script>
+
+<section id="subscribe" class="subscribe roomy-100 fix">
+  <div class="overlay_footer"></div>
+  <div class="container">
+    <div class="row">
+      <div class="main_subscribe text-center">
+
+        <div class="col-sm-10 col-sm-offset-1">
+          <div class="subscribe_btns m-top-40">
+            <p class="text_footer m-top-30 text-white">
+              문의할 사항이나 Getteam을 위한 아이디어가 있으실 때,<br />
+
+              언제든지 관리자에게 의견을 보내주세요!
+            </p>
+
+            <form name="footer_note_question" class="form_question" method="post" action="/">
+              <div class="form-group col-md-4 col-md-offset-1">
+                <select class="form-control" name="question_kind" style="border-radius: 10px; margin-bottom: 15px;">
+                  <option value="기능 개선 제안">기능 개선 제안</option>
+                  <option value="기능 추가 제안">기능 추가 제안</option>
+                  <option value="기능 오류">기능 오류</option>
+                  <option value="사용성 이슈 개선 제안">사용성 이슈 개선 제안</option>
+                </select>
+                <input type="text" class="form-control" id="footerTitle" name="question_title" placeholder="문의 제목을 입력해주세요">
+                <textarea class="form-control" id="footerContent" name="question_content" rows="3" placeholder="문의 내용을 입력해주세요"></textarea>
+                <span id="footer_note_question_result" class="fail_yellow" style="color: #ffffff;"></span>
+              </div>
+              <div class="col-md-2">
+                <button type="button" onClick="footer_note_question_chk()" class="btn btn-default">보내기</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!--End off row -->
+  </div>
+  <!--End off container -->
+</section><!-- End off Impress section-->
+
+<!-- scroll up-->
+<div class="scrollup">
+  <a href="#"><i class="fa fa-chevron-up"></i></a>
+</div><!-- End off scroll up -->
+
+
+<footer id="footer" class="footer bg-black text-white">
+  <div class="container">
+    <div class="row">
+      <div class="main_footer text-center p-top-30 p-bottom-20">
+        <p class="wow fadeInRight text_footer" data-wow-duration="1s">
+          <small>
+            Made by
+            <a href="https://github.com/kyw017763"><i class="fa fa-github" style="color: #efdc05;"></i></a>
+          </small>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="/js/vendor/jquery-1.11.2.min.js"></script>
+<script src="/js/vendor/bootstrap.min.js"></script>
+
+<script src="/js/jquery.magnific-popup.js"></script>
+<script src="/js/jquery.easing.1.3.js"></script>
+<script src="/js/slick.min.js"></script>
+<script src="/js/jquery.collapse.js"></script>
+<script src="/js/bootsnav.js"></script>
+
+<script src="/js/plugins.js"></script>
+<script src="/js/main.js"></script>
