@@ -21,6 +21,7 @@ export default async (req: any, res: any, next: any) => {
       res.locals.statusAuth = true;
       res.locals.message = req.flash('message'),
       req.decoded = tokenVerifyResult.data;
+      req.locals.decoded = tokenVerifyResult.data;
     } else {
       const refreshTokenResult = await fetch(`${process.env.API || config.API}/signin/refresh`, {
         method: 'POST',
