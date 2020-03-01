@@ -5,7 +5,6 @@
   "main": "app.js",
   "dependencies": {
     "@types/connect-flash": "0.0.35",
-    "@types/connect-redis": "0.0.13",
     "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "connect-redis": "^4.0.4",
@@ -28,21 +27,21 @@
     "typescript": "^3.8.2"
   },
   "devDependencies": {
+    "@types/connect-redis": "0.0.13",
     "@types/cookie-parser": "^1.4.2",
     "@types/ejs": "^3.0.1",
     "@types/express": "^4.17.2",
     "@types/express-session": "^1.15.16",
     "@types/method-override": "0.0.31",
-    "@types/node-fetch": "^2.5.4",
-    "@types/redis": "^2.8.16"
+    "@types/node-fetch": "^2.5.4"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node app.ts",
+    "start": "nodemon --exec ts-node ./src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kyw017763/zteam_NodeJS.git"
+    "url": "git+https://github.com/kyw017763/Geteam.git"
   },
   "author": "Woni",
   "license": "ISC",

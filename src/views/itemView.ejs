@@ -22,11 +22,11 @@
       let pSet = document.frmItemModify;
       let doubleResult = document.getElementById("modifyDoubleResult");
       let topicResult = document.getElementById("modifyTopicResult");
-      letr titleResult = document.getElementById("modifyTitleResult");
+      let titleResult = document.getElementById("modifyTitleResult");
       
-      if(pSet.modify_want_num.value == "") {
+      if(pSet.modifyWantNum.value == "") {
         doubleResult.innerHTML = "원하시는 팀원 수를 입력해주세요";
-        pSet.modify_want_num.focus();
+        pSet.modifyWantNum.focus();
       } else if(pSet.modifyTopic.value == "") {
         doubleResult.innerHTML = "";
         topicResult.innerHTML = "주제를 입력해주세요";
@@ -391,17 +391,17 @@
           <form name="frmItemModify" class="form_write" method="post" action="/board/<%= kind %>/<%= category %>?_method=PATCH&page=<%= page %>">
               <label>
               작성자
-              <input type="text" name="modify_author" value="<%= userId %> (<%= userName %>)" readonly>
+              <input type="text" name="modifyAuthor" value="<%= userId %> (<%= userName %>)" readonly>
               </label>
               
               <label class="short" class="short" style="display: inline-block;">
               필요 인원
-              <input type="number" name="modify_want_num" value="<%= item.wantNum %>">
+              <input type="number" name="modifyWantNum" value="<%= item.wantNum %>">
               </label>
               
               <label class="short" style="display: inline-block; margin-left: 20px;">
               신청 마감일
-              <input type="date" class="short" name="modify_end_day" value="<%= item.endDay %>">
+              <input type="date" class="short" name="modifyEndDay" value="<%= item.endDay %>">
               </label>
               
               <span id="modifyDoubleResult" class="fail"></span>
