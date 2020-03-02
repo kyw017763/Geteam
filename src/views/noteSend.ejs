@@ -70,20 +70,20 @@
 
     <div class="container">
       <div class="row">
-        <div class="col-sm-8 col-sm-offset-2">
+        <div class="col-md-8 col-md-offset-2">
           <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
             <li class="nav-item">
-              <a class="nav-link" href="/note/recv" target="_self" style="color: #efdc05; font-size: 1.1rem;">받은 쪽지함</a>
+              <a class="nav-link" href="/note/recv" target="_self" style="color: #efdc05; font-size: 0.9rem;">받은 쪽지함</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/note/send" target="_self" style="color: #efdc05; font-size: 1.1rem;">보낸 쪽지함</a>
+              <a class="nav-link" href="/note/send" target="_self" style="color: #efdc05; font-size: 0.9rem;">보낸 쪽지함</a>
             </li>
           </ul>
         </div>
 
         <div class="separator_auto"></div>
 
-        <div class="col-sm-12">
+        <div class="col-md-12">
 
           <div class="page_title text-center">
             <h2>보낸 쪽지함</h2>
@@ -119,8 +119,8 @@
                     //   $start = ($page-1) * $scale;
                   %>
 
-        <div class="col-sm-12">
-          <div class="col-sm-3">
+        <div class="col-md-12">
+          <div class="col-md-3">
             <form method="post" action="note_send.php?kind=<%= // $kind; %>">
               <select onchange="location = this.value;" class="form-control" style="display: inline-block;">
                 <option value="note_send.php?range=num">날짜</option>
@@ -130,12 +130,12 @@
             </form>
           </div>
 
-          <div class="col-sm-3">
+          <div class="col-md-3">
             <button type='button' class="home_btns form-control btn btn-primary" data-toggle="modal"
               data-target="#modal_note_write">쪽지 쓰기</button>
           </div>
 
-          <div class="col-sm-3">
+          <div class="col-md-3">
             <a href="javascript:form_delete()">
               <button type="button" class="btn btn-primary_delete" style="padding: 1em 1em; border-radius: 50%;">
                 <i class='fa fa-trash text-primary'></i>
@@ -147,7 +147,7 @@
         <!--블럭 내에 보여 줄 데이터들 DB에서 가져온 값이 저장된 $row 변수에서 한 속성씩 빼냄-->
 
         <form action="send_delete.php" method="post" name="formm">
-          <div class="col-sm-12 m-top-50">
+          <div class="col-md-12 m-top-50">
             <table class="table table-bordered table-hover" style="width: 100%; font-size: 13px;">
               <input type="hidden" name="gb">
               <thead>
@@ -204,7 +204,7 @@
           </div>
         </form>
 
-        <div class="col-sm-4 col-sm-offset-4 text-center m-top-50">
+        <div class="col-md-4 col-md-offset-4 text-center m-top-50">
           <!--페이지 번호 표시-->
           <nav aria-labesl="...">
             <div>
@@ -314,7 +314,7 @@
         </div> <!-- modal body -->
 
         <div class="modal-footer">
-          <div class="col-sm-3 col-sm-offset-9">
+          <div class="col-md-3 col-md-offset-9">
             <button onClick="note_write_chk()" class="form-control btn btn-primary">보내기</button>
             </form>
           </div>

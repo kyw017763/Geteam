@@ -159,7 +159,7 @@ p {
 
 @media (max-width: 576px) {
     p.text_footer {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         margin: 0 0 15px;
     }
 }
@@ -760,18 +760,18 @@ textarea::-ms-input-placeholder{
 /*End off pridifain css*/
 
 /*page title all area*/
-.page_title{
+.page_title {
     padding-bottom: 3.143rem;
     overflow: hidden;
     letter-spacing: 2px;
 }
-.page_title h2{
+.page_title h2 {
     font-family: 'Nanum Gothic', sans-serif;
     font-weight: 600;
     font-size: 1.2rem;
     color:#1a1a1a;
 }
-.page_title p{
+.page_title p {
     font-family: 'Nanum Gothic', sans-serif;
     font-weight: 500;
     font-size: 1rem;
@@ -782,7 +782,7 @@ textarea::-ms-input-placeholder{
 
 /*Preloader css*/
 
-#loading{
+#loading {
     background-color: #d14149;
     height: 100%;
     width: 100%;
@@ -793,7 +793,7 @@ textarea::-ms-input-placeholder{
     left:0;
     z-index: 9999;
 }
-#loading-center{
+#loading-center {
     width: 100%;
     height: 100%;
     position: relative;
@@ -811,7 +811,7 @@ textarea::-ms-input-placeholder{
     transform: rotate(45deg); 
 
 }
-.object{
+.object {
     width: 20px;
     height: 20px;
     background-color: #FFF;
@@ -1204,7 +1204,7 @@ p.view_content {
 
 @media (max-width: 576px) {
     p.view_content {
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -1461,7 +1461,7 @@ nav {
 
 .not_list span {
     display: block;
-    color: #8B8B8B;
+    color: #5f5f5f;
     font-size: 15px;
     font-weight: 500;
     letter-spacing: 2px;
@@ -1470,7 +1470,7 @@ nav {
 
 .not_list span.title {
     display: block;
-    color: #747474;
+    color: #5a5a5a;
     font-size: 17px;
     font-weight: 700;
     letter-spacing: 3px;
@@ -1510,7 +1510,7 @@ nav {
   
 .list span {
     display: block;
-  	color: #8B8B8B;
+  	color: #5f5f5f;
   	font-size: 15px;
   	font-weight: 500;
   	letter-spacing: 2px;
@@ -1519,7 +1519,7 @@ nav {
   
 .list span.title {
     display: block;
-    color: #747474;
+    color: #5a5a5a;
     font-size: 17px;
     font-weight: 700;
     letter-spacing: 3px;
@@ -1543,7 +1543,7 @@ nav {
   }
   
 .list:hover span.title{
-    color: #5b5b5b;
+    color: #5a5a5a;
   }
 
 

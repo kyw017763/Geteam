@@ -67,16 +67,16 @@
     <% include header %>
     <div class="container">
       <div class="row">
-        <div class="col-sm-8 col-sm-offset-2" style="margin-top: 200px; margin-bottom: 150px;">
+        <div class="col-md-8 col-md-offset-2" style="margin-top: 200px; margin-bottom: 150px;">
 
-          <div class="col-sm-12">
+          <div class="col-md-12">
             <div class="page_title text-center">
               <h2>로그인</h2>
               <div class="separator_auto"></div>
             </div>
           </div>
 
-          <div class="col-sm-10">
+          <div class="col-md-10">
             <form action="/signin" method="post" class="form_write" name="frm_signin">
               <label>
                 이메일
@@ -133,15 +133,15 @@
             <span id="text_find_pwd" class="content"></span>
           </div>
 
-          <div id="original" class="col-sm-10 col-sm-offset-1">
+          <div id="original" class="col-md-10 col-md-offset-1">
             <form name="frm_find_write" class="form_write" action="/signin/reset?_method=patch" method="post">
-              <div class="col-sm-8">
+              <div class="col-md-8">
                 <input type="text" id="find_email" name="find_email" maxlength="25" placeholder="학교 이메일(아이디)을 입력해주세요"
                   style="padding: 1.25rem 0.3rem;">
                 <input type="text" id="find_hint" name="find_hint" maxlength="25"
                   placeholder="가입 시 입력했던 흥미있는 기술 / 공부 주제 중 하나를 입력해주세요" style="padding: 1.25rem 0.3rem;">
               </div>
-              <div class="col-sm-4">
+              <div class="col-md-4">
                 <button type="button" onClick="find_pwd_chk()" id="btn_find"
                   class="form-control btn btn-primary">확인</button>
               </div>

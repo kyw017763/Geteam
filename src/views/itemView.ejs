@@ -1,37 +1,26 @@
 <!doctype html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>Geteam : <%= item.title %></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script>
-    <%
-    function getFormatDate(paramDate) {
-      let date = new Date(paramDate);
-      let year = date.getFullYear(); //yyyy 
-      let month = (1 + date.getMonth()); //M
-      month = month >= 10 ? month : '0' + month; //month 두자리로 저장 
-      let day = date.getDate(); //d 
-      day = day >= 10 ? day : '0' + day; //day 두자리로 저장 
-      return year + '-' + month + '-' + day;
-    }
-    %>
 
+<head>
+  <meta charset="utf-8">
+  <title>Geteam : <%= item.title %></title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
     function itemModifyChk() {
       let pSet = document.frmItemModify;
       let doubleResult = document.getElementById("modifyDoubleResult");
       let topicResult = document.getElementById("modifyTopicResult");
       let titleResult = document.getElementById("modifyTitleResult");
-      
-      if(pSet.modifyWantNum.value == "") {
+
+      if (pSet.modifyWantNum.value == "") {
         doubleResult.innerHTML = "원하시는 팀원 수를 입력해주세요";
         pSet.modifyWantNum.focus();
-      } else if(pSet.modifyTopic.value == "") {
+      } else if (pSet.modifyTopic.value == "") {
         doubleResult.innerHTML = "";
         topicResult.innerHTML = "주제를 입력해주세요";
         pSet.modifyTopic.focus();
-      } else if(pSet.modifyTitle.value == "") {
+      } else if (pSet.modifyTitle.value == "") {
         topicResult.innerHTML = "";
         titleResult.innerHTML = "제목을 입력해주세요";
         pSet.modifyTitle.focus();
@@ -39,282 +28,297 @@
         pSet.submit();
       }
     }
-    
+
     function lengCounter() {
-      document.getElementById("counter").innerHTML=document.getElementById("textarea").value.length;
+      document.getElementById("counter").innerHTML = document.getElementById("textarea").value.length;
     }
 
     function text_lengCounter() {
-      document.getElementById("text_counter").innerHTML=document.getElementById("text").value.length;
+      document.getElementById("text_counter").innerHTML = document.getElementById("text").value.length;
     }
-    </script>
+  </script>
 
-    <style type="text/css">
-        .article_f span {
-            display: block;
-            font-size: 20px;
-        }
-        .articlesub_f {
-            clear: both;
-            height: 3rem;
-            border-style: double;
-            border-color: #efdc05;
-            border-width: 3px 0 3px 0;
-            color: #efdc05;
-            padding: 10px 25px;
-            margin-bottom: 35px;
-        }
+  <style type="text/css">
+    .article_f span {
+      display: block;
+      font-size: 20px;
+    }
 
-        @media (max-width: 576px) {
-          .articlesub_f {
-              padding: 3px 25px;
+    .articlesub_f {
+      clear: both;
+      height: 3rem;
+      border-style: double;
+      border-color: #efdc05;
+      border-width: 3px 0 3px 0;
+      color: #efdc05;
+      padding: 10px 25px;
+      margin-bottom: 35px;
+    }
+
+    @media (max-width: 576px) {
+      .articlesub_f {
+        padding: 3px 25px;
+      }
+    }
+
+    .articlesub_s {
+      padding-bottom: 35px;
+      margin-bottom: 30px;
+    }
+
+    .articlesub_s span.topic {
+      color: #efdc05;
+      font-weight: 600;
+      font-size: 25px;
+    }
+
+    .articlesub_s span.title {
+      color: black;
+      font-weight: 600;
+      font-size: 27px;
+    }
+
+    .articlesub_s span.content {
+      font-size: 20px;
+      margin-top: 40px;
+    }
+
+    .articlesub_t {
+      border-style: solid;
+      border-color: #eee;
+      border-width: 0 0 0 1.5px;
+      color: black;
+      padding: 10px 25px;
+    }
+
+    .articlesub_t span {
+      display: block;
+    }
+
+    .articlesub_t span.title {
+      color: black;
+      font-weight: 600;
+      font-size: 17px;
+    }
+
+    .articlesub_t span.content {
+      color: black;
+      font-size: 18px;
+      margin-top: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .article_container {
+      padding-top: 30px;
+      margin-bottom: 50px;
+      border-style: solid;
+      border-color: #eee;
+      border-width: 1.5px 0 0 0;
+    }
+
+    .nav_bottom {
+      margin-top: 30px;
+      font-size: 17px;
+    }
+  </style>
+
+    <% if (isApplied && !isAccepted) { %>
+      <script>
+        function confirmCancelApply() {
+          if (confirm("신청을 취소하시겠습니까?")) {
+            document.frmApplied.submit();
           }
         }
+      </script>
+    <% } else if (isApplied && isAccepted) { %>
+      <script>
+        function notEnableCancel() {
+          alert("이미 수락된 신청은 취소할 수 없습니다!");
+        }
+      </script>
+    <% } %>
 
-        .articlesub_s {
-            padding-bottom: 35px;
-            margin-bottom: 30px;
+    <% if (decoded._id === item.account._id && enableModify) { %>
+      <script>
+        function confirmDelete() {
+          if (confirm("정말 삭제하시겠습니까?")) {
+            document.frmDelete.submit();
+          }
         }
-        .articlesub_s span.topic {
-            color: #efdc05;
-            font-weight: 600;
-            font-size: 25px;
+      </script>
+    <% } else { %>
+      <script>
+        function notEnableModify() {
+          alert("이미 신청자가 있는 글이기에 수정할 수 없습니다!");
         }
-        .articlesub_s span.title {
-            color: black;
-            font-weight: 600;
-            font-size: 27px;
+        function notEnableDelete() {
+          alert("이미 신청자가 있는 글이기에 삭제할 수 없습니다!");
         }
-        .articlesub_s span.content {
-            font-size: 20px;
-            margin-top: 40px;
-        }
+      </script>
+    <% } %>
 
-        .articlesub_t {
-            border-style: solid;
-            border-color: #eee;
-            border-width: 0 0 0 1.5px;
-            color: black;
-            padding: 10px 25px;
-        }
-        .articlesub_t span {
-            display: block;
-        }
-        .articlesub_t span.title {
-            color: black;
-            font-weight: 600;
-            font-size: 17px;
-        }
-        .articlesub_t span.content {
-            color: black;
-            font-size: 18px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .article_container {
-            padding-top: 30px;
-            margin-bottom: 50px; 
-            border-style: solid;
-            border-color: #eee;
-            border-width: 1.5px 0 0 0;
-        }
-
-        .nav_bottom {
-            margin-top: 30px;
-            font-size: 17px;
-        }
-    </style>
-
-    <script>
-      function confirmAlreadyApplied() {
-        let appliedSet = document.frmApplied;
-
-        if(confirm("신청을 취소하시겠습니까?")) {
-          appliedSet.submit();
-        }
-      }
-
-      function confirmDelete() {
-        let deleteSet = document.frmDelete;
-
-        if(confirm("정말 삭제하시겠습니까?")) {
-          deleteSet.submit();
-        }
-      }
-
-      function notDelete(){
-          alert("이미 신청자가 있는 글이기에 삭제가 불가능합니다!");
-      }
-    </script>
-    
 </head>
+
+<%
+  function getFormatDate(paramDate) {
+    let date = new Date(paramDate);
+    let year = date.getFullYear(); //yyyy 
+    let month = (1 + date.getMonth()); //M
+    month = month >= 10 ? month : '0' + month; //month 두자리로 저장 
+    let day = date.getDate(); //d 
+    day = day >= 10 ? day : '0' + day; //day 두자리로 저장 
+    return year + '-' + month + '-' + day;
+  }
+
+  let endDay = new Date();
+  let maxEndDay = new Date();
+
+  endDay.setDate(endDay.getDate() + 7);
+  endDay = getFormatDate(endDay);
+
+  maxEndDay.setDate(maxEndDay.getDate() + 60);
+  maxEndDay = getFormatDate(maxEndDay);
+%>
 
 <body data-spy="scroll" data-target=".navbar-collapse">
 
-    <div class="culmn">
-      <% include header %>
+  <div class="culmn">
+    <% include header %>
     <div class="container">
-        <div class="row">
+      <div class="row">
 
-          <div class="col-sm-8 col-sm-offset-2">
-            <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
+        <div class="col-md-8 col-md-offset-2">
+          <ul class="nav nav-pills nav-fill nav-justified m-top-100" style="margin-bottom: 50px;">
 
-              <li class="nav-item">
-                <a class="nav-link" href="/board/<%= kind %>/list/develop" target="Self"
-                  style="color: #efdc05; font-size: 1.1rem;">개발</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/board/<%= kind %>/list/design" target="Self"
-                  style="color: #efdc05; font-size: 1.1rem;">디자인</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/board/<%= kind %>/list/etc" target="Self"
-                  style="color: #efdc05; font-size: 1.1rem;">etc</a>
-              </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/board/list/<%= kind %>/develop" target="_self"
+                style="color: #efdc05; font-size: 0.9rem; font-weight: bold;">개발</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/board/list/<%= kind %>/design" target="_self"
+                style="color: #efdc05; font-size: 0.9rem; font-weight: bold;">디자인</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/board/list/<%= kind %>/etc" target="_self"
+                style="color: #efdc05; font-size: 0.9rem; font-weight: bold;">Etc</a>
+            </li>
 
-              <%
-                if(kind === 'contest') {
-              %>
-                <li class="nav-item">
-                  <a class="nav-link" href="/board/<%= kind %>/list/idea" target="Self"
-                    style="color: #efdc05; font-size: 1.1rem;">idea</a>
-                </li>
-              <%
-                }
-              %>
-            </ul>
-          </div>
+            <% if (kind === 'contest') { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/board/list/<%= kind %>/idea" target="_self"
+                style="color: #efdc05; font-size: 0.9rem; font-weight: bold;">Idea</a>
+            </li>
+            <% } %>
+
+          </ul>
+        </div>
 
         <div class="separator_auto"></div>
 
         <div class="main_featured m-top-100">
-          <div class="col-sm-12 m-top-50">
-            <div class="col-sm-3 col-xs-3">
-              <div class="buttons">
-                <a href="/board/<%= kind %>/list/<%= category %>">
-                  <button class='btn btn-primary'>글목록</button>
+          <div class="col-md-12 m-top-50">
+        
+              <div class="col-md-12">
+                <a href="/board/list/<%= kind %>/<%= item.kind %>">
+                  <div>
+                    <button class='btn btn-primary'>글목록</button>
+                  </div>
                 </a>
-              <div>
-            </div>
+              </diV>
 
-            <%
-            if(userId == item.mem){
-            %>
-            <div class="col-sm-2 col-xs-3 col-xs-offset-1">
-              <div class="buttons">
-                  <button class='btn btn-change' data-toggle="modal" data-target="#modalModify">수정</button>
-              </div>
-            </div>
-            <%
-            }
-            %>
+              <%
+              function getFormatDate(paramDate) {
+                let date = new Date(paramDate);
+                let year = date.getFullYear(); //yyyy 
+                let month = (1 + date.getMonth()); //M
+                month = month >= 10 ? month : '0' + month; //month 두자리로 저장 
+                let day = date.getDate(); //d 
+                day = day >= 10 ? day : '0' + day; //day 두자리로 저장 
+                return year + '-' + month + '-' + day;
+              }
 
-            <%
-            if (item.wantNum) {
-            %>
-              <div class="col-sm-2 col-xs-3">
-                <div class="buttons">
-                    <button type="button" onClick="notDelete()" class='btn btn-change'>삭제</button>
-                </div>
-              </div>
-            <%
-            } else {
-            %>
-              <div class="col-sm-2 col-xs-3">
-                <div class="buttons">
-                  <form name="frmDelete" method="post" action="/board/<%= kind %>/list/<%= category %>?_method=DELETE&page=<%= page %>">
-                    <button type="button" onClick="confirmDelete()" class='btn btn-change'>삭제</button>
-                  </form>
-                </div>
-              </div>
-            <%
-            }
-            %>
-          </div>
+              item.createdAt = getFormatDate(item.createdAt);
+              item.updatedAt = getFormatDate(item.updatedAt);
+              item.endDay = getFormatDate(item.endDay);
+              const endDayTime = new Date(item.endDay.slice(0, 4), Number(item.endDay.slice(5, 7)) - 1, item.endDay.slice(8, 10)).getTime();
+              const diffDate = Math.round(((endDayTime - new Date().getTime()) / 1000 / 60 / 60 / 24));
+              %>
 
-          <%
-            item.createdAt = getFormatDate(item.createdAt);
-            item.updatedAt = getFormatDate(item.updatedAt);
-            item.endDay = getFormatDate(item.endDay);
-            const endDayTime = new Date(item.endDay.slice(0, 4), Number(item.endDay.slice(5, 7)) - 1, item.endDay.slice(8, 10)).getTime();
-            const diffDate = Math.round(((endDayTime - new Date().getTime()) / 1000 / 60 / 60 / 24));
-          %>
-
-          <article class="col-sm-12  m-top-50 article_container">
-                <div class="col-sm-9 article_f">
-                    <div class="col-sm-12 articlesub_f">
-                        <span style="float: left;">
-                          No. <%= item.num %>
-                        </span>
-
-                        <span style="float: right;">
-                          <i class="fa fa-eye"></i>&nbsp;&nbsp;&nbsp;<%= // $item_hit %>
-                        </span>
-                    </div>
-                    <div class="col-sm-12 articlesub_s">
+              <article class="col-md-12  m-top-50 article_container">
+                <div class="col-md-9 article_f">
+                  <div class="col-md-12 articlesub_f">
+                    <span style="float: left; color: #5f5f5f;"><i class="fa fa-pencil" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= `${item.applyNum} / ${item.wantNum}` %> (신청 기간: <%= `${item.createdAt} ~ ${item.endDay}` %>)</span>
+                    <span style="float: right; color: #5f5f5f;"><i class="fa fa-eye" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= item.hit %></span>
+                  </div>
+                  <div class="col-md-12 articlesub_s">
                     <span>
                       [<%= item.topic %>]
                     </span>
 
                     <span class="title">
-                        <%= item.title %>
-                        <span class='badge' style='border-radius: 45%; display: inline; padding: 3px 10px; background: #efdc05; color: white; margin: auto 10px;'>
-                          <%= diffDate > 0 ? `D - ${diffDate}` : `${Math.abs(diffDate)}일 지남` %>
-                        </span>";
+                      <%= item.title %>
+                      <span class='badge' style='border-radius: 45%; display: inline; padding: 3px 10px; background: #efdc05; color: white; margin: auto 10px;'>
+                        <%= diffDate > 0 ? `D - ${diffDate}` : `${Math.abs(diffDate)}일 지남` %>
+                      </span>
                     </span>
 
                     <span class="content">
-                        <%= item.content %>
+                      <%- item.content %>
                     </span>
-                    </div>
+                  </div>
                 </div>
 
                 <div class="col-sm-3 col-xs-7 articlesub_t">
-                    <span class="title" style="font-size: 18px; text-align: left; margin: 20px 0 40px 0;">
-                      <%= item.num %>
-                      <br>
-                      (<%= item.title %>)
-                    </span>
-
-                    <span class="title">신청 현황</span>
-                    <span class="content">
-                      <%= `${item.applyNum} / ${item.wantNum}` %>
-                    </span>
-
-                    <span class="title">신청 기간</span>
-                    <span class="content" style="line-height: 0.9;">
-                      <%= `${item.createdAt} ~ ${item.endDay}` %>
-                    </span>
-
-                    <%
-                      if(userId != item.mem){
-                    %>
-                      <%
-                        if(isApplied) {
-                      %>
-                        <div class="col-sm-12 col-xs-12">-
-                          <button type="button" onClick="confirmAlreadyApplied()" class='btn btn-already'>이미 신청 완료되었습니다 :)</button>
+                    <% // decoded._id === item.account._id %>
+                    <% if (decoded._id === item.account._id && enableModify) { %>
+                      <div class="col-md-12 col-xs-12">
+                        <div>
+                          <button class='btn btn-change' data-toggle="modal" data-target="#modalModify">수정</button>
                         </div>
-                      <%
-                      } else {
-                      %>
-                        <div class="col-sm-12 col-xs-12">
-                          <button class='btn btn-change' data-toggle="modal" data-target="#modalStudyApply">신청하기</button>
+                      </div>
+                    <% } else if (decoded._id === item.account._id && !enableModify) { %>
+                      <div class="col-md-12 col-xs-12">
+                        <div>
+                          <button onClick="notModfiy()" class='btn btn-change'>수정</button>
                         </div>
-                      <%
-                      }
-                      %>
-                    <%
-                      }
-                    %>
-                    
+                      </div>
+                    <% } %>
+      
+                    <% if (decoded._id === item.account._id && enableModify) { %>
+                      <div class="col-md-12 col-xs-12">
+                        <div>
+                          <form name="frmDelete" method="post"
+                            action="/board/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
+                            <button type="button" onClick="confirmDelete()" class='btn btn-change'>삭제</button>
+                          </form>
+                        </div>
+                      </div>
+                    <% } else if (decoded._id === item.account._id && !enableModify) { %>
+                      <div class="col-md-12 col-xs-12">
+                        <div>
+                          <button type="button" onClick="notEnableDelete()" class='btn btn-change'>삭제</button>
+                        </div>
+                      </div>
+                    <% } %>
+
+                    <% // decoded._id !== item.account._id %>
+                    <% if (decoded._id !== item.account._id && !isApplied) { %>
+                      <button class='btn btn-change' data-toggle="modal" data-target="#modalApply">신청</button>
+                    <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
+                      <form method="post" action="/apply/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
+                        <button type="button" onClick="confirmCancel()" class='btn btn-change'>신청 취소</button>
+                      </form>
+                    <% } else if (decoded._id !== item.account._id && isApplied && isAccepted) { %>
+                      <button type="button" onClick="notEnableCancel()" class='btn btn-already'>신청이 수락되었습니다 :)</button>
+                    <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
+                      <button type="button" onClick="confirmCancelApply()" class='btn btn-already'>이미 신청하셨습니다 :)</button>
+                    <% } %>
                 </div>
 
-                <div class="col-sm-9 nav_bottom">
-                <%
+                <div class="col-md-9 nav_bottom">
+                  <%
                     // 단순히 한단계 위 아래로 움직여서는 안된다. 그 글이 삭제되고 두단계 건너뛴 곳에 신청기간이 멀쩡한 글이 있을 수도 있기 때문에!
 
                     // if($kind=="develop"){
@@ -362,171 +366,192 @@
                     // } else {
                     //     echo "<span style='float: right; cursor: no-drop;'>다음 글 <span>&raquo;</span></span>";
                     // }
-                %>
+                  %>
                 </div>
-            </article>
-        </div>
+              </article>
+            </div>
 
-    </div> <!-- row -->
-    </div> <!-- container -->
-      <% include footer %>
-    </div> <!-- culmn -->  
+          </div> <!-- row -->
+        </div> <!-- container -->
+        <% include footer %>
+      </div> <!-- culmn -->
 
-    <%
-    if(userId == item.mem){
-    %>
-    <div class="modal fade" id="modalModify" role="dialog">
+      <% if (decoded._id === item.account._id && enableModify) { %>
+      <div class="modal fade" id="modalModify" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-            
+
           <div class="modal-content">
 
-          <div class="modal-header">
-            <h6 class="modal-title" style="display: inline-block;">
-              <%= kind.charAt(0).toUpperCase() + kind.slice(1) %> Modify
-            </h6>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div> <!-- modal header -->
-
-          <div class="modal-body" style="padding: 50px;">
-          <form name="frmItemModify" class="form_write" method="post" action="/board/<%= kind %>/<%= category %>?_method=PATCH&page=<%= page %>">
-              <label>
-              작성자
-              <input type="text" name="modifyAuthor" value="<%= userId %> (<%= userName %>)" readonly>
-              </label>
-              
-              <label class="short" class="short" style="display: inline-block;">
-              필요 인원
-              <input type="number" name="modifyWantNum" value="<%= item.wantNum %>">
-              </label>
-              
-              <label class="short" style="display: inline-block; margin-left: 20px;">
-              신청 마감일
-              <input type="date" class="short" name="modifyEndDay" value="<%= item.endDay %>">
-              </label>
-              
-              <span id="modifyDoubleResult" class="fail"></span>
-              
-              <label>
-              스터디 주제
-              <input type="text" name="modifyTopic" value="<%= item.topic %>">
-              </label>
-              <span id="modifyTopicResult" class="fail"></span>
-          
-              <div class="textarea_counter">
-              <label>
-              스터디 제목
-              <input type="text" id="text" name="modifyTitle" value="<%= item.title %>" maxlength="50" onkeyup="text_lengCounter()">
-                <span id="ex_counter" class="counter">( <span id="text_counter" class="counter"></span> / 50 )</span>
-                
-                </label>
-                <span id="modifyTitleResult" class="fail"></span>
-              </div>
-              
-              <script src="https://cdn.ckeditor.com/ckeditor5/12.2.0/classic/ckeditor.js"></script>
-              <label>
-              스터디 소개 : 기간, 진행방식, 스터디 주제 설명, 주의사항 등을 자유롭게 적어주세요!
-                <textarea name="modifyContent" id="editor"><%= item.content %></textarea>
-              </label>
-              <script>
-              ClassicEditor
-                  .create( document.querySelector( '#editor' ) )
-                  .catch( error => {
-                      console.error( error );
-                  } );
-              </script>
-
-          </div> <!-- modal body -->
-
-          <div class="modal-footer">
-            <div class="col-sm-3 col-sm-offset-9">
-                <button type="button" onClick="itemModifyChk()" class="form-control btn btn-primary">저장</button>
-            </form>
-            </div>
-          </div> <!-- modal footer -->
-
-        </div> <!-- modal content -->
-
-        </div> <!-- modal-dialog -->
-    </div> <!-- modal -->
-    <%
-    } else {
-    %>
-    <!-- Apply Modal -->
-    <div class="modal fade" id="modalStudyApply" role="dialog">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-            
-            <div class="modal-content">
-
             <div class="modal-header">
-              <h6 class="modal-title" style="display: inline-block;">
-                <%= kind.charAt(0).toUpperCase() + kind.slice(1) %> Apply
+              <h6 class="modal-title" style="display: inline-block; text-transform: capitalize; font-style: italic;">
+                <%= kind %> modify
               </h6>
               <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div> <!-- modal header -->
 
             <div class="modal-body" style="padding: 50px;">
-              <form class="form_write" method="post" action="/board/<%= kind %>/apply/<%= category %>?page=<%= page %>">
+              <form name="frmItemModify" class="form_write" method="post" action="/board/<%= kind %>/<%= id %>?_method=PATCH">
+                <label>
+                  작성자
+                  <input type="hidden" name="modifyAuthor" value="<%= item.account._id %>">
+                  <input type="text" value="<%= item.account.id %> (<%= item.account.name %>)" readonly>
+                </label>
 
-                <input type="hidden" name="num_recv" value="<%= item.num %>">
-                <input type="hidden" name="id_apply" value="<%= userId %>">
-                <input type="hidden" name="id_recv" value="<%= item.mem %>">
-                <input type="hidden" name="topic" value="<%= item.topic %>">
-                <input type="hidden" name="title" value="<%= item.title %>">
+                <select class="form-control" name="modifyCategory">
+                  <option value="develop">개발</option>
+                  <option value="design">디자인</option>
+                  <% if (kind === 'contest') { %>
+                  <option value="idea">아이디어</option>
+                  <% } %>
+                  <option value="etc">기타</option>
+                </select>
+
+                <label class="short" class="short" style="display: inline-block;">
+                  필요 인원
+                  <input type="number" name="modifyWantNum" value="<%= item.wantNum %>">
+                </label>
+
+                <label class="short" style="display: inline-block; margin-left: 20px;">
+                  신청 마감일
+                  <input type="date" class="short" name="modifyEndDay" value="<%= item.endDay %>" min="<%= endDay %>">
+                </label>
+
+                <span id="modifyDoubleResult" class="fail"></span>
 
                 <label>
-                Starter
-                <input type="text" value="<%= item.mem %> (<%= item.memName %>)" readonly disabled>
+                  <% kind === 'study' ? '스터디' : '공모전' %> 주제
+                  <input type="text" name="modifyTopic" value="<%= item.topic %>">
+                </label>
+                <span id="modifyTopicResult" class="fail"></span>
+
+                <div class="textarea_counter">
+                  <label>
+                    <% kind === 'study' ? '스터디' : '공모전' %> 제목
+                    <input type="text" id="text" name="modifyTitle" value="<%= item.title %>" maxlength="50"
+                      onkeyup="text_lengCounter()">
+                    <span id="ex_counter" class="counter">( <span id="text_counter" class="counter"></span> / 50)</span>
+                  </label>
+                  <span id="modifyTitleResult" class="fail"></span>
+                </div>
+
+                <script src="https://cdn.ckeditor.com/ckeditor5/12.2.0/classic/ckeditor.js"></script>
+                <label>
+                  <% kind === 'study' ? '스터디' : '공모전' %> 소개 : 기간, 진행방식, <% kind === 'study' ? '스터디' : '공모전' %> 주제 설명, 주의사항 등을 자유롭게 적어주세요!
+                  <textarea name="modifyContent" id="editor"><%= item.content %></textarea>
+                </label>
+                <script>
+                  ClassicEditor
+                    .create(document.querySelector('#editor'))
+                    .catch(error => {
+                      console.error(error);
+                    });
+                </script>
+
+            </div> <!-- modal body -->
+
+            <div class="modal-footer">
+              <div class="col-md-3 col-md-offset-9">
+                <button type="button" onClick="itemModifyChk()" class="form-control btn btn-primary">저장</button>
+                </form>
+              </div>
+            </div> <!-- modal footer -->
+
+          </div> <!-- modal content -->
+
+        </div> <!-- modal-dialog -->
+      </div> <!-- modal -->
+    <% } else { %>
+      <div class="modal fade" id="modalApply" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h6 class="modal-title" style="display: inline-block; text-transform: capitalize; font-style: italic;">
+                <%= kind %> 신청
+              </h6>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div> <!-- modal header -->
+
+            <div class="modal-body" style="padding: 50px;">
+              <input type="hidden" name="num_recv" value="<%= item.num %>">
+              <form class="form_write" method="post" action="/apply/<%= kind %>">
+                <input type="hidden" name="applyKind" value="<%= item.kind %>">
+                <input type="hidden" name="applyItem" value="<%= item._id %>">
+                <input type="hidden" name="applyAccount" value="<%= decoded._id %>">
+                <input type="hidden" name="recvAccount" value="<%= item.account._id %>">
+
+                <label>
+                  모집자
+                  <input type="text" value="<%= item.account.id %> (<%= item.account.name %>)" readonly disabled>
                 </label>
 
                 <label>
-                신청자
-                <input type="text" value="<%= userId %> (<%= userName %>)" readonly disabled>
+                  신청자
+                  <input type="text" value="<%= decoded.id %> (<%= decoded.name %>)" readonly disabled>
+                </label>
+
+                <% if (kind === 'contest') { %>
+                  <label>
+                    파트 선택
+                    <select class="form-control" name="applyPart">
+                    <% for (let partName of item.part.name) {  %>
+                      <option value="<%= partName %>"><%= partName %></option>
+                    <% } %>
+                    </select>
+                  </label>
+                <% } %>
+
+                <label>
+                  신청글
+                  <input type="text" value="<%= `[${item.topic}] ${item.title}` %>" readonly disabled>
                 </label>
 
                 <label class="short" style="display: inline-block;">
-                신청종료일
-                <input type="date" value="<%= item.endDay %>" readonly disabled>
+                  신청종료일
+                  <input type="date" value="<%= item.endDay %>" readonly disabled>
                 </label>
-                
+
                 <label class="short" style="display: inline-block; margin-left: 20px;">
-                신청일
-                <input type="date" name="day" value="<%= %>" disabled>
+                  신청일
+                  <input type="date" name="day" value="<%= new Date() %>" readonly disabled>
                 </label>
-                
+
                 <label>
-                신청글
-                <input type="text" value="<%= `[${item.topic}] item.title` %>" readonly disabled>
+                  신청글
+                  <input type="text" value="<%= `[${item.topic}] ${item.title}` %>" readonly disabled>
                 </label>
-                
+
                 <div>
                   <label>
-                      짧은 포트폴리오
-                  <textarea name="portfolio" placeholder="300자 이하로 입력해주세요" maxlength="300" class="signup_profile"></textarea>
+                    짧은 포트폴리오
+                    <textarea name="applyPortfolio" placeholder="300자 이하로 입력해주세요" maxlength="300"
+                      class="signup_profile"></textarea>
                   </label>
                 </div>
-                
+
                 <div>
                   <label>
-                      스터디에 바라는 점 
-                  <textarea name="want" placeholder="500자 이하로 입력해주세요" maxlength="500" class="signup_profile"></textarea>
+                    <% kind === 'study' ? '스터디' : '공모전 준비' %>를 하면서 바라는 점
+                    <textarea name="applyWant" placeholder="500자 이하로 입력해주세요" maxlength="500"
+                      class="signup_profile"></textarea>
                   </label>
                 </div>
 
             </div> <!-- modal body -->
 
             <div class="modal-footer">
-              <div class="col-sm-3 col-sm-offset-9">
-                  <input type="submit" value="신청하기" class="form-control btn btn-primary"></button>
-              </form>
+              <div class="col-md-3 col-md-offset-9">
+                <input type="submit" value="신청하기" class="form-control btn btn-primary"></button>
+                </form>
               </div>
             </div> <!-- modal footer -->
 
-        </div> <!-- modal content -->
+          </div> <!-- modal content -->
 
         </div> <!-- modal-dialog -->
-    </div> <!-- modal -->
-    <%
-    }
-    %>
+      </div> <!-- modal -->
+    <% } %>
 </body>
+
 </html>

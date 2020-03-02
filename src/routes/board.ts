@@ -10,43 +10,46 @@ export default router;
 
 router.get('/list/:kind', async (req, res) => {
   const { kind } = req.params;
-  const page = req.query.page || 1;
-  const order = req.query.order || 'createdAt';
-  let list;
-  let title;
+  const page: number = req.query.page || 1;
+  const order: string = req.query.order || 'createdAt';
+  let list = null;
+  let total: number = 0;
+  let title: string;
+  let status: number;
+  let listResult;
 
   if (kind === 'study') {
-    const listResult = await fetch(`${process.env.API || config.API}/boards/study/${page - 1}/${order}`, {
+    listResult = await fetch(`${process.env.API || config.API}/boards/study/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
-  
-    if (listResult.success) {
-      list = listResult.data;
-      title = '스터디';
-    } else {
-      // TODO: message
-    }
+    }).then((res) => {
+      status = res.status;
+      if (status === 200) return res.json();
+    });
+    title = '스터디';
   } else if (kind === 'contest') {
-    const listResult = await fetch(`${process.env.API || config.API}/boards/contest/${page - 1}/${order}`, {
+    listResult = await fetch(`${process.env.API || config.API}/boards/contest/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
-  
-    if (listResult.success) {
-      list = listResult.data;
-      title = '공모전 / 기타';
-    } else {
-      // TODO: message
-    }
+    }).then((res) => {
+      status = res.status;
+      if (status === 200) return res.json();
+    });
+    title = '공모전 / 기타';
   } else {
-    res.redirect('/board/list/study');
+    return res.redirect('/board/list/study');
+  }
+
+  if (status! === 204) {
+  } else if (status! === 200) {
+    list = listResult.data.list;
+    total = listResult.data.total;
+  } else {
+    // TODO: message
   }
 
   res.setHeader('Content-Type', 'text/html');
@@ -54,6 +57,7 @@ router.get('/list/:kind', async (req, res) => {
     kind,
     title,
     list,
+    total,
     page,
     order,
   });
@@ -61,43 +65,46 @@ router.get('/list/:kind', async (req, res) => {
 
 router.get('/list/:kind/:category', async (req, res) => {
   const { kind, category } = req.params;
-  const page = req.query.page || 1;
-  const order = req.query.order || 'createdAt';
-  let list;
-  let title;
+  const page: number = req.query.page || 1;
+  const order: string = req.query.order || 'createdAt';
+  let list = null;
+  let total: number = 0;
+  let title: string;
+  let status: number;
+  let listResult;
 
   if (kind === 'study' && (category === 'develop' || 'design' || 'etc')) {
-    const listResult = await fetch(`${process.env.API || config.API}/boards/study/${category}/${page - 1}/${order}`, {
+    listResult = await fetch(`${process.env.API || config.API}/boards/study/${category}/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
-  
-    if (listResult.success) {
-      list = listResult.data;
-      title = `${category.charAt(0).toUpperCase() + category.slice(1)} 스터디`;
-    } else {
-      // TODO: message
-    }
+    }).then(res => {
+      status = res.status;
+      if (status === 200) return res.json();
+    })
+    title = `${category.charAt(0).toUpperCase() + category.slice(1)} 스터디`;
   } else if (kind === 'contest' && (category === 'develop' || 'design' || 'etc' || 'idea')) {
-    const listResult = await fetch(`${process.env.API || config.API}/boards/contest/${category}/${page - 1}/${order}`, {
+    listResult = await fetch(`${process.env.API || config.API}/boards/contest/${category}/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
-  
-    if (listResult.success) {
-      list = listResult.data;
-      title = `${category.charAt(0).toUpperCase() + category.slice(1)} '공모전 / 기타`;
-    } else {
-      // TODO: message
-    }
+    }).then(res => {
+      status = res.status;
+      if (status === 200) return res.json();
+    });
+    title = `${category.charAt(0).toUpperCase() + category.slice(1)} 공모전 / 기타`;
   } else {
-    res.redirect('/board/list/study');
+    return res.redirect('/board/list/study');
+  }
+
+  if (status! === 204) {
+  } else if (status! === 200) {
+    list = listResult.data.list;
+    total = listResult.data.total;
+  } else {
+    // TODO: message
   }
 
   res.setHeader('Content-Type', 'text/html');
@@ -106,6 +113,7 @@ router.get('/list/:kind/:category', async (req, res) => {
     category,
     title,
     list,
+    total,
     page,
     order,
   });
@@ -113,37 +121,43 @@ router.get('/list/:kind/:category', async (req, res) => {
 
 router.get('/:kind/:id', async (req, res) => {
   const { kind, category, id } = req.params;
-  const page = req.query.page || 1;
-  const order = req.query.order || 'createdAt';
+  const page: number = req.query.page || 1;
+  const order: string = req.query.order || 'createdAt';
+  let status: number;
+  let itemResult;
   const renderData: any = {};
-  let listResult;
 
   if (kind === 'study') {
-    listResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
+    itemResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
+    }).then(res => {
+      status = res.status;
+      if (status === 200) return res.json();
+    });
   } else if (kind === 'contest') {
-    listResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
+    itemResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
       },
-    }).then(res => res.json())
-      .then(json => json);
+    }).then(res => {
+      status = res.status;
+      if (status === 200) return res.json();
+    });
   } else {
     res.redirect('/board/list/study');
   }
   
-  if (listResult.success) {
-    renderData['item'] = listResult.data.result;
-    renderData['enableModify'] = listResult.data.enableModify;
-    renderData['enableApply'] = listResult.data.enableApply;
-    renderData['isApplied'] = listResult.data.isApplied;
-    renderData['isAccepted'] = listResult.data.isAccepted;
+  if (status! === 204) {
+  } else if (status! === 200) {
+    renderData['item'] = itemResult.data.result;
+    renderData['enableModify'] = itemResult.data.enableModify;
+    renderData['enableApply'] = itemResult.data.enableApply;
+    renderData['isApplied'] = itemResult.data.isApplied;
+    renderData['isAccepted'] = itemResult.data.isAccepted;
   } else {
     // TODO: message
   }
@@ -160,8 +174,9 @@ router.get('/:kind/:id', async (req, res) => {
   });
 });
 
-router.post('/:kind/:category', async (req, res) => {
-  const { kind, category } = req.params;
+router.post('/:kind', async (req, res) => {
+  const { kind } = req.params;
+  const { category } = req.body;
   let writeResult;
 
   if (kind === 'study' && (category === 'develop' || 'design' || 'etc')) {
@@ -185,18 +200,20 @@ router.post('/:kind/:category', async (req, res) => {
     }).then(res => res.json())
       .then(json => json);
   } else {
-    res.redirect('/board/list/study');
+    res.redirect(`/board/list/${kind}/${category}`);
   }
 
   if (!writeResult.success) {
     // TODO: message
   }
 
-  writeResult.data ? res.redirect(`board/${kind}/${writeResult.data}`) : res.redirect(`/board/list/${kind}/${category}`);
+  return writeResult.data ? res.redirect(`/board/${kind}/${writeResult.data}`) : res.redirect(`/board/list/${kind}/${category}`);
 });
 
-router.patch('/:kind/:category/:id', async (req, res) => {
-  const { kind, category, id } = req.params;
+// category가 변경될 수 있으므로 url에 포함하지 않음
+router.patch('/:kind/:id', async (req, res) => {
+  const { kind, id } = req.params;
+  const { modifyCategory: category } = req.body;
   let modifyResult;
 
   if (kind === 'study' && (category === 'develop' || 'design' || 'etc')) {
@@ -220,14 +237,14 @@ router.patch('/:kind/:category/:id', async (req, res) => {
     }).then(res => res.json())
       .then(json => json);
   } else {
-    res.redirect('/board/list/study');
+    res.redirect(`/board/list/${kind}/${category}`);
   }
 
   if (!modifyResult.success || !modifyResult.data) {
     // TODO: message
   }
 
-  modifyResult.data ? res.redirect(`board/${kind}/${modifyResult.data}`) : res.redirect(`/board/list/${kind}/${category}`);
+  return modifyResult.data ? res.redirect(`/board/${kind}/${modifyResult.data}`) : res.redirect(`/board/list/${kind}/${category}`);
 });
 
 router.delete('/:kind/:category/:id', async (req, res) => {
@@ -251,12 +268,12 @@ router.delete('/:kind/:category/:id', async (req, res) => {
     }).then(res => res.json())
       .then(json => json);
   } else {
-    res.redirect('/board/list/study');
+    res.redirect(`/board/list/${kind}/${category}`);
   }
 
   if (!removeResult.success || !removeResult.data) {
     // TODO: message
   }
 
-  res.redirect('/board/list/study');
+  return res.redirect(`/board/list/${kind}/${category}`);
 });
