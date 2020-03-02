@@ -19,7 +19,7 @@ router.get('/list/:kind', async (req, res) => {
     const listResult = await fetch(`${process.env.API || config.API}/boards/study/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -34,7 +34,7 @@ router.get('/list/:kind', async (req, res) => {
     const listResult = await fetch(`${process.env.API || config.API}/boards/contest/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -70,7 +70,7 @@ router.get('/list/:kind/:category', async (req, res) => {
     const listResult = await fetch(`${process.env.API || config.API}/boards/study/${category}/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -85,7 +85,7 @@ router.get('/list/:kind/:category', async (req, res) => {
     const listResult = await fetch(`${process.env.API || config.API}/boards/contest/${category}/${page - 1}/${order}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -122,7 +122,7 @@ router.get('/:kind/:id', async (req, res) => {
     listResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -130,7 +130,7 @@ router.get('/:kind/:id', async (req, res) => {
     listResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -168,18 +168,20 @@ router.post('/:kind/:category', async (req, res) => {
     writeResult = await fetch(`${process.env.API || config.API}/board/study`, {
       method: 'POST',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
-      body: req.body
+      body: JSON.stringify(req.body)
     }).then(res => res.json())
       .then(json => json);
   } else if (kind === 'contest' && (category === 'develop' || 'design' || 'etc' || 'idea')) {
     writeResult = await fetch(`${process.env.API || config.API}/board/contest`, {
       method: 'POST',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
-      body: req.body
+      body: JSON.stringify(req.body),
     }).then(res => res.json())
       .then(json => json);
   } else {
@@ -201,18 +203,20 @@ router.patch('/:kind/:category/:id', async (req, res) => {
     modifyResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
-      body: req.body
+      body: JSON.stringify(req.body),
     }).then(res => res.json())
       .then(json => json);
   } else if (kind === 'contest' && (category === 'develop' || 'design' || 'etc' || 'idea')) {
     modifyResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
-      body: req.body
+      body: JSON.stringify(req.body),
     }).then(res => res.json())
       .then(json => json);
   } else {
@@ -234,7 +238,7 @@ router.delete('/:kind/:category/:id', async (req, res) => {
     removeResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);
@@ -242,7 +246,7 @@ router.delete('/:kind/:category/:id', async (req, res) => {
     removeResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `bearer ${req.cookies.token}`,
+        'Authorization': `Bearer ${req.cookies.token}`,
       },
     }).then(res => res.json())
       .then(json => json);

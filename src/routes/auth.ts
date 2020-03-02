@@ -28,7 +28,10 @@ router.get('/signup', checkNotStatusAuth, (req, res) => {
 router.post('/signup', checkNotStatusAuth, async (req, res) => {
   const registerResult = await fetch(`${process.env.API || config.API}/register`, {
     method: 'POST',
-    body: req.body
+    body: JSON.stringify(req.body),
+    headers:{
+    'Content-Type': 'application/json'
+    },
   }).then(res => res.json())
     .then(json => json.success);
 
@@ -45,7 +48,7 @@ router.get('/signup/verify', checkNotStatusAuth, (req, res) => {
 });
 
 router.get('/signup/verify/:key', checkNotStatusAuth, async (req, res) => {
-  const verifyEmailResult = await fetch(`${process.env.API || config.API}/signup/verify/${req.params.key}`, {
+  const verifyEmailResult = await fetch(`${process.env.API || config.API}/register/verify/${req.params.key}`, {
     method: 'POST',
   }).then(res => res.json())
     .then(json => json.success);
@@ -60,7 +63,7 @@ router.get('/signup/verify/:key', checkNotStatusAuth, async (req, res) => {
 });
 
 router.get('/signup/verify/new/:key', checkNotStatusAuth, async (req, res) => {
-  const verifyEmailNewResult = await fetch(`${process.env.API || config.API}/signup/verify/new/${req.params.key}`, {
+  const verifyEmailNewResult = await fetch(`${process.env.API || config.API}/register/verify/new/${req.params.key}`, {
     method: 'POST',
   }).then(res => res.json())
     .then(json => json.success);
@@ -84,7 +87,10 @@ router.get('/signin', checkNotStatusAuth, (req, res) => {
 router.post('/signin', checkNotStatusAuth, async (req, res) => {
   const signinResult = await fetch(`${process.env.API || config.API}/signin`, {
     method: 'POST',
-    body: req.body
+    body: JSON.stringify(req.body),
+    headers:{
+    'Content-Type': 'application/json'
+    }
   }).then(res => res.json())
     .then(json => json);
 
@@ -92,7 +98,7 @@ router.post('/signin', checkNotStatusAuth, async (req, res) => {
     res.cookie('token', signinResult.data.accessToken);
     res.cookie('exp', signinResult.data.exp);
 
-    if (req.body.emailCookie === 'yes') {
+    if (req.body.email === 'yes') {
       res.cookie('cookieEmail', req.body.signin_email);
     }
 
@@ -105,7 +111,10 @@ router.post('/signin', checkNotStatusAuth, async (req, res) => {
 router.patch('/signin/reset', checkNotStatusAuth, async (req, res) => {
   const signinResetResult = await fetch(`${process.env.API || config.API}/signin/reset`, {
     method: 'PATCH',
-    body: req.body
+    body: JSON.stringify(req.body),
+    headers:{
+    'Content-Type': 'application/json'
+    }
   }).then(res => res.json())
     .then(json => json.success);
   
@@ -116,11 +125,11 @@ router.patch('/signin/reset', checkNotStatusAuth, async (req, res) => {
   }
 });
 
-router.post('/signout', checkStatusAuth, async (req, res) => {
+router.get('/signout', checkStatusAuth, async (req, res) => {
   const signoutResult = await fetch(`${process.env.API || config.API}/signout`, {
     method: 'POST',
     headers: {
-      'Authorization': `bearer ${req.cookies.token}`,
+      'Authorization': `Bearer ${req.cookies.token}`,
     }
   }).then(res => res.json())
     .then(json => json.success);
@@ -137,7 +146,7 @@ router.delete('/unregister', checkStatusAuth, async (req, res) => {
   const signinResetResult = await fetch(`${process.env.API || config.API}/unregister`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `bearer ${req.cookies.token}`,
+      'Authorization': `Bearer ${req.cookies.token}`,
     }
   }).then(res => res.json())
     .then(json => json.success);

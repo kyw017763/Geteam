@@ -1,17 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
-  <title>즐팀 : 회원가입</title>
+  <title>Geteam : 회원가입</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      let m = '<%= message %>';
-      if (m) alert(m);
-    }, false);
-  </script>
 
   <script>
     function isNumber(s) {
@@ -22,8 +16,8 @@
     }
 
     function compareEmail() {
-      let id = document.frm_signup.signup_email.value;
-      
+      const id = document.frm_signup.signup_email.value;
+
       const regxEmail = /[A-Za-z0-9]{8}@e-mirim.hs.kr/;
       const resultEmail = regxEmail.exec(id);
 
@@ -35,31 +29,31 @@
         return;
       }
 
-      let data = {
-        id
-      };
-
-      fetch('http://127.0.0.1:3000/signup/compareEmail', {
+      fetch('http://127.0.0.1:3000/register/compareEmail', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          id,
+        }),
         headers: new Headers(),
       }).then((res) => {
         res.json()
           .then(json => {
-            if (res.status === 200 && JSON.parse(json).result) {
+            if (res.status === 200 && json.success) {
               document.frm_signup.signup_email.readOnly = true;
               document.getElementById('compareBtn').innerHTML = '이메일 중복 확인 완료';
               document.getElementById('compareBtn').disabled = true;
               document.getElementById("signup_email_result").innerHTML = "사용 가능한 이메일입니다";
               document.getElementById('signupBtn').disabled = false;
+            } else if (res.status === 200 && !json.success) {
+              document.getElementById("signup_email_result").innerHTML = "사용할 수 없는 이메일입니다";
             } else if (res.status === 500) {
               document.getElementById("signup_email_result").innerHTML =
-              "이메일을 중복확인 하는 과정에서 오류가 발생했습니다. 다시 시도해주세요";
-            } else if (res.status === 200 && !JSON.parse(json).result) {
-              document.getElementById("signup_email_result").innerHTML = "사용할 수 없는 이메일입니다";
+                "이메일을 중복확인 하는 과정에서 오류가 발생했습니다. 다시 시도해주세요";
             }
           });
-      }).catch(err => console.error(err));
+      }).catch(err => {
+        console.error(err)
+      });
     }
 
     function signup_chk() {
@@ -132,11 +126,8 @@
 </head>
 
 <body data-spy="scroll" data-target=".navbar-collapse">
-
   <div class="culmn">
-
     <% include header %>
-
     <div class="container">
       <div class="row">
 
@@ -167,19 +158,15 @@
                 이메일
                 <input type="text" name="signup_email" placeholder="학교 이메일을 입력해주세요">
               </label>
+
               <button type="button" id="compareBtn" onClick="compareEmail()" class="form-control btn btn-primary">
                 이메일 중복 확인
               </button>
-              <button type="button" id="compareBtn" onClick="sendVerifyMail()" class="form-control btn btn-primary" style="display: none;">
-                인증 메일 발송
-              </button>
-
               <span id="signup_email_result" class="fail"></span>
 
               <label>
                 비밀번호
-                <input type="password" name="signup_pwd" placeholder="비밀번호"
-                  name="signup_pwd">
+                <input type="password" name="signup_pwd" placeholder="비밀번호" name="signup_pwd">
               </label>
               <span id="signup_pwd_result" class="fail"></span>
 
@@ -217,8 +204,8 @@
               </div>
               <span id="signup_profile_result" class="fail"></span>
 
-              <button type="button" id="signupBtn" onClick="signup_chk()" class="form-control btn btn-primary" disabled>회원가입</button>
-
+              <button type="button" id="signupBtn" onClick="signup_chk()" class="form-control btn btn-primary"
+                disabled>회원가입</button>
             </form>
           </div>
         </div>
@@ -228,8 +215,5 @@
   </div> <!-- container -->
   <% include footer %>
   </div> <!-- culmn -->
-
-
 </body>
-
 </html>

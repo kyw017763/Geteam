@@ -1,4 +1,4 @@
-<link rel="icon" type="/image/png" href=""> <!-- 파비콘 추가 -->
+<link rel="icon" type="/image/png" href=""> <!-- 파비콘 -->
 
 <link rel="stylesheet" href="/css/slick.css">
 <link rel="stylesheet" href="/css/slick-theme.css">
@@ -15,6 +15,13 @@
 <link rel="stylesheet" href="/css/style.css" />
 <link rel="stylesheet" href="/css/responsive.css" />
 
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const message = '<%= message %>';
+    if (message) alert(message);
+  }, false);
+</script>
+
 <nav class="navbar navbar-default navbar-fixed white bootsnav">
   <div class="top-search">
     <div class="container">
@@ -27,60 +34,41 @@
   </div>
 
   <div class="container" style="user-select:none;">
-
-    <%
-    // if(isset($userid)) {
-    //     $sql_badgeCal = mysqli_query($conn, "SELECT * FROM note_recv WHERE recv_id='$userid' AND recv_chk='0' ");
-    //     $sql_badgeCal = mysqli_num_rows($sql_badgeCal);
-    %>
-
-    <%
-      if(statusAuth){
-    %>
+    <% if(statusAuth){ %>
     <div class="attr-nav">
       <ul>
         <li class="dropdown">
-          <a href="note/recv">
+          <a href="/note/recv">
             <i class="fa fa-envelope-o"></i>
-            <span class="badge"><%= badgeCal %></span>
           </a>
         </li>
       </ul>
     </div>
-    <%
-      }
-    %>
+    <% } %>
 
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
         <i class="fa fa-bars"></i>
       </button>
       <a class="navbar-brand" href="/">
-        <!-- 로고 이미지 -->
         <img src="/images/logo.png" class="logo" alt="zteam logo image" style="width: 6.3rem; height: 2.2rem;">
       </a>
     </div>
 
     <div class="collapse navbar-collapse" id="navbar-menu">
       <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
-        <li><a href="/board/study/list/develop" target="_self">스터디</a></li>
-        <li><a href="/board/contest/list/develop" target="_self">공모전</a></li>
+        <li><a href="/board/list/study" target="_self">스터디</a></li>
+        <li><a href="/board/list/contest" target="_self">공모전</a></li>
         <li><a href="/mypage" target="_self">My Page</a></li>
 
-        <%
-          if(statusAuth) {
-        %>
-        <li><a href="/signout" target="_self">SignOut</a></li>
-        <%
-          } else {
-        %>
+        <% if(statusAuth) { %>
+        <li><a href="/signout?_method=post" target="_self">SignOut</a></li>
+        <% } else { %>
         <li><a href="/signin" target="_self">SignIn</a></li>
         <li><a href="/signup" target="_self">SignUp</a></li>
-        <%
-          }
-        %>
-
+        <% } %>
       </ul>
     </div>
+
   </div>
 </nav>
