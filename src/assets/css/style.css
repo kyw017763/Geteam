@@ -351,25 +351,6 @@ Separator
 Button
 */
 
-.btn{
-    -webkit-transition: all 0.6s;
-    transition: all 0.6s;
-    text-transform: uppercase;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 2.5px;
-    border-radius: 0;
-    border:1px solid;
-    height: 50px;
-    line-height: 10px;
-    padding: 0.8rem 2rem;
-}
-
-.btn:hover{
-    color:#fff;
-    border:1px solid;
-}
-
 .btn-already{
     color: #000;
     background: white;
@@ -388,17 +369,6 @@ Button
 .btn-default:hover{
     border-color:#efdc05;
     background-color: #efdc05;
-}
-
-.btn-primary{
-    color: #fff;
-    background-color: #efdc05;
-    border:1px #efdc05 solid;
-}
-.btn-primary:hover{
-    background-color: #eee;
-    border-color: #eee;
-    color:#efdc05;
 }
 
 .btn-primary_delete{
@@ -1456,7 +1426,7 @@ nav {
     border-width: 0.5px; 
     overflow: hidden;
     line-height: 1.5;
-    border-top: 6px solid #A2A2A2;
+    border-top: 12px solid #A2A2A2;
 }
 
 .not_list span {
@@ -1505,7 +1475,7 @@ nav {
     border-width: 0.5px; 
   	overflow: hidden;
   	transition: transform 0.7s;
-    border-top: 6px solid #efdc05;
+    border-top: 12px solid #efdc05;
   }
   
 .list span {

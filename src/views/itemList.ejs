@@ -208,7 +208,7 @@
                     </span>
                     <% if (item.account._id === decoded._id) { //신청기간 지난 게시물의 삭제 버튼 %>
                     <form method="post" action="/board/<%= kind %>/<%= item.kind %>/<%= item._id %>?_method=DELETE">
-                      <button type="submit" class="btn btn-primary_delete"
+                      <button type="submit" class="btn btn-primary"
                         style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
                         <i class='fa fa-trash text-primary'></i>
                       </button>

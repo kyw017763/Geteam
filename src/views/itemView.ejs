@@ -223,7 +223,7 @@
               <div class="col-md-12">
                 <a href="/board/list/<%= kind %>/<%= item.kind %>">
                   <div>
-                    <button class='btn btn-primary'>글목록</button>
+                    <button class='btn btn-primary btn-radius'>글목록</button>
                   </div>
                 </a>
               </diV>
@@ -246,7 +246,7 @@
               const diffDate = Math.round(((endDayTime - new Date().getTime()) / 1000 / 60 / 60 / 24));
               %>
 
-              <article class="col-md-12  m-top-50 article_container">
+              <article class="col-md-12 article_container m-top-50">
                 <div class="col-md-9 article_f">
                   <div class="col-md-12 articlesub_f">
                     <span style="float: left; color: #5f5f5f;"><i class="fa fa-pencil" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= `${item.applyNum} / ${item.wantNum}` %> (신청 기간: <%= `${item.createdAt} ~ ${item.endDay}` %>)</span>
@@ -275,30 +275,31 @@
                     <% if (decoded._id === item.account._id && enableModify) { %>
                       <div class="col-md-12 col-xs-12">
                         <div>
-                          <button class='btn btn-change' data-toggle="modal" data-target="#modalModify">수정</button>
+                          <button class='btn btn-primary btn-lg' data-toggle="modal" data-target="#modalModify">수정</button>
                         </div>
                       </div>
                     <% } else if (decoded._id === item.account._id && !enableModify) { %>
                       <div class="col-md-12 col-xs-12">
                         <div>
-                          <button onClick="notModfiy()" class='btn btn-change'>수정</button>
+                          <button onClick="notModfiy()" class='btn btn-primary btn-lg'>수정</button>
                         </div>
                       </div>
                     <% } %>
       
                     <% if (decoded._id === item.account._id && enableModify) { %>
-                      <div class="col-md-12 col-xs-12">
+                      <div class="col-md-12 col-xs-12 m-top-20">
                         <div>
                           <form name="frmDelete" method="post"
                             action="/board/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
-                            <button type="button" onClick="confirmDelete()" class='btn btn-change'>삭제</button>
+                            <input type="hidden" name="writeMem" value="<%= item.account._id %>">
+                            <button type="button" onClick="confirmDelete()" class='btn btn-primary btn-lg'>삭제</button>
                           </form>
                         </div>
                       </div>
                     <% } else if (decoded._id === item.account._id && !enableModify) { %>
-                      <div class="col-md-12 col-xs-12">
+                      <div class="col-md-12 col-xs-12 m-top-20">
                         <div>
-                          <button type="button" onClick="notEnableDelete()" class='btn btn-change'>삭제</button>
+                          <button type="button" onClick="notEnableDelete()" class='btn btn-primary btn-lg'>삭제</button>
                         </div>
                       </div>
                     <% } %>
@@ -542,7 +543,7 @@
 
             <div class="modal-footer">
               <div class="col-md-3 col-md-offset-9">
-                <input type="submit" value="신청하기" class="form-control btn btn-primary"></button>
+                <input type="submit" value="신청하기" class="form-control btn btn-primary btn-radius"></button>
                 </form>
               </div>
             </div> <!-- modal footer -->

@@ -19,30 +19,22 @@ router.get('/list/:kind', async (req, res) => {
   let listResult;
 
   if (kind === 'study') {
-    listResult = await fetch(`${process.env.API || config.API}/boards/study/${page - 1}/${order}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${req.cookies.token}`,
-      },
-    }).then((res) => {
-      status = res.status;
-      if (status === 200) return res.json();
-    });
     title = '스터디';
   } else if (kind === 'contest') {
-    listResult = await fetch(`${process.env.API || config.API}/boards/contest/${page - 1}/${order}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${req.cookies.token}`,
-      },
-    }).then((res) => {
-      status = res.status;
-      if (status === 200) return res.json();
-    });
     title = '공모전 / 기타';
   } else {
     return res.redirect('/board/list/study');
   }
+
+  listResult = await fetch(`${process.env.API || config.API}/boards/${kind}/${page - 1}/${order}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${req.cookies.token}`,
+    },
+  }).then((res) => {
+    status = res.status;
+    if (status === 200) return res.json();
+  });
 
   if (status! === 204) {
   } else if (status! === 200) {
@@ -125,20 +117,11 @@ router.get('/:kind/:id', async (req, res) => {
   const order: string = req.query.order || 'createdAt';
   let status: number;
   let itemResult;
+  let appliesResult;
   const renderData: any = {};
 
-  if (kind === 'study') {
-    itemResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${req.cookies.token}`,
-      },
-    }).then(res => {
-      status = res.status;
-      if (status === 200) return res.json();
-    });
-  } else if (kind === 'contest') {
-    itemResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
+  if (kind === 'study' || kind === 'contest') {
+    itemResult = await fetch(`${process.env.API || config.API}/board/${kind}/${id}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
@@ -158,8 +141,26 @@ router.get('/:kind/:id', async (req, res) => {
     renderData['enableApply'] = itemResult.data.enableApply;
     renderData['isApplied'] = itemResult.data.isApplied;
     renderData['isAccepted'] = itemResult.data.isAccepted;
+
+    if (res.locals.decoded._id === renderData['item'].account._id) {
+      appliesResult = await fetch(`${process.env.API || config.API}/apply/${kind}/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${req.cookies.token}`,
+        },
+      }).then(res => {
+        status = res.status;
+        if (status === 200) return res.json();
+      });
+    }
   } else {
     // TODO: message
+  }
+
+  if (status! === 200) {
+    renderData['applies'] = appliesResult.data;
+  } else {
+    renderData['applies'] = null;
   }
 
   res.setHeader('Content-Type', 'text/html');
@@ -254,16 +255,20 @@ router.delete('/:kind/:category/:id', async (req, res) => {
   if (kind === 'study' && (category === 'develop' || 'design' || 'etc')) {
     removeResult = await fetch(`${process.env.API || config.API}/board/study/${id}`, {
       method: 'DELETE',
+      body: JSON.stringify(req.body),
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
     }).then(res => res.json())
       .then(json => json);
   } else if (kind === 'contest' && (category === 'develop' || 'design' || 'etc' || 'idea')) {
     removeResult = await fetch(`${process.env.API || config.API}/board/contest/${id}`, {
       method: 'DELETE',
+      body: JSON.stringify(req.body),
       headers: {
         'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
       },
     }).then(res => res.json())
       .then(json => json);
