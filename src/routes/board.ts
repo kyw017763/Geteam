@@ -140,6 +140,7 @@ router.get('/:kind/:id', async (req, res) => {
     renderData['enableModify'] = itemResult.data.enableModify;
     renderData['enableApply'] = itemResult.data.enableApply;
     renderData['isApplied'] = itemResult.data.isApplied;
+    renderData['applyId'] = itemResult.data.applyId;
     renderData['isAccepted'] = itemResult.data.isAccepted;
 
     if (res.locals.decoded._id === renderData['item'].account._id) {

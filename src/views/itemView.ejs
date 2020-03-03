@@ -39,46 +39,47 @@
   </script>
 
   <style type="text/css">
-    .article_f span {
+    .article-sub span {
       display: block;
-      font-size: 20px;
+      font-size: 15px;
     }
 
-    .articlesub_f {
+    .article-sub-div {
       clear: both;
       height: 3rem;
       border-style: double;
       border-color: #efdc05;
       border-width: 3px 0 3px 0;
-      color: #efdc05;
+      color: #5f5f5f;
+      line-height: 1.5rem;
       padding: 10px 25px;
       margin-bottom: 35px;
     }
 
     @media (max-width: 576px) {
-      .articlesub_f {
+      .article-sub-div {
         padding: 3px 25px;
       }
     }
 
-    .articlesub_s {
+    .article-main {
       padding-bottom: 35px;
       margin-bottom: 30px;
     }
 
-    .articlesub_s span.topic {
+    .article-main span.topic {
       color: #efdc05;
       font-weight: 600;
       font-size: 25px;
     }
 
-    .articlesub_s span.title {
+    .article-main span.title {
       color: black;
       font-weight: 600;
       font-size: 27px;
     }
 
-    .articlesub_s span.content {
+    .article-main span.content {
       font-size: 20px;
       margin-top: 40px;
     }
@@ -124,40 +125,48 @@
     }
   </style>
 
-    <% if (isApplied && !isAccepted) { %>
-      <script>
-        function confirmCancelApply() {
-          if (confirm("신청을 취소하시겠습니까?")) {
-            document.frmApplied.submit();
-          }
-        }
-      </script>
-    <% } else if (isApplied && isAccepted) { %>
-      <script>
-        function notEnableCancel() {
-          alert("이미 수락된 신청은 취소할 수 없습니다!");
-        }
-      </script>
-    <% } %>
+  <% if (decoded._id === item.account._id && item.applyNum === 0) { %>
+    <script>
+      function notApplied() {
+        alert("아직 신청자가 없습니다");
+      }
+    </script>
+  <% } %>
 
-    <% if (decoded._id === item.account._id && enableModify) { %>
-      <script>
-        function confirmDelete() {
-          if (confirm("정말 삭제하시겠습니까?")) {
-            document.frmDelete.submit();
-          }
+  <% if (isApplied && !isAccepted) { %>
+    <script>
+      function confirmCancelApply() {
+        if (confirm("신청을 취소하시겠습니까?")) {
+          document.frmApplied.submit();
         }
-      </script>
-    <% } else { %>
-      <script>
-        function notEnableModify() {
-          alert("이미 신청자가 있는 글이기에 수정할 수 없습니다!");
+      }
+    </script>
+  <% } else if (isApplied && isAccepted) { %>
+    <script>
+      function notEnableCancel() {
+        alert("이미 수락된 신청은 취소할 수 없습니다!");
+      }
+    </script>
+  <% } %>
+
+  <% if (decoded._id === item.account._id && enableModify) { %>
+    <script>
+      function confirmDelete() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          document.frmDelete.submit();
         }
-        function notEnableDelete() {
-          alert("이미 신청자가 있는 글이기에 삭제할 수 없습니다!");
-        }
-      </script>
-    <% } %>
+      }
+    </script>
+  <% } else { %>
+    <script>
+      function notEnableModify() {
+        alert("이미 신청자가 있는 글이기에 수정할 수 없습니다!");
+      }
+      function notEnableDelete() {
+        alert("이미 신청자가 있는 글이기에 삭제할 수 없습니다!");
+      }
+    </script>
+  <% } %>
 
 </head>
 
@@ -172,8 +181,11 @@
     return year + '-' + month + '-' + day;
   }
 
+  let applyDay = new Date();
   let endDay = new Date();
   let maxEndDay = new Date();
+
+  applyDay = getFormatDate(applyDay);
 
   endDay.setDate(endDay.getDate() + 7);
   endDay = getFormatDate(endDay);
@@ -247,12 +259,12 @@
               %>
 
               <article class="col-md-12 article_container m-top-50">
-                <div class="col-md-9 article_f">
-                  <div class="col-md-12 articlesub_f">
-                    <span style="float: left; color: #5f5f5f;"><i class="fa fa-pencil" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= `${item.applyNum} / ${item.wantNum}` %> (신청 기간: <%= `${item.createdAt} ~ ${item.endDay}` %>)</span>
-                    <span style="float: right; color: #5f5f5f;"><i class="fa fa-eye" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= item.hit %></span>
+                <div class="col-md-9 article-sub">
+                  <div class="col-md-12 article-sub-div">
+                    <span style="float: left;"><i class="fa fa-pencil" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= `${item.applyNum} / ${item.wantNum}` %> (신청 기간: <%= `${item.createdAt} ~ ${item.endDay}` %>)</span>
+                    <span style="float: right;"><i class="fa fa-eye" style="color: #efdc05;"></i>&nbsp;&nbsp;&nbsp;<%= item.hit %></span>
                   </div>
-                  <div class="col-md-12 articlesub_s">
+                  <div class="col-md-12 article-main">
                     <span>
                       [<%= item.topic %>]
                     </span>
@@ -271,51 +283,64 @@
                 </div>
 
                 <div class="col-sm-3 col-xs-7 articlesub_t">
-                    <% // decoded._id === item.account._id %>
-                    <% if (decoded._id === item.account._id && enableModify) { %>
-                      <div class="col-md-12 col-xs-12">
-                        <div>
-                          <button class='btn btn-primary btn-lg' data-toggle="modal" data-target="#modalModify">수정</button>
-                        </div>
+                  <% // decoded._id === item.account._id %>
+                  <% if (decoded._id === item.account._id && item.applyNum > 0) { %>
+                    <div class="col-md-12 col-xs-12">
+                      <div>
+                        <button class='btn btn-primary btn-lg btn-radius' data-toggle="modal" data-target="#applyInfo">신청 현황 확인</button>
                       </div>
-                    <% } else if (decoded._id === item.account._id && !enableModify) { %>
-                      <div class="col-md-12 col-xs-12">
-                        <div>
-                          <button onClick="notModfiy()" class='btn btn-primary btn-lg'>수정</button>
-                        </div>
+                    </div>
+                  <% } else if (decoded._id === item.account._id && item.applyNum === 0) { %>
+                    <div class="col-md-12 col-xs-12">
+                      <div>
+                        <button onClick="notApplied()" class='btn btn-primary btn-lg btn-radius'>신청 현황 확인</button>
                       </div>
-                    <% } %>
-      
-                    <% if (decoded._id === item.account._id && enableModify) { %>
-                      <div class="col-md-12 col-xs-12 m-top-20">
-                        <div>
-                          <form name="frmDelete" method="post"
-                            action="/board/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
-                            <input type="hidden" name="writeMem" value="<%= item.account._id %>">
-                            <button type="button" onClick="confirmDelete()" class='btn btn-primary btn-lg'>삭제</button>
-                          </form>
-                        </div>
-                      </div>
-                    <% } else if (decoded._id === item.account._id && !enableModify) { %>
-                      <div class="col-md-12 col-xs-12 m-top-20">
-                        <div>
-                          <button type="button" onClick="notEnableDelete()" class='btn btn-primary btn-lg'>삭제</button>
-                        </div>
-                      </div>
-                    <% } %>
+                    </div>
+                  <% } %>
 
-                    <% // decoded._id !== item.account._id %>
-                    <% if (decoded._id !== item.account._id && !isApplied) { %>
-                      <button class='btn btn-change' data-toggle="modal" data-target="#modalApply">신청</button>
-                    <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
-                      <form method="post" action="/apply/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
-                        <button type="button" onClick="confirmCancel()" class='btn btn-change'>신청 취소</button>
-                      </form>
-                    <% } else if (decoded._id !== item.account._id && isApplied && isAccepted) { %>
-                      <button type="button" onClick="notEnableCancel()" class='btn btn-already'>신청이 수락되었습니다 :)</button>
-                    <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
+                  <% if (decoded._id === item.account._id && enableModify) { %>
+                    <div class="col-md-12 col-xs-12 m-top-50">
+                      <div>
+                        <button class='btn btn-primary btn-lg' data-toggle="modal" data-target="#modalModify">수정</button>
+                      </div>
+                    </div>
+                  <% } else if (decoded._id === item.account._id && !enableModify) { %>
+                    <div class="col-md-12 col-xs-12 m-top-50">
+                      <div>
+                        <button onClick="notEnableModify()" class='btn btn-primary btn-lg'>수정</button>
+                      </div>
+                    </div>
+                  <% } %>
+    
+                  <% if (decoded._id === item.account._id && enableModify) { %>
+                    <div class="col-md-12 col-xs-12 m-top-20">
+                      <div>
+                        <form name="frmDelete" method="post"
+                          action="/board/<%= kind %>/<%= item.kind %>/<%= id %>?_method=DELETE">
+                          <input type="hidden" name="writeMem" value="<%= item.account._id %>">
+                          <button type="button" onClick="confirmDelete()" class='btn btn-primary btn-lg'>삭제</button>
+                        </form>
+                      </div>
+                    </div>
+                  <% } else if (decoded._id === item.account._id && !enableModify) { %>
+                    <div class="col-md-12 col-xs-12 m-top-20">
+                      <div>
+                        <button type="button" onClick="notEnableDelete()" class='btn btn-primary btn-lg'>삭제</button>
+                      </div>
+                    </div>
+                  <% } %>
+
+                  <% // decoded._id !== item.account._id %>
+                  <% if (decoded._id !== item.account._id && !isApplied) { %>
+                    <button class='btn btn-primary btn-lg btn-radius' data-toggle="modal" data-target="#modalApply">신청</button>
+                  <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
+                    <form name="frmApplied" method="post" action="/apply/<%= kind %>/<%= item._id %>/<%= applyId %>?_method=DELETE">
+                      <button type="button" onClick="confirmCancelApply()" class='btn btn-primary btn-lg btn-radius'>신청 취소</button>
                       <button type="button" onClick="confirmCancelApply()" class='btn btn-already'>이미 신청하셨습니다 :)</button>
-                    <% } %>
+                    </form>
+                  <% } else if (decoded._id !== item.account._id && isApplied && isAccepted) { %>
+                    <button type="button" onClick="notEnableCancel()" class='btn btn-already'>신청이 수락되었습니다 :)</button>
+                  <% } %>
                 </div>
 
                 <div class="col-md-9 nav_bottom">
@@ -461,7 +486,7 @@
 
         </div> <!-- modal-dialog -->
       </div> <!-- modal -->
-    <% } else { %>
+    <% } else if (decoded._id !== item.account._id && enableApply) { %>
       <div class="modal fade" id="modalApply" role="dialog">
         <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
 
@@ -475,7 +500,6 @@
             </div> <!-- modal header -->
 
             <div class="modal-body" style="padding: 50px;">
-              <input type="hidden" name="num_recv" value="<%= item.num %>">
               <form class="form_write" method="post" action="/apply/<%= kind %>">
                 <input type="hidden" name="applyKind" value="<%= item.kind %>">
                 <input type="hidden" name="applyItem" value="<%= item._id %>">
@@ -489,7 +513,7 @@
 
                 <label>
                   신청자
-                  <input type="text" value="<%= decoded.id %> (<%= decoded.name %>)" readonly disabled>
+                  <input type="text" value="<%= `${decoded.id} (${decoded.name})` %> " readonly disabled>
                 </label>
 
                 <% if (kind === 'contest') { %>
@@ -515,26 +539,21 @@
 
                 <label class="short" style="display: inline-block; margin-left: 20px;">
                   신청일
-                  <input type="date" name="day" value="<%= new Date() %>" readonly disabled>
-                </label>
-
-                <label>
-                  신청글
-                  <input type="text" value="<%= `[${item.topic}] ${item.title}` %>" readonly disabled>
+                  <input type="date" name="day" value="<%= applyDay %>" readonly disabled>
                 </label>
 
                 <div>
                   <label>
-                    짧은 포트폴리오
-                    <textarea name="applyPortfolio" placeholder="300자 이하로 입력해주세요" maxlength="300"
+                    간단한 포트폴리오
+                    <textarea name="applyPortfolio" placeholder="500자 이하로 입력해주세요" maxlength="500"
                       class="signup_profile"></textarea>
                   </label>
                 </div>
 
                 <div>
                   <label>
-                    <% kind === 'study' ? '스터디' : '공모전 준비' %>를 하면서 바라는 점
-                    <textarea name="applyWant" placeholder="500자 이하로 입력해주세요" maxlength="500"
+                    <%= kind === 'study' ? '스터디' : '공모전 준비' %>를 하면서 바라는 점
+                    <textarea name="applyWant" placeholder="300자 이하로 입력해주세요" maxlength="300"
                       class="signup_profile"></textarea>
                   </label>
                 </div>
@@ -550,6 +569,75 @@
 
           </div> <!-- modal content -->
 
+        </div> <!-- modal-dialog -->
+      </div> <!-- modal -->
+    <% } %>
+
+    <% if (decoded._id === item.account._id && item.applyNum > 0) { %>
+      <div class="modal fade" id="applyInfo" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+
+          <div class="modal-content">
+
+            <div class="modal-header">
+              <h6 class="modal-title" style="display: inline-block; text-transform: capitalize; font-style: italic;">
+                신청 현황
+              </h6>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div> <!-- modal header -->
+
+            <div class="modal-body" style="padding: 50px;">
+              <ul class="list-group list-group-flush flex-column">
+                <% for (let apply of applies) { %>
+                <li class="list-group-item align-items-start">
+                  <div class="d-flex justify-content-between">
+                    
+                    <% if (apply.accept) { %>
+                      <div class="col-md-3 col-md-offset-9" style="float: right;">
+                        <input value="<%= getFormatDate(apply.updatedAt) %>" class="form-control btn btn-primary btn-sm btn-radius"></button>
+                      </div>
+                    <% } else { %>
+                      <div class="col-md-3 col-md-offset-9" style="float: right;">
+                        <form class="form_write" method="post" action="/apply/<%= kind %>/<%= item._id %>/<%= apply._id %>?_method=PATCH">
+                          <input type="submit" value="신청 수락" class="form-control btn btn-primary btn-sm btn-radius"></button>
+                        </form>
+                      </div>
+                    <% } %>
+
+                    <div class="m-top-20">
+                      <h6>신청자 정보</h5>
+                      <%= `${apply.applyAccount.id}(${apply.applyAccount.name})` %>
+                    </div>
+                    
+                    <% if (apply.kind === 'contest') { %>
+                    <div class="m-top-20">
+                      <label>
+                        파트 선택
+                        <select class="form-control" name="applyPart" readonly>
+                        <% for (let partName of item.part.name) {  %>
+                          <option value="<%= partName %>" selected="<% apply.part === partName ? "true" : "false" %>"><%= partName %></option>
+                        <% } %>
+                        </select>
+                      </label>
+                    </div>
+                    <% } %>
+
+                    <div class="m-top-20">
+                      <h6>포트폴리오</h5>
+                      <%= apply.portfolio %>
+                    </div>
+
+                    <div class="m-top-20">
+                      <h6><%= (kind === "study") ? "스터디" : "공모전 준비" %>하면서 바라는 점</h5>
+                      <%= apply.want %>
+                    </div>
+                  </div>
+                </li>
+                <% } %>
+              </ul>
+
+            </div> <!-- modal body -->
+          </div> <!-- modal content -->
         </div> <!-- modal-dialog -->
       </div> <!-- modal -->
     <% } %>

@@ -13,8 +13,11 @@ router.get('/', async (req, res) => {
 
   const counting = await fetch(`${process.env.API || config.API}/counting`)
     .then(res => res.json())
-    .then(json => json.data);
-
+    .then(json => json.data)
+    .catch((err) => {
+      console.log(err);
+    }) || { visit: 0, account: 0, list: 0, apply: 0, team: 0 };
+    
   res.render(path.join(__dirname, '..', 'views', 'index.ejs'), {
     counting,
   });

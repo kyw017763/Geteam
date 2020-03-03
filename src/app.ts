@@ -10,11 +10,7 @@ import connectRedis from 'connect-redis';
 import redisClient from './redisClient';
 import methodOverride from 'method-override';
 
-import auth from './routes/auth';
-import board from './routes/board';
-import note from './routes/note';
-import mypage from './routes/mypage';
-
+import { auth, board, apply, note, mypage } from './routes';
 import { checkStatusAuth, setStatusAuth } from './middleware';
 
 dotenv.config();
@@ -53,6 +49,7 @@ app.use(express.static(path.resolve(__dirname, 'assets')));
 
 app.use('/', setStatusAuth, auth);
 app.use('/board', setStatusAuth, checkStatusAuth, board);
+app.use('/apply', setStatusAuth, checkStatusAuth, apply);
 app.use('/note', setStatusAuth, checkStatusAuth, note);
 app.use('/mypage', setStatusAuth, checkStatusAuth, mypage);
 
