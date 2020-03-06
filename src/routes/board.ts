@@ -166,7 +166,7 @@ router.get('/:kind/:id', async (req, res) => {
 
   res.setHeader('Content-Type', 'text/html');
 
-  res.render(path.join(__dirname, '..', 'views', '/itemView.ejs'), {
+  res.render(path.join(__dirname, '..', 'views', 'itemView.ejs'), {
     kind,
     category,
     id,

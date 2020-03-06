@@ -26,12 +26,12 @@ app.use(session({
     httpOnly: true,
     maxAge: 24000 * 60 * 60, // 쿠키 유효기간 24시간
   },
-  store: new RedisStore({
-    client: redisClient.client,
-    host: '127.0.0.1',
-    port: 6379,
-    logErrors: true,
-  }),
+  // store: new RedisStore({
+  //   client: redisClient.client,
+  //   host: '127.0.0.1',
+  //   port: 6379,
+  //   logErrors: true,
+  // }),
 }));
 
 // view engine setup
