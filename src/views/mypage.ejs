@@ -29,32 +29,32 @@
     function member_chk() {
       let c_set = document.frm_change;
 
-      let name_result = document.getElementById("name_result");
-      let num_result = document.getElementById("s_num_result");
-      let inters_result = document.getElementById("interest_result");
-      let profile_result = document.getElementById("profile_result");
+      let nameResult = document.getElementById("nameResult");
+      let numResult = document.getElementById("modifySNumResult");
+      let intersResult = document.getElementById("interestResult");
+      let modifyProfileResult = document.getElementById("modifyProfileResult");
 
-      if (c_set.name.value == "") {
-        name_result.innerHTML = "이름을 입력해주세요";
-        c_set.name.focus();
-      } else if (c_set.s_num.value == "" || !(isNumber(c_set.s_num.value))) {
-        name_result.innerHTML = "";
-        num_result.innerHTML = "학번을 입력해주세요";
-        c_set.s_num.focus();
-      } else if (c_set.interest1.value == "") {
-        num_result.innerHTML = "";
-        inters_result.innerHTML = "흥미 주제들을 입력해주세요";
-        c_set.interest1.focus();
-      } else if (c_set.interest2.value == "") {
-        inters_result.innerHTML = "흥미 주제들을 입력해주세요";
-        c_set.interest2.focus();
-      } else if (c_set.interest3.value == "") {
-        inters_result.innerHTML = "흥미 주제들을 입력해주세요";
-        c_set.interest3.focus();
-      } else if (c_set.profile.value == "") {
-        inters_result.innerHTML = "";
-        profile_result.innerHTML = "자기소개를 입력해주세요";
-        c_set.profile.focus();
+      if (c_set.modifyName.value == "") {
+        nameResult.innerHTML = "이름을 입력해주세요";
+        c_set.modifyName.focus();
+      } else if (c_set.modifySNum.value == "" || !(isNumber(c_set.modifySNum.value))) {
+        nameResult.innerHTML = "";
+        numResult.innerHTML = "학번을 입력해주세요";
+        c_set.modifySNum.focus();
+      } else if (c_set.modifyInterest1.value == "") {
+        numResult.innerHTML = "";
+        intersResult.innerHTML = "흥미 주제들을 입력해주세요";
+        c_set.modifyInterest1.focus();
+      } else if (c_set.modifyInterest2.value == "") {
+        intersResult.innerHTML = "흥미 주제들을 입력해주세요";
+        c_set.modifyInterest2.focus();
+      } else if (c_set.modifyInterest3.value == "") {
+        intersResult.innerHTML = "흥미 주제들을 입력해주세요";
+        c_set.modifyInterest3.focus();
+      } else if (c_set.modifyProfile.value == "") {
+        intersResult.innerHTML = "";
+        modifyProfileResult.innerHTML = "자기소개를 입력해주세요";
+        c_set.modifyProfile.focus();
       } else {
         c_set.submit();
       }
@@ -64,16 +64,16 @@
 
       let pwd_set = document.frm_pwd;
 
-      let pw_result = document.getElementById("pw_result");
-      let pwd_result = document.getElementById("pw1_result");
-      let pwdck_result = document.getElementById("pw2_result");
+      let oldPwd = document.getElementById("oldPwd");
+      let pwdResult = document.getElementById("newPwdResult");
+      let pwdckResult = document.getElementById("newPwdCheckResult");
 
       if (pwd_set.pw.value == "") {
-        pw_result.innerHTML = "기존 비밀번호를 입력하세요!";
+        oldPwd.innerHTML = "기존 비밀번호를 입력하세요!";
         pwd_set.pw.focus();
       } else if (!(pwd_set.pw1.value == pwd_set.pw2.value)) {
-        pw_result.innerHTML = "";
-        pwdck_result.innerHTML = "비밀번호와 확인 문자가 일치하지 않습니다";
+        oldPwd.innerHTML = "";
+        pwdckResult.innerHTML = "비밀번호와 확인 문자가 일치하지 않습니다";
         pwd_set.pw2.focus();
       } else {
         pwd_set.submit();
@@ -340,32 +340,32 @@
 
                       <label>
                         이름
-                        <input type="text" name="name" value="<%= //$member['name']; %>">
+                        <input type="text" name="modifyName" value="<%= //$member['name']; %>">
                       </label>
-                      <span id="name_result" class="fail"></span>
+                      <span id="nameResult" class="fail"></span>
 
                       <label>
                         학번
-                        <input type="text" name="s_num" value="<%= //$member['s_num']; %>">
+                        <input type="text" name="modifySNum" value="<%= //$member['modifySNum']; %>">
                       </label>
-                      <span id="s_num_result" class="fail"></span>
+                      <span id="modifySNumResult" class="fail"></span>
 
                       <label>
                         <div>흥미있는 기술 / 공부주제</div>
-                        <input type="text" name="interest1" placeholder="1" value="<%= //$member['interest1']; %>"
+                        <input type="text" name="modifyInterest1" placeholder="1" value="<%= //$member['modifyInterest1']; %>"
                           style="display: inline-block; width: 30%;">
-                        <input type="text" name="interest2" placeholder="2" value="<%= //$member['interest2']; %>"
+                        <input type="text" name="modifyInterest2" placeholder="2" value="<%= //$member['modifyInterest2']; %>"
                           style="display: inline-block; width: 30%;">
-                        <input type="text" name="interest3" placeholder="3" value="<%= //$member['interest3']; %>"
+                        <input type="text" name="modifyInterest3" placeholder="3" value="<%= //$member['modifyInterest3']; %>"
                           style="display: inline-block; width: 30%;">
                       </label>
-                      <span id="interest_result" class="fail"></span>
+                      <span id="interestResult" class="fail"></span>
 
                       <label>
                         자기소개
-                        <textarea name="profile"><%= //$member['profile']; %></textarea>
+                        <textarea name="modifyProfile"><%= //$member['modifyProfile']; %></textarea>
                       </label>
-                      <span id="profile_result" class="fail"></span>
+                      <span id="modifyProfileResult" class="fail"></span>
 
                       <button type="button" class="form-control btn btn-primary" onClick="member_chk()">개인정보 변경</button>
                     </form>
@@ -378,19 +378,19 @@
                       style="margin-top: 40px;">
                       <label>
                         기존 비밀번호
-                        <input type="password" name="pw" placeholder="기존 비밀번호" value="">
+                        <input type="password" name="oldPwd" placeholder="기존 비밀번호" value="">
                       </label>
-                      <span id="pw_result" class="fail"></span>
+                      <span id="oldPwd" class="fail"></span>
                       <label>
                         새로운 비밀번호
-                        <input type="password" name="pw1" placeholder="새로운 비밀번호" value="">
+                        <input type="password" name="newPwd" placeholder="새로운 비밀번호" value="">
                       </label>
-                      <span id="pw1_result" class="fail"></span>
+                      <span id="newPwdResult" class="fail"></span>
                       <label>
                         새로운 비밀번호 확인
-                        <input type="password" name="pw2" placeholder="새로운 비밀번호 확인" value="">
+                        <input type="password" name="newPwdCheck" placeholder="새로운 비밀번호 확인" value="">
                       </label>
-                      <span id="pw2_result" class="fail"></span>
+                      <span id="newPwdCheckResult" class="fail"></span>
                       <button type="button" onClick="pwd_chk()" class="form-control btn btn-primary">비밀번호 변경</button>
                     </form>
 
@@ -440,7 +440,7 @@
               <input type="text" class="form-control" name="write_recv">
             </label>
 
-            <span id="note_write_double_result" class="fail"></span>
+            <span id="note_write_doubleResult" class="fail"></span>
 
             <div class="textarea_counter">
               <label>
@@ -449,7 +449,7 @@
                   onkeyup="lengCounter()"></textarea>
 
               </label>
-              <span id="note_write_content_result" class="fail"></span>
+              <span id="note_write_contentResult" class="fail"></span>
             </div>
         </div> <!-- modal body -->
 
