@@ -344,55 +344,19 @@
                 </div>
 
                 <div class="col-md-9 nav_bottom">
-                  <%
-                    // 단순히 한단계 위 아래로 움직여서는 안된다. 그 글이 삭제되고 두단계 건너뛴 곳에 신청기간이 멀쩡한 글이 있을 수도 있기 때문에!
+                  <ul class="pager">
+                  <% if (prev) { %>
+                    <li class="previous"><a href="/board/<%= kind %>/<%= prev._id %>" style='color: gray'>이전 글: <%= `${prev.title.substr(0, 10)}···` %></a></li>
+                  <% } else { %>
+                    <li class="previous"><a style='color: gray'>이전 글 없음</a></li>
+                  <% } %>
 
-                    // if($kind=="develop"){
-                    //     $b_sql = "SELECT num, title FROM study_develop WHERE num < $item_num AND end_day >= curdate( ) LIMIT 1";
-                    //     $a_sql = "SELECT num, title FROM study_develop WHERE num > $item_num AND end_day >= curdate( ) LIMIT 1";
-                    // } else if($kind=="design"){
-                    //     $b_sql = "SELECT num, title FROM study_design WHERE num < $item_num AND end_day >= curdate( ) LIMIT 1";
-                    //     $a_sql = "SELECT num, title FROM study_design WHERE num > $item_num AND end_day >= curdate( ) LIMIT 1";
-                    // } else if($kind=="etc"){
-                    //     $b_sql = "SELECT num, title FROM study_etc WHERE num < $item_num AND end_day >= curdate( ) LIMIT 1";
-                    //     $a_sql = "SELECT num, title FROM study_etc WHERE num > $item_num AND end_day >= curdate( ) LIMIT 1";
-                    // }
-
-                    // $b = mysqli_query($conn, $b_sql);
-                    // $a = mysqli_query($conn, $a_sql);
-
-                    // $bResult_num = mysqli_num_rows($b);
-                    // $aResult_num = mysqli_num_rows($a);
-                    
-                    // $b = mysqli_fetch_row($b);
-                    // $a = mysqli_fetch_row($a);
-
-                    // $b_num = $b[0];
-                    // $a_num = $a[0];
-
-                    // $bTitle = $b[1];
-                    // $aTitle = $a[1];
-
-                    // if($bResult_num > 0){
-                    //     echo "<a href='study_view.php?num=$b_num&page=$page&kind=$kind'>";
-                    //     echo "<span style='float: left;'><span>&laquo;</span> 이전 글 
-                    //     <span style='color: gray'>$bTitle</span> 
-                    //     </span>";
-                    //     echo "</a>";
-                    // } else {
-                    //     echo "<span style='float: left; cursor: no-drop;'><span>&laquo;</span> 이전 글</span>";
-                    // }
-
-                    // if($aResult_num > 0){
-                    //     echo "<a href='study_view.php?num=$a_num&page=$page&kind=$kind'>";
-                    //     echo "<span style='float: right;'>
-                    //      <span style='color: gray'>$aTitle</span>
-                    //      다음 글 <span>&raquo;</span></span>";
-                    //     echo "</a >";
-                    // } else {
-                    //     echo "<span style='float: right; cursor: no-drop;'>다음 글 <span>&raquo;</span></span>";
-                    // }
-                  %>
+                  <% if (next) { %>
+                    <li class="next"><a href="/board/<%= kind %>/<%= next._id %>" style='color: gray'>다음 글: <%= `${next.title.substr(0, 10)}···` %></a></li>
+                  <% } else { %>
+                    <li class="next"><a style='color: gray'>다음 글 없음</a></li>
+                  <% } %>
+                  </ul>
                 </div>
               </article>
             </div>

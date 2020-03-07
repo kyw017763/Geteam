@@ -133,7 +133,6 @@ router.get('/:kind/:id', async (req, res) => {
   } else {
     res.redirect('/board/list/study');
   }
-  
   if (status! === 204) {
   } else if (status! === 200) {
     renderData['item'] = itemResult.data.result;
@@ -142,6 +141,8 @@ router.get('/:kind/:id', async (req, res) => {
     renderData['isApplied'] = itemResult.data.isApplied;
     renderData['applyId'] = itemResult.data.applyId;
     renderData['isAccepted'] = itemResult.data.isAccepted;
+    renderData['prev'] = itemResult.data.prev;
+    renderData['next'] = itemResult.data.next;
 
     if (res.locals.decoded._id === renderData['item'].account._id) {
       appliesResult = await fetch(`${process.env.API || config.API}/apply/${kind}/${id}`, {

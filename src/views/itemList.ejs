@@ -176,7 +176,7 @@
                     <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
                       D - <%= diffDate %>
                     </span>
-                    <span style="text-transform: capitalize; font-style: italic;"><%= checkCategory ? `No.${idx + 1}` : item.kind %></span>
+                  <span style="text-transform: capitalize; font-style: italic;"><%= checkCategory ? `No.${idx + 1}` : item.kind %> <%= item.createdAt === item.updatedAt ? '' : `(updated ${item.updatedAt})`%></span>
                     <span>작성자 | <%= item.account.id %></span>
                     <h6 class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></h6>
                     <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
@@ -196,24 +196,24 @@
                   <span class='badge' style='padding-bottom: 5px; background: #efdc05; color: white; float:right'>
                     <%= Math.abs(diffDate) + '일 지남' %>
                   </span>
-                  <span>No.<%= idx + 1 %></span>
-                  <span>작성자 | <%= item.account.id %>
-                    <h6 class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></h6>
-                    <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
-                    <span>신청 기간 | <%= item.createdAt %> ~ <%= item.endDay %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <span style='float: left;'>
-                      신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
-                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                      조회수 | <%= item.hit %>
-                    </span>
-                    <% if (item.account._id === decoded._id) { //신청기간 지난 게시물의 삭제 버튼 %>
+                  <span style="text-transform: capitalize; font-style: italic;"><%= checkCategory ? `No.${idx + 1}` : item.kind %></span>
+                  <span>작성자 | <%= item.account.id %></span>
+                  <h6 class='title' style='margin-top: 15px;'>[<%= item.topic %>] <%= item.title %></h6>
+                  <span class='content' style='margin-bottom: 23px;'><%= item.content %></span>
+                  <span>신청일 | <%= item.createdAt %> ~ <%= item.endDay %></span>
+                  <span>
+                    신청현황 | <%= item.applyNum %> / <%= item.wantNum %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    조회수 | <%= item.hit %>
+                  </span>
+                  <% if (item.account._id === decoded._id) { //신청기간 지난 게시물의 삭제 버튼 %>
                     <form method="post" action="/board/<%= kind %>/<%= item.kind %>/<%= item._id %>?_method=DELETE">
                       <button type="submit" class="btn btn-primary"
                         style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
                         <i class='fa fa-trash text-primary'></i>
                       </button>
                     </form>
-                    <% } %>
+                  <% } %>
                 </div>
               </div>
               <% } %>
