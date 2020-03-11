@@ -298,20 +298,26 @@
                     </div>
                   <% } %>
 
+                  <div class="col-md-12 col-xs-12 m-top-50">
                   <% if (decoded._id === item.account._id && enableModify) { %>
-                    <div class="col-md-12 col-xs-12 m-top-50">
-                      <div>
-                        <button class='btn btn-primary btn-lg' data-toggle="modal" data-target="#modalModify">수정</button>
-                      </div>
+                    <div>
+                      <button class='btn btn-primary btn-lg' data-toggle="modal" data-target="#modalModify">수정</button>
                     </div>
                   <% } else if (decoded._id === item.account._id && !enableModify) { %>
-                    <div class="col-md-12 col-xs-12 m-top-50">
-                      <div>
-                        <button onClick="notEnableModify()" class='btn btn-primary btn-lg'>수정</button>
-                      </div>
+                    <div>
+                      <button onClick="notEnableModify()" class='btn btn-primary btn-lg'>수정</button>
+                    </div>
+                  <% } else if (decoded._id !== item.account._id && enableApply && item.applyNum > applies.filter((apply) => apply.accept).length) { %>
+                    <form method="post" action="/apply/team/<%= kind %>/<%= item._id %>?_method=PATCH">
+                      <button type="button" class='btn btn-primary btn-lg btn-radius'>모집 완료 처리</button>
+                    </form>
+                  <% } else if (decoded._id !== item.account._id && !enableApply) { %>
+                    <div>
+                      <button type="button" class='btn btn-already btn-lg btn-radius'>모집 완료된 글입니다 :) 메일을 확인해주세요</button>
                     </div>
                   <% } %>
-    
+                  </div>
+
                   <% if (decoded._id === item.account._id && enableModify) { %>
                     <div class="col-md-12 col-xs-12 m-top-20">
                       <div>
@@ -331,15 +337,16 @@
                   <% } %>
 
                   <% // decoded._id !== item.account._id %>
-                  <% if (decoded._id !== item.account._id && !isApplied) { %>
+                  <% if (decoded._id !== item.account._id && !isApplied && enableApply) { %>
                     <button class='btn btn-primary btn-lg btn-radius' data-toggle="modal" data-target="#modalApply">신청</button>
-                  <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted) { %>
+                  <% } else if (decoded._id !== item.account._id && isApplied && !isAccepted && enableApply) { %>
                     <form name="frmApplied" method="post" action="/apply/<%= kind %>/<%= item._id %>/<%= applyId %>?_method=DELETE">
-                      <button type="button" onClick="confirmCancelApply()" class='btn btn-primary btn-lg btn-radius'>신청 취소</button>
-                      <button type="button" onClick="confirmCancelApply()" class='btn btn-already'>이미 신청하셨습니다 :)</button>
+                      <button type="button" onClick="confirmCancelApply()" class='btn btn-already btn-lg btn-radius'>이 모집에 이미 신청하셨습니다! :)</button>
                     </form>
-                  <% } else if (decoded._id !== item.account._id && isApplied && isAccepted) { %>
+                  <% } else if (decoded._id !== item.account._id && isApplied && isAccepted && enableApply) { %>
                     <button type="button" onClick="notEnableCancel()" class='btn btn-already'>신청이 수락되었습니다 :)</button>
+                  <% } else if (decoded._id !== item.account._id && isApplied && isAccepted) { %>
+                    <button type="button" class='btn btn-already'>모집 완료된 글입니다 :) 메일을 확인해주세요</button>
                   <% } %>
                 </div>
 

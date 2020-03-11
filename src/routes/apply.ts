@@ -88,3 +88,22 @@ router.delete('/:kind/:itemId/:applyId', async (req, res) => {
 
   return cancelResult.data ? res.redirect(`/board/${kind}/${cancelResult.data}`) : res.redirect(`/board/${kind}/${itemId}`);
 });
+
+router.patch('/team/:kind/:id', async (req, res, next) => {
+  const { kind, id } = req.params;
+  let status = null;
+  await fetch(`${process.env.API || config.API}/apply/team/${kind}/${id}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${req.cookies.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(req.body)
+    })
+    .then(res => {
+      status = res.status;
+      if (res.status === 200) return res.json();
+    });
+  
+  return status === 200 ? res.redirect(`/board/${kind}/${id}`) : res.redirect(`/board/${kind}/${id}`) ;
+});

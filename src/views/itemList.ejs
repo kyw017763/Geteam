@@ -125,25 +125,6 @@
           </div>
         </div>
 
-        <div class="col-md-10 col-md-offset-1 m-top-30">
-          <div class="col-md-10">
-            <form name="frmSearch" method="post" action="board/list/<%= kind %>/search">
-              <select name="searchList" class="form-control dropdown-toggle" data-toggle="dropdown"
-                aria-expanded="false" style="width: 30%; display: inline-block;">
-                <option value="subject">제목</option>
-                <option value="content">내용</option>
-                <option value="name">작성자</option>
-              </select>
-
-              <input type="search" class="form-control form_fifty" placeholder="Search" name="search"
-                style="display: inline-block; width: 60%;">
-
-              <button type="button" onClick="searchChk()" class="btn btn-primary" style="padding: 1.2em 1.5em;"><i
-                  class="fa fa-search"></i></button>
-            </form>
-          </div>
-        </div>
-
         <div class="col-md-10 col-md-offset-1 m-top-20">
           <div class="col-md-3">
             <% if (decoded.listNum < 3) { %>
@@ -208,6 +189,7 @@
                   </span>
                   <% if (item.account._id === decoded._id) { //신청기간 지난 게시물의 삭제 버튼 %>
                     <form method="post" action="/board/<%= kind %>/<%= item.kind %>/<%= item._id %>?_method=DELETE">
+                      <input type="hidden" name="writeMem" value="<%= item.account._id %>">
                       <button type="submit" class="btn btn-primary"
                         style="position: absolute; right: 40px; bottom: 20px; padding: 1em 1em; border-radius: 50%;">
                         <i class='fa fa-trash text-primary'></i>

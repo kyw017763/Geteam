@@ -18,8 +18,9 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    const message = '<%= typeof message!='undefined' ? message : '' %>';
-    if (message) alert(message);
+    if (typeof message != undefined) {
+      alert(message);
+    }
   }, false);
 </script>
 

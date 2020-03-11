@@ -134,6 +134,7 @@ router.get('/:kind/:id', async (req, res) => {
     res.redirect('/board/list/study');
   }
   if (status! === 204) {
+    res.redirect('/board/list/study');
   } else if (status! === 200) {
     renderData['item'] = itemResult.data.result;
     renderData['enableModify'] = itemResult.data.enableModify;
